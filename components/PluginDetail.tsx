@@ -7,8 +7,12 @@ import { PLUGINS } from "@/lib/plugins";
 import { fetchVersions } from "@/lib/versions";
 import { useI18n } from "@/lib/i18n";
 import { pluginDescEn } from "@/lib/i18n/plugins-en";
+import { AlertTriangle, ExternalLink } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import RelatedPlugins from "./RelatedPlugins";
-import ReviewSection from "./ReviewSection";
 
 type Props = {
   plugin: Plugin;
@@ -38,54 +42,54 @@ export default function PluginDetail({ plugin }: Props) {
 
   return (
     <div>
-      <Link
-        href="/plugins"
-        className="mb-6 inline-block rounded border border-border-main px-3 py-1.5 font-mono text-[10px] text-text-sub hover:border-[#30306A] hover:text-[#CCC]"
-      >
-        {t.detail.backToList}
-      </Link>
+      <Button variant="outline" size="xs" asChild className="mb-6 font-mono text-[10px]">
+        <Link href="/plugins">
+          {t.detail.backToList}
+        </Link>
+      </Button>
 
       <div className="mb-6 flex flex-wrap items-center gap-3">
         <h1 className="font-heading text-xl font-extrabold">{plugin.name}</h1>
-        <span
-          className="rounded-[3px] px-2 py-1 text-[10px] font-bold tracking-wide"
+        <Badge
+          className="border-transparent"
           style={{
             color: plugin.color,
             background: plugin.color + "18",
           }}
         >
           {plugin.tag}
-        </span>
+        </Badge>
         {version?.latestVersion && (
-          <span className="rounded-[3px] border border-border-main px-1.5 py-0.5 text-[9px] text-success">
+          <Badge variant="outline" className="text-primary">
             {version.latestVersion}
-          </span>
+          </Badge>
         )}
         {plugin.url && (
-          <a
-            href={plugin.url}
-            target="_blank"
-            rel="noreferrer"
-            className="rounded border border-border-main px-2 py-1 font-mono text-[9px] text-text-sub hover:border-[#30306A] hover:text-[#CCC]"
-          >
-            GitHub →
-          </a>
+          <Button variant="outline" size="xs" asChild className="font-mono text-[9px]">
+            <a
+              href={plugin.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              GitHub <ExternalLink className="ml-1 inline h-3 w-3" />
+            </a>
+          </Button>
         )}
       </div>
 
-      <p className="mb-6 text-xs leading-[1.8] text-[#888]">
+      <p className="mb-6 text-xs leading-[1.8] text-muted-foreground">
         {longDesc}
       </p>
 
       <div className="mb-6">
-        <div className="mb-2 text-[9px] tracking-[2px] text-[#444]">
+        <div className="mb-2 text-[9px] tracking-[2px] text-text-dim">
           {t.detail.features}
         </div>
         <div className="flex flex-wrap gap-1.5">
           {plugin.features.map((f, i) => (
             <span
               key={i}
-              className="rounded px-2 py-[3px] text-[10px]"
+              className="rounded-sm px-2 py-[3px] text-[10px]"
               style={{
                 color: plugin.color,
                 background: plugin.color + "15",
@@ -99,40 +103,42 @@ export default function PluginDetail({ plugin }: Props) {
       </div>
 
       <div className="mb-6">
-        <div className="mb-2 text-[9px] tracking-[2px] text-[#444]">
+        <div className="mb-2 text-[9px] tracking-[2px] text-text-dim">
           {t.detail.install}
         </div>
         <div className="flex flex-col gap-1.5">
           {plugin.install.map((cmd, i) => (
             <div
               key={i}
-              className="flex items-center gap-2 rounded-[5px] border border-[#121224] bg-[#040408] px-3 py-2"
+              className="flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2"
             >
-              <code className="flex-1 overflow-x-auto text-[11px] text-[#777]">
+              <code className="flex-1 overflow-x-auto text-[11px] text-muted-foreground">
                 {cmd}
               </code>
-              <button
+              <Button
+                variant="outline"
+                size="xs"
                 onClick={() => copyCommand(cmd, i)}
-                className="shrink-0 rounded border border-border-main px-2 py-1 font-mono text-[9px] text-text-sub hover:text-accent"
+                className="shrink-0 font-mono text-[9px]"
               >
                 {copiedIdx === i ? t.detail.copied : t.detail.copy}
-              </button>
+              </Button>
             </div>
           ))}
         </div>
       </div>
 
       {version?.latestVersion && (
-        <div className="mb-6 rounded-[7px] border border-border-main bg-card p-3">
-          <div className="mb-1 text-[9px] tracking-[2px] text-[#444]">
+        <Card className="mb-6 p-3">
+          <div className="mb-1 text-[9px] tracking-[2px] text-text-dim">
             {t.detail.latestVersion}
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-xs font-bold text-success">
+            <span className="text-xs font-bold text-primary">
               {version.latestVersion}
             </span>
             {version.publishedAt && (
-              <span className="text-[10px] text-[#555]">
+              <span className="text-[10px] text-muted-foreground">
                 {new Date(version.publishedAt).toLocaleDateString(
                   locale === "en" ? "en-US" : "ko-KR"
                 )}
@@ -143,18 +149,18 @@ export default function PluginDetail({ plugin }: Props) {
                 href={version.releaseUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[10px] text-accent hover:underline"
+                className="text-[10px] text-primary transition-colors hover:underline"
               >
-                Release Notes →
+                Release Notes <ExternalLink className="ml-1 inline h-3 w-3" />
               </a>
             )}
           </div>
-        </div>
+        </Card>
       )}
 
       {plugin.conflicts.length > 0 && (
-        <div className="mb-6 rounded-[7px] border border-[#301010] bg-[#120808] px-3 py-2.5 text-[11px] text-[#FF6060]">
-          ⚠{" "}
+        <div className="mb-6 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-[11px] text-destructive">
+          <AlertTriangle className="mr-1 inline h-3.5 w-3.5" />
           <strong>
             {plugin.conflicts.map((c) => PLUGINS[c]?.name).join(", ")}
           </strong>{" "}
@@ -163,23 +169,19 @@ export default function PluginDetail({ plugin }: Props) {
       )}
 
       <div className="mb-8">
-        <div className="mb-2 text-[9px] tracking-[2px] text-[#444]">
+        <div className="mb-2 text-[9px] tracking-[2px] text-text-dim">
           {t.detail.keywords}
         </div>
         <div className="flex flex-wrap gap-1">
           {plugin.keywords.map((kw, i) => (
             <span
               key={i}
-              className="rounded-[3px] border border-accent/20 bg-accent/5 px-[7px] py-0.5 text-[10px] text-[#7070FF]"
+              className="rounded-sm border border-primary/20 bg-primary/5 px-[7px] py-0.5 text-[10px] text-[#7070FF]"
             >
               {kw}
             </span>
           ))}
         </div>
-      </div>
-
-      <div className="mb-8">
-        <ReviewSection pluginId={plugin.id} />
       </div>
 
       <RelatedPlugins currentId={plugin.id} category={plugin.category} />

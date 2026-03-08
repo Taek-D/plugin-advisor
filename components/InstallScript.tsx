@@ -1,9 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { Check, Copy, Terminal } from "lucide-react";
 import { PLUGINS } from "@/lib/plugins";
 import { saveFavorite } from "@/lib/favorites";
 import { useI18n } from "@/lib/i18n";
+import { trackEvent } from "@/lib/analytics";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 type Props = {
   selectedIds: string[];
@@ -31,12 +36,14 @@ export default function InstallScript({ selectedIds }: Props) {
   const handleCopy = () => {
     navigator.clipboard.writeText(script);
     setCopied(true);
+    trackEvent("script_copy", { pluginCount: selectedIds.length });
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSaveFavorite = async () => {
+  const handleSaveFavorite = () => {
     if (!favName.trim()) return;
-    await saveFavorite(favName.trim(), selectedIds);
+    saveFavorite(favName.trim(), selectedIds);
+    trackEvent("favorite_save", { pluginCount: selectedIds.length });
     setSaved(true);
     setSaving(false);
     setFavName("");
@@ -44,59 +51,74 @@ export default function InstallScript({ selectedIds }: Props) {
   };
 
   return (
-    <div className="rounded-[9px] border border-[#121224] bg-[#040408] p-4">
+    <Card className="p-4">
       <div className="mb-2.5 flex flex-wrap items-center justify-between gap-2">
-        <div className="text-[9px] tracking-[2px] text-[#383850]">
+        <div className="text-xs font-medium tracking-wide text-text-dim">
           {t.installScript.title}
         </div>
         <div className="flex items-center gap-2">
           {saving ? (
             <div className="flex items-center gap-1.5">
-              <input
+              <Input
                 type="text"
                 value={favName}
                 onChange={(e) => setFavName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSaveFavorite()}
                 placeholder={t.installScript.comboName}
-                className="w-[120px] rounded border border-border-main bg-card px-2 py-1.5 font-mono text-[10px] text-[#CCC] outline-none focus:border-accent"
+                className="h-8 w-[120px] text-xs"
                 autoFocus
               />
-              <button
+              <Button
+                variant="outline"
+                size="xs"
                 onClick={handleSaveFavorite}
                 disabled={!favName.trim()}
-                className="rounded-[5px] bg-accent/20 px-3 py-1.5 font-mono text-[9px] font-bold text-accent hover:bg-accent/30 disabled:opacity-30"
+                className="font-bold"
               >
                 {t.installScript.save}
-              </button>
+              </Button>
               <button
                 onClick={() => setSaving(false)}
-                className="text-[11px] text-text-sub hover:text-[#CCC]"
+                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
               >
                 ×
               </button>
             </div>
           ) : (
-            <button
+            <Button
+              variant="outline"
+              size="xs"
               onClick={() => (saved ? undefined : setSaving(true))}
-              className="rounded-[5px] border border-border-main px-3 py-1.5 font-mono text-[9px] text-text-sub hover:border-accent hover:text-accent sm:py-2"
             >
               {saved ? t.installScript.saved : t.installScript.saveFavorite}
-            </button>
+            </Button>
           )}
-          <button
+          <Button
             onClick={handleCopy}
-            className="min-h-[44px] rounded-[5px] bg-gradient-to-br from-success to-accent px-5 py-2 font-mono text-[11px] font-bold tracking-wide text-white hover:opacity-85 sm:min-h-0"
+            size="sm"
+            className="min-h-[44px] sm:min-h-0"
           >
-            {copied ? t.installScript.copyDone : t.installScript.copy}
-          </button>
+            <span className="flex items-center gap-1.5">
+              {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+              {copied ? t.installScript.copyDone : t.installScript.copy}
+            </span>
+          </Button>
         </div>
       </div>
-      <pre className="overflow-x-auto whitespace-pre-wrap text-[11px] leading-[1.9] text-[#666]">
-        {script}
+      <pre className="overflow-x-auto whitespace-pre-wrap text-[13px] leading-[1.9] sm:text-xs">
+        {script.split("\n").map((line, i) => (
+          <span key={i} className={line.startsWith("#") ? "text-text-faint" : "text-muted-foreground"}>
+            {line}
+            {"\n"}
+          </span>
+        ))}
       </pre>
-      <div className="mt-2.5 rounded-[5px] bg-[#07070E] px-3 py-2 text-[10px] leading-relaxed text-[#383850]">
-        {t.installScript.guide}
+      <div className="mt-2.5 flex items-start gap-2.5 rounded-md border border-primary/20 bg-primary/5 px-3 py-3">
+        <Terminal className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+        <span className="text-xs leading-relaxed text-muted-foreground">
+          {t.installScript.guide}
+        </span>
       </div>
-    </div>
+    </Card>
   );
 }

@@ -4,7 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PLUGINS } from "@/lib/plugins";
 import { useI18n } from "@/lib/i18n";
-import AuthButton from "./AuthButton";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+
 
 export default function Nav() {
   const pathname = usePathname();
@@ -12,23 +15,23 @@ export default function Nav() {
 
   const links = [
     { href: "/", label: t.nav.home },
+    { href: "/advisor", label: t.nav.advisor },
     { href: "/plugins", label: t.nav.plugins },
-    { href: "/community", label: t.nav.community },
   ];
 
   return (
-    <nav className="flex items-center justify-between border-b border-[#121224] px-4 py-4 sm:px-6">
-      <div className="flex items-center gap-4">
+    <nav className="flex items-center justify-between border-b border-border px-4 py-4 sm:px-6">
+      <div className="flex items-center gap-3 overflow-hidden sm:gap-4">
         <Link href="/" className="flex items-center gap-2">
-          <div className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent shadow-[0_0_8px_#3030FF]" />
-          <span className="font-heading text-[11px] font-extrabold tracking-[1.5px] sm:text-[13px] sm:tracking-[2.5px]">
+          <div className="h-2 w-2 flex-shrink-0 rounded-full bg-primary" />
+          <span className="font-heading text-xs font-bold tracking-wider sm:text-sm">
             PLUGIN ADVISOR
           </span>
         </Link>
-        <span className="hidden rounded-[3px] border border-[#181848] bg-[#080820] px-1.5 py-0.5 text-[9px] text-accent sm:inline">
+        <Badge variant="outline" className="hidden sm:inline-flex">
           {Object.keys(PLUGINS).length} {t.nav.pluginCount}
-        </span>
-        <div className="flex gap-1">
+        </Badge>
+        <div className="flex gap-0.5 sm:gap-1">
           {links.map((link) => {
             const isActive =
               link.href === "/"
@@ -38,11 +41,12 @@ export default function Nav() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-[5px] px-2.5 py-1.5 font-mono text-[10px] tracking-wide transition-colors ${
+                className={cn(
+                  "cursor-pointer rounded-sm px-3 py-2.5 text-sm transition-colors sm:px-2.5 sm:py-1.5 sm:text-xs",
                   isActive
-                    ? "bg-[#101028] text-[#CCC]"
-                    : "text-text-sub hover:text-[#CCC]"
-                }`}
+                    ? "bg-card text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
               >
                 {link.label}
               </Link>
@@ -51,13 +55,15 @@ export default function Nav() {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <button
+        <Button
+          variant="outline"
+          size="xs"
           onClick={() => setLocale(locale === "ko" ? "en" : "ko")}
-          className="rounded-[5px] border border-border-main px-2 py-1 font-mono text-[9px] text-text-sub transition-colors hover:border-accent hover:text-accent"
+          aria-label={locale === "ko" ? "Switch to English" : "한국어로 전환"}
+          className="text-muted-foreground hover:border-primary hover:text-primary"
         >
           {locale === "ko" ? "EN" : "KO"}
-        </button>
-        <AuthButton />
+        </Button>
       </div>
     </nav>
   );

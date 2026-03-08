@@ -4,6 +4,8 @@ import Link from "next/link";
 import type { Plugin } from "@/lib/types";
 import { useI18n } from "@/lib/i18n";
 import { pluginDescEn } from "@/lib/i18n/plugins-en";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 type Props = {
   plugin: Plugin;
@@ -16,39 +18,41 @@ export default function PluginGridCard({ plugin }: Props) {
   return (
     <Link
       href={`/plugins/${plugin.id}`}
-      className="group rounded-[9px] border border-border-main bg-card p-4 transition-all hover:border-[#28285A] hover:-translate-y-0.5"
+      className="block"
     >
-      <div className="mb-2 flex flex-wrap items-center gap-2">
-        <span
-          className="rounded-[3px] px-1.5 py-0.5 text-[9px] font-bold tracking-wide"
-          style={{
-            color: plugin.color,
-            background: plugin.color + "18",
-          }}
-        >
-          {plugin.tag}
-        </span>
-        <span className="rounded-[3px] border border-border-main px-1.5 py-0.5 text-[8px] text-text-sub">
-          {t.categories[plugin.category] ?? plugin.category}
-        </span>
-      </div>
-      <h3 className="mb-1 font-heading text-xs font-extrabold text-[#CCC] group-hover:text-white">
-        {plugin.name}
-      </h3>
-      <p className="mb-2.5 text-[11px] leading-[1.7] text-[#666]">
-        {desc}
-      </p>
-      <div className="flex flex-wrap gap-1">
-        {plugin.features.slice(0, 3).map((f, i) => (
-          <span
-            key={i}
-            className="rounded px-1.5 py-0.5 text-[9px] text-[#555]"
-            style={{ background: plugin.color + "0A" }}
+      <Card className="group cursor-pointer p-4 transition-colors hover:border-muted-foreground">
+        <div className="mb-2 flex flex-wrap items-center gap-2">
+          <Badge
+            className="border-transparent"
+            style={{
+              color: plugin.color,
+              background: plugin.color + "18",
+            }}
           >
-            {f}
-          </span>
-        ))}
-      </div>
+            {plugin.tag}
+          </Badge>
+          <Badge variant="outline">
+            {t.categories[plugin.category] ?? plugin.category}
+          </Badge>
+        </div>
+        <h3 className="mb-1 font-heading text-sm font-semibold text-muted-foreground group-hover:text-foreground">
+          {plugin.name}
+        </h3>
+        <p className="mb-2.5 text-xs leading-[1.7] text-muted-foreground">
+          {desc}
+        </p>
+        <div className="flex flex-wrap gap-1">
+          {plugin.features.slice(0, 3).map((f, i) => (
+            <span
+              key={i}
+              className="rounded-sm px-1.5 py-0.5 text-xs text-muted-foreground"
+              style={{ background: plugin.color + "0A" }}
+            >
+              {f}
+            </span>
+          ))}
+        </div>
+      </Card>
     </Link>
   );
 }

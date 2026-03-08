@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import type { PluginCategory } from "@/lib/types";
 import { useI18n } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
 type Props = {
   onSearch: (query: string) => void;
@@ -39,23 +41,24 @@ export default function PluginSearch({
 
   return (
     <div>
-      <input
+      <Input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={t.pluginsPage.searchPlaceholder}
-        className="mb-4 w-full rounded-md border border-border-main bg-card px-3 py-3 font-mono text-xs text-[#CCC] outline-none transition-colors placeholder:text-[#252540] focus:border-accent"
+        className="mb-4 h-auto px-3 py-3 font-mono text-xs"
       />
       <div className="mb-6 flex gap-1.5 overflow-x-auto pb-2">
         {CATEGORY_KEYS.map((key) => (
           <button
             key={key}
             onClick={() => onCategory(key)}
-            className={`shrink-0 rounded-full border px-3 py-1.5 font-mono text-[10px] tracking-wide transition-all ${
+            className={cn(
+              "shrink-0 rounded-full border px-3 py-1.5 font-mono text-[10px] tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               activeCategory === key
-                ? "border-accent bg-accent/10 text-accent"
-                : "border-border-main text-text-sub hover:border-[#30306A] hover:text-[#CCC]"
-            }`}
+                ? "border-primary bg-primary/10 text-primary"
+                : "border-border text-muted-foreground hover:border-muted-foreground hover:text-foreground"
+            )}
           >
             {key === "all" ? t.pluginsPage.allCategories : (t.categories[key] || key)}
           </button>

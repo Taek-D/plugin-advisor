@@ -38,6 +38,8 @@ export type AnalysisResult = {
   recommendations: Recommendation[];
   warning: string | null;
   inputText: string;
+  complements?: Array<{ pluginId: string; reason: string }>;
+  redundancies?: Array<{ ids: string[]; msg: string }>;
 };
 
 export type ConflictWarning = {
@@ -73,20 +75,3 @@ export type VersionInfo = {
 
 export type AnalysisMode = "keyword" | "ai";
 
-// P2-2: Reviews
-export type Review = {
-  id: string;
-  plugin_id: string;
-  user_id: string;
-  user_name: string;
-  user_avatar: string | null;
-  rating: number;
-  comment: string;
-  created_at: string;
-  updated_at: string;
-};
-
-export type ReviewStats = {
-  avgRating: number;
-  totalCount: number;
-};

@@ -4,8 +4,8 @@ export type Translations = {
   // Nav
   nav: {
     home: string;
+    advisor: string;
     plugins: string;
-    community: string;
     pluginCount: string;
   };
   // Main page
@@ -30,6 +30,7 @@ export type Translations = {
     fileChange: string;
     ghPlaceholder: string;
     analyzeBtn: string;
+    analyzing: string;
     aiMode: string;
     keywordMode: string;
     noContent: string;
@@ -45,6 +46,8 @@ export type Translations = {
     noKeyword: string;
     noKeywordDefault: string;
     backToAnalysis: string;
+    redundancyHint: string;
+    alsoConsider: string;
   };
   // Plugin card
   card: {
@@ -80,22 +83,11 @@ export type Translations = {
     scriptComment1: string;
     scriptComment2: string;
   };
-  // Reviews
-  review: {
-    title: string;
-    rating: string;
-    placeholder: string;
-    submit: string;
-    submitting: string;
-    success: string;
-    saveError: string;
-    noReviews: string;
-    loginRequired: string;
-  };
   // History
   history: {
     title: string;
     empty: string;
+    emptyHint: string;
     restore: string;
     delete: string;
   };
@@ -103,6 +95,7 @@ export type Translations = {
   favorites: {
     title: string;
     empty: string;
+    emptyHint: string;
     copyScript: string;
     delete: string;
   };
@@ -113,26 +106,67 @@ export type Translations = {
     allCategories: string;
     noResults: string;
   };
-  // Community
-  community: {
-    title: string;
-    description: string;
-    shareButton: string;
-    cancelButton: string;
-    emptyTitle: string;
-    emptyDescription: string;
-    formTitle: string;
-    formNamePlaceholder: string;
-    formDescriptionPlaceholder: string;
-    selectPlugins: string;
-    submit: string;
-    submitting: string;
-  };
-  // Auth
-  auth: {
-    login: string;
-    logout: string;
+  // Landing Page
+  landing: {
+    heroTitle: string;
+    heroSubtitle: string;
+    startBtn: string;
+    featuresTitle: string;
+    feature1Title: string;
+    feature1Desc: string;
+    feature2Title: string;
+    feature2Desc: string;
+    feature3Title: string;
+    feature3Desc: string;
   };
   // Categories
   categories: Record<string, string>;
+  // Presets
+  presets: {
+    title: string;
+    subtitle: string;
+    difficulty: {
+      beginner: string;
+      intermediate: string;
+      advanced: string;
+    };
+    useThisPack: string;
+    pluginCount: string;
+  };
+  // Onboarding
+  onboarding: {
+    welcome: string;
+    welcomeDesc: string;
+    question: string;
+    skipToAdvanced: string;
+    step: string;
+    stepInstall: string;
+    stepInstallDesc: string;
+    stepDone: string;
+    stepDoneDesc: string;
+    backToPresets: string;
+    installGuideTitle: string;
+    installGuideStep1: string;
+    installGuideStep2: string;
+    installGuideStep3: string;
+    installGuideStep4: string;
+    letsStart: string;
+    beginnerBanner: string;
+    beginnerBannerDesc: string;
+    whatsNext: string;
+    whatsNextDesc: string;
+    tryThisPrompt: string;
+    copyPrompt: string;
+    troubleshooting: string;
+    troubleshootingHint: string;
+    installProgress: string;
+    troubleshootItems: {
+      cmdNotWork: string;
+      cmdNotWorkAnswer: string;
+      pluginNotVisible: string;
+      pluginNotVisibleAnswer: string;
+      permissionError: string;
+      permissionErrorAnswer: string;
+    };
+  };
 };

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { PLUGINS, REASONS } from "@/lib/plugins";
+import { PLUGINS } from "@/lib/plugins";
+import { REASONS } from "@/lib/plugin-reasons";
 import type { AnalysisResult } from "@/lib/types";
 
 const SYSTEM_PROMPT = `You are a Claude Code plugin advisor. Given a project description, analyze it and recommend the most suitable plugins from the available list.

@@ -65,11 +65,34 @@ export const PLUGINS: Record<string, Plugin> = {
   // ─────────────────────────────────────────────
   // Workflow
   // ─────────────────────────────────────────────
+  "bkit-starter": {
+    id: "bkit-starter",
+    name: "bkit Starter",
+    tag: "BKIT-S",
+    color: "#00D4AA",
+    category: "workflow",
+    githubRepo: "popup-studio-ai/bkit-claude-code",
+    desc: "Claude Code 초보자용 프로젝트 설정 가이드. 첫 프로젝트 생성, 학습 커리큘럼, 설정 자동 생성.",
+    longDesc:
+      "bkit Starter는 Claude Code를 처음 쓰는 분들을 위한 온보딩 도구예요. 첫 프로젝트 만들기, 체계적인 학습 커리큘럼, 기존 프로젝트에 Claude Code 설정 자동 생성, 설정 업그레이드까지 단계별로 안내해줘요. 바이브코딩 입문자에게 딱 맞는 시작점이에요.",
+    url: "https://github.com/popup-studio-ai/bkit-claude-code",
+    install: [
+      "/plugin marketplace add popup-studio-ai/bkit-claude-code",
+      "/plugin install bkit",
+    ],
+    features: ["첫 프로젝트 가이드", "학습 커리큘럼", "설정 자동 생성", "설정 업그레이드"],
+    conflicts: [],
+    keywords: [
+      "초보", "입문", "시작", "beginner", "start", "setup", "학습", "learn",
+      "tutorial", "가이드", "guide", "처음", "first", "온보딩", "onboarding",
+      "바이브코딩", "vibe coding",
+    ],
+  },
   bkit: {
     id: "bkit",
     name: "bkit",
     tag: "BKIT",
-    color: "#00D4AA",
+    color: "#00B892",
     category: "workflow",
     githubRepo: "popup-studio-ai/bkit-claude-code",
     desc: "PDCA 방법론 기반 구조화 워크플로. PRD → 설계 → 구현 → 검증 자동화.",
@@ -910,85 +933,4 @@ export const PLUGINS: Record<string, Plugin> = {
       "캐시", "cache",
     ],
   },
-};
-
-export const REASONS: Record<string, string> = {
-  // Orchestration
-  omc: "복잡한 멀티에이전트 작업이 감지됐어요. 32개 전문 에이전트가 병렬 처리해서 개발 속도를 높여줘요.",
-  superpowers:
-    "스크립트나 자동화 작업이 포함돼 있어요. 기존 코드를 빠르게 파악하고 수정하는 데 최적화돼 있어요.",
-
-  // Workflow
-  bkit: "PRD나 설계 기반 개발이 필요한 프로젝트예요. PDCA 워크플로로 계획부터 검증까지 체계적으로 관리해줘요.",
-  ralph:
-    "반복적인 구현 작업이 많은 프로젝트예요. PRD 완료까지 자동 루프로 처리하고 git 히스토리도 깔끔하게 유지해줘요.",
-  taskmaster:
-    "태스크 분해와 관리가 필요한 프로젝트예요. PRD를 세부 태스크로 자동 분해하고 의존성을 추적해줘요.",
-  "sequential-thinking":
-    "복잡한 추론이나 설계가 필요한 작업이에요. 단계별 사고로 아키텍처 품질을 높여줘요.",
-  todoist:
-    "할 일 관리가 포함된 프로젝트예요. Todoist 연동으로 개발 태스크를 실시간 추적할 수 있어요.",
-  linear:
-    "팀 프로젝트 관리가 필요해요. Linear 이슈 트래킹으로 개발과 프로젝트 관리를 하나로 연결해요.",
-
-  // Code Quality
-  repomix:
-    "대형 코드베이스나 레거시 분석이 필요해요. 전체 코드를 AI 친화적으로 패킹해서 컨텍스트 이해를 높여줘요.",
-  context7:
-    "외부 라이브러리나 API를 많이 쓰는 구조예요. 최신 공식 문서를 실시간 주입해서 환각 오류를 줄여줘요.",
-  memory:
-    "장기 프로젝트라서 세션 간 컨텍스트 유지가 중요해요. 영구 메모리로 매번 같은 설명을 반복하지 않아도 돼요.",
-
-  // Testing
-  playwright:
-    "E2E 테스트나 브라우저 자동화가 필요한 프로젝트예요. 웹앱 품질 검증을 자동화해줘요.",
-  puppeteer:
-    "Chrome 브라우저 자동화가 필요해요. 스크린샷, PDF 생성, 폼 테스트에 특화된 도구예요.",
-
-  // Documentation
-  notion:
-    "문서화와 지식 관리가 중요한 프로젝트예요. Notion 연동으로 개발 문서와 코드를 동기화해요.",
-
-  // Data
-  firecrawl:
-    "웹 데이터 수집이 핵심 기능이에요. 스크래핑 자동화를 간단하게 구현할 수 있어요.",
-  "brave-search":
-    "실시간 웹 검색이 필요한 프로젝트예요. Brave 검색으로 최신 정보에 빠르게 접근할 수 있어요.",
-  exa: "AI 기반 시맨틱 검색이 필요해요. 의미 기반으로 가장 관련 높은 기술 문서를 찾아줘요.",
-  tavily:
-    "검색 결과 자동 요약이 필요한 프로젝트예요. AI 에이전트에 최적화된 검색 API를 제공해요.",
-  perplexity:
-    "기술 리서치와 비교 분석이 필요해요. 소스 기반 답변으로 정확한 조사 결과를 제공해요.",
-  postgres:
-    "PostgreSQL 데이터베이스 작업이 포함돼 있어요. 스키마 조회와 쿼리 실행을 직접 할 수 있어요.",
-
-  // Security
-  security:
-    "인증, 결제, 개인정보 처리가 포함돼 있어요. 보안 취약점을 실시간 감지해서 안전한 코드를 유지해줘요.",
-  sentry:
-    "에러 트래킹과 모니터링이 필요한 프로젝트예요. Sentry 연동으로 프로덕션 에러를 실시간 분석해요.",
-
-  // Integration
-  github:
-    "GitHub 기반 협업이 핵심이에요. PR, 이슈, 코드 리뷰를 코딩 흐름 안에서 바로 처리해요.",
-  slack:
-    "팀 소통이 중요한 프로젝트예요. Slack 연동으로 배포 알림과 협업을 자동화해요.",
-  filesystem:
-    "로컬 파일 처리가 많은 작업이에요. 안전한 샌드박스 내에서 파일 시스템을 자유롭게 다뤄요.",
-  git: "Git 버전 관리가 핵심인 프로젝트예요. 로컬 저장소를 프로그래밍 방식으로 조작할 수 있어요.",
-  supabase:
-    "BaaS 기반 풀스택 개발이에요. Supabase로 DB, 인증, 스토리지를 빠르게 구축해요.",
-  figma:
-    "디자인에서 코드로의 변환이 필요해요. Figma 디자인 데이터를 직접 읽어서 정확한 구현을 도와줘요.",
-
-  // UI/UX
-  uiux: "프론트엔드 UI 개발이 핵심인 프로젝트예요. 컴포넌트 퀄리티와 디자인 일관성을 높여줘요.",
-
-  // DevOps
-  docker:
-    "컨테이너 기반 개발이 필요해요. Docker로 개발 환경과 배포를 일관되게 관리해요.",
-  vercel:
-    "Vercel 배포가 필요한 프로젝트예요. 프론트엔드 앱을 원클릭으로 배포하고 관리해요.",
-  cloudflare:
-    "엣지 컴퓨팅이나 글로벌 배포가 필요해요. Cloudflare Workers로 고성능 서비스를 구축해요.",
 };

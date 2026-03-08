@@ -3,6 +3,12 @@
 import { useState, useRef, useCallback, DragEvent } from "react";
 import { useI18n } from "@/lib/i18n";
 import type { AnalysisMode } from "@/lib/types";
+import { FileText, AlertTriangle, Sparkles, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type InputMode = "text" | "file" | "github";
 
@@ -22,6 +28,7 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
   const [fcontent, setFcontent] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
+  const [loading, setLoading] = useState(false);
   const dragCounter = useRef(0);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -77,6 +84,7 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
 
   const handleAnalyze = async () => {
     setErr(null);
+    setLoading(true);
     try {
       let content = "";
       if (mode === "text") {
@@ -99,6 +107,8 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
       const msg = e instanceof Error ? e.message : "Unknown error";
       setErr(msg);
       setMode("text");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -117,50 +127,46 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
       className="relative"
     >
       {dragging && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl border-2 border-dashed border-accent bg-[#080810]/90">
+        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-md border-2 border-dashed border-primary bg-card/90">
           <div className="text-center">
-            <div className="mb-1 text-2xl">📄</div>
-            <div className="text-xs font-bold text-accent">{t.input.fileDrop}</div>
+            <FileText className="mx-auto mb-1 h-6 w-6 text-primary" />
+            <div className="text-xs font-bold text-primary">{t.input.fileDrop}</div>
           </div>
         </div>
       )}
-      <div className="mb-3.5 flex items-center justify-between gap-2">
-        <div className="flex gap-1.5">
+      <div className="mb-3.5 flex flex-wrap items-center justify-between gap-2">
+        <TabsList>
           {tabs.map((tab) => (
-            <button
+            <TabsTrigger
               key={tab.key}
+              active={mode === tab.key}
               onClick={() => setMode(tab.key)}
-              className={`rounded-[5px] border px-3.5 py-[7px] font-mono text-[11px] tracking-wide transition-all ${
-                mode === tab.key
-                  ? "border-[#30306A] bg-[#101028] text-[#CCC]"
-                  : "border-border-main bg-transparent text-text-sub hover:border-[#30306A] hover:text-[#CCC]"
-              }`}
             >
               {tab.label}
-            </button>
+            </TabsTrigger>
           ))}
-        </div>
+        </TabsList>
         {aiAvailable && (
-          <button
+          <TabsTrigger
+            active={analysisMode === "ai"}
             onClick={() => setAnalysisMode(analysisMode === "keyword" ? "ai" : "keyword")}
-            className={`rounded-[5px] border px-3 py-[7px] font-mono text-[10px] tracking-wide transition-all ${
-              analysisMode === "ai"
-                ? "border-[#7C3AED] bg-[#7C3AED]/10 text-[#A78BFA]"
-                : "border-border-main text-text-sub hover:border-[#30306A] hover:text-[#CCC]"
-            }`}
+            className={cn(
+              analysisMode === "ai" &&
+                "border-[#7C3AED]/50 bg-[#7C3AED]/10 text-[#A78BFA] hover:border-[#7C3AED]/50 hover:text-[#A78BFA]"
+            )}
           >
-            {analysisMode === "ai" ? `✦ ${t.input.aiMode}` : t.input.keywordMode}
-          </button>
+            {analysisMode === "ai" ? <span className="flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" />{t.input.aiMode}</span> : t.input.keywordMode}
+          </TabsTrigger>
         )}
       </div>
 
       {mode === "text" && (
-        <textarea
+        <Textarea
           rows={8}
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder={t.input.placeholder}
-          className="w-full rounded-md border border-border-main bg-card px-3 py-3 font-mono text-xs leading-[1.7] text-[#CCC] outline-none transition-colors placeholder:text-[#252540] focus:border-accent"
+          className="leading-relaxed placeholder:text-text-faint focus-visible:ring-primary"
           style={{ resize: "vertical" }}
         />
       )}
@@ -168,19 +174,19 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
       {mode === "file" && (
         <div
           onClick={() => fileRef.current?.click()}
-          className="cursor-pointer rounded-[7px] border-2 border-dashed border-border-main p-7 text-center transition-all hover:border-accent hover:bg-card"
+          className="cursor-pointer rounded-md border-2 border-dashed border-border bg-card p-8 text-center transition-colors hover:border-primary"
         >
           {fname ? (
             <>
-              <span className="text-xs text-success">{fname}</span>
+              <span className="text-sm font-bold text-primary">{fname}</span>
               <br />
-              <span className="text-[10px] text-[#333]">{t.input.fileChange}</span>
+              <div className="mt-1.5 text-xs text-text-dim">{t.input.fileChange}</div>
             </>
           ) : (
             <>
-              <div className="mb-1.5 text-lg">📄</div>
-              <div className="mb-1 text-xs">{t.input.fileUploadTitle}</div>
-              <div className="text-[10px] text-[#333]">{t.input.fileUploadDesc}</div>
+              <FileText className="mx-auto mb-2 h-6 w-6 text-muted-foreground" />
+              <div className="mb-1 text-sm font-bold text-foreground">{t.input.fileUploadTitle}</div>
+              <div className="text-xs text-text-dim">{t.input.fileUploadDesc}</div>
             </>
           )}
           <input
@@ -194,32 +200,44 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
       )}
 
       {mode === "github" && (
-        <input
+        <Input
           type="text"
           value={ghUrl}
           onChange={(e) => setGhUrl(e.target.value)}
           placeholder={t.input.ghPlaceholder}
-          className="w-full rounded-md border border-border-main bg-card px-3 py-3 font-mono text-xs text-[#CCC] outline-none transition-colors placeholder:text-[#252540] focus:border-accent"
+          className="h-auto px-4 py-3 text-sm placeholder:text-text-faint focus-visible:ring-primary"
         />
       )}
 
       {err && (
-        <div className="mt-2.5 rounded-[5px] border border-[#301010] bg-[#120808] px-3 py-2 text-[11px] text-[#FF6060]">
-          ⚠ {err}
+        <div className="mt-4 rounded-md border border-border-error-subtle bg-bg-error-subtle px-3 py-2.5 text-sm text-destructive">
+          <span className="inline-flex items-center gap-2"><AlertTriangle className="inline h-4 w-4 flex-shrink-0" />{err}</span>
         </div>
       )}
 
-      <button
+      <Button
         onClick={handleAnalyze}
-        disabled={!canGo || disabled}
-        className={`mt-3 w-full rounded-[7px] px-3 py-3.5 font-mono text-xs font-bold tracking-[1.5px] text-white transition-all hover:opacity-85 hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-30 ${
-          analysisMode === "ai"
-            ? "bg-gradient-to-br from-[#7C3AED] to-[#EC4899]"
-            : "bg-gradient-to-br from-accent to-[#7C3AED]"
-        }`}
+        disabled={!canGo || disabled || loading}
+        aria-busy={loading}
+        className={cn(
+          "mt-4 w-full py-3 text-sm font-semibold",
+          analysisMode === "ai" && "bg-[#7C3AED] hover:bg-[#7C3AED]/90"
+        )}
       >
-        {analysisMode === "ai" ? "✦ AI ANALYZE → RECOMMEND" : t.input.analyzeBtn}
-      </button>
+        {loading ? (
+          <span className="flex items-center justify-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            {t.input.analyzing || "분석 중..."}
+          </span>
+        ) : analysisMode === "ai" ? (
+          <span className="flex items-center justify-center gap-1.5">
+            <Sparkles className="h-3.5 w-3.5" />
+            AI ANALYZE → RECOMMEND
+          </span>
+        ) : (
+          t.input.analyzeBtn
+        )}
+      </Button>
     </div>
   );
 }

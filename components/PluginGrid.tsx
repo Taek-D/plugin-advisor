@@ -39,7 +39,7 @@ export default function PluginGrid() {
       />
       {filtered.length === 0 ? (
         <div className="py-12 text-center">
-          <div className="mb-2 text-[11px] text-text-sub">
+          <div className="mb-2 text-[11px] text-muted-foreground">
             {t.pluginsPage.noResults}
           </div>
         </div>

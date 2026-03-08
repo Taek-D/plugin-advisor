@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { recommend } from "@/lib/recommend";
 import { saveHistory } from "@/lib/history";
+import { trackEvent } from "@/lib/analytics";
 import type { AnalysisResult, AnalysisMode, HistoryEntry, Plugin } from "@/lib/types";
 
 type Step = "input" | "analyzing" | "result";
@@ -29,6 +30,7 @@ export function useAnalysis() {
   const handleAnalyze = useCallback(
     async (content: string, mode: InputMode = "text", analysisMode: AnalysisMode = "keyword") => {
       setStep("analyzing");
+      trackEvent("analysis_start", { mode: analysisMode, inputMode: mode });
 
       let res: AnalysisResult;
       let effectiveMode: AnalysisMode = analysisMode;
@@ -61,8 +63,12 @@ export function useAnalysis() {
       });
       setSel(s);
       setStep("result");
+      trackEvent("analysis_complete", {
+        mode: effectiveMode,
+        pluginCount: res.recommendations.length,
+      });
 
-      await saveHistory({
+      saveHistory({
         inputText: content,
         inputMode: mode,
         analysisMode: effectiveMode,

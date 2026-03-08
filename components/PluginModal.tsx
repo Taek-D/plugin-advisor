@@ -6,6 +6,16 @@ import type { Plugin, VersionInfo } from "@/lib/types";
 import { PLUGINS } from "@/lib/plugins";
 import { useI18n } from "@/lib/i18n";
 import { pluginDescEn } from "@/lib/i18n/plugins-en";
+import { AlertTriangle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   plugin: Plugin | null;
@@ -18,14 +28,20 @@ export default function PluginModal({ plugin, onClose, version }: Props) {
 
   useEffect(() => {
     if (!plugin) return;
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
     };
+
     document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleEsc);
+    window.addEventListener("keydown", handleKeyDown);
+
     return () => {
       document.body.style.overflow = "";
-      window.removeEventListener("keydown", handleEsc);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [plugin, onClose]);
 
@@ -36,50 +52,41 @@ export default function PluginModal({ plugin, onClose, version }: Props) {
     : plugin.longDesc;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-5"
-      onClick={onClose}
-    >
-      <div
-        className="animate-fade-in fixed inset-0 flex flex-col overflow-y-auto rounded-none border border-[#252545] bg-[#0D0D1E] p-6 md:static md:max-h-[80vh] md:max-w-[500px] md:rounded-xl"
-        onClick={(e) => e.stopPropagation()}
+    <Dialog open={!!plugin} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent
+        onClose={onClose}
+        aria-label={plugin.name}
       >
-        <div className="mb-4 flex items-center justify-between">
+        <DialogHeader className="mb-4">
           <div className="flex items-center gap-2">
-            <span className="font-heading text-base font-extrabold">
+            <DialogTitle className="font-heading">
               {plugin.name}
-            </span>
-            <span
-              className="rounded-[3px] px-1.5 py-0.5 text-[9px] font-bold tracking-wide"
+            </DialogTitle>
+            <Badge
+              className="border-transparent"
               style={{
                 color: plugin.color,
                 background: plugin.color + "20",
               }}
             >
               {plugin.tag}
-            </span>
+            </Badge>
           </div>
-          <button
-            onClick={onClose}
-            className="min-h-[44px] min-w-[44px] bg-transparent text-lg text-text-sub"
-          >
-            ×
-          </button>
-        </div>
+        </DialogHeader>
 
-        <p className="mb-4 text-xs leading-[1.8] text-[#888]">
+        <DialogDescription className="mb-4 text-xs leading-[1.8]">
           {longDesc}
-        </p>
+        </DialogDescription>
 
         <div className="mb-3.5">
-          <div className="mb-2 text-[9px] tracking-[2px] text-[#444]">
+          <div className="mb-2 text-xs font-medium uppercase tracking-wide text-text-dim">
             {t.detail.features}
           </div>
           <div className="flex flex-wrap gap-1.5">
             {plugin.features.map((f, i) => (
               <span
                 key={i}
-                className="rounded px-2 py-[3px] text-[10px]"
+                className="rounded-md px-2 py-[3px] text-xs"
                 style={{
                   color: plugin.color,
                   background: plugin.color + "15",
@@ -93,8 +100,8 @@ export default function PluginModal({ plugin, onClose, version }: Props) {
         </div>
 
         {plugin.conflicts.length > 0 && (
-          <div className="mb-3.5 rounded-md border border-[#301010] bg-[#120808] px-3 py-2.5 text-[11px] text-[#FF6060]">
-            ⚠{" "}
+          <div className="mb-3.5 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm text-destructive">
+            <AlertTriangle className="mr-1 inline h-3.5 w-3.5" />
             <strong>
               {plugin.conflicts.map((c) => PLUGINS[c]?.name).join(", ")}
             </strong>{" "}
@@ -103,13 +110,13 @@ export default function PluginModal({ plugin, onClose, version }: Props) {
         )}
 
         {version?.latestVersion && (
-          <div className="mb-3 rounded-[5px] border border-border-main bg-[#060610] px-3 py-2">
-            <div className="flex flex-wrap items-center gap-2 text-[10px]">
-              <span className="font-bold text-success">
+          <div className="mb-3 rounded-md border border-border bg-background px-3 py-2">
+            <div className="flex flex-wrap items-center gap-2 text-xs">
+              <span className="font-bold text-primary">
                 {version.latestVersion}
               </span>
               {version.publishedAt && (
-                <span className="text-[#555]">
+                <span className="text-text-dim">
                   {new Date(version.publishedAt).toLocaleDateString(
                     locale === "en" ? "en-US" : "ko-KR"
                   )}
@@ -120,7 +127,7 @@ export default function PluginModal({ plugin, onClose, version }: Props) {
                   href={version.releaseUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-accent hover:underline"
+                  className="text-primary transition-colors hover:underline"
                 >
                   Release Notes
                 </a>
@@ -134,24 +141,25 @@ export default function PluginModal({ plugin, onClose, version }: Props) {
             href={plugin.url}
             target="_blank"
             rel="noreferrer"
-            className="block rounded-md p-2.5 text-center text-[11px] tracking-wide no-underline"
+            className="block rounded-md p-2.5 text-center text-sm no-underline text-primary transition-colors hover:underline"
             style={{
-              color: plugin.color,
               background: plugin.color + "20",
               border: `1px solid ${plugin.color}40`,
             }}
           >
             {t.detail.githubLink}
           </a>
-          <Link
-            href={`/plugins/${plugin.id}`}
-            onClick={onClose}
-            className="block rounded-md border border-border-main p-2 text-center text-[10px] text-text-sub hover:border-[#30306A] hover:text-[#CCC]"
-          >
-            {t.detail.detailPage}
-          </Link>
+          <Button variant="outline" asChild className="w-full">
+            <Link
+              href={`/plugins/${plugin.id}`}
+              onClick={onClose}
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              {t.detail.detailPage}
+            </Link>
+          </Button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

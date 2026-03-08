@@ -8,6 +8,10 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     desc: "Quick codebase understanding & modification. Low learning curve, instant impact.",
     longDesc: "Superpowers instantly enhances Claude Code's core capabilities. It helps quickly understand existing codebases and minimizes friction in file navigation, search, and modification. The biggest advantage is the immediate impact with zero complex setup. Especially strong for scripts, data analysis, and automation tasks.",
   },
+  "bkit-starter": {
+    desc: "Beginner-friendly Claude Code setup guide. First project creation, learning curriculum, and auto-config generation.",
+    longDesc: "bkit Starter is an onboarding tool for Claude Code beginners. It guides you step by step through creating your first project, a structured learning curriculum, auto-generating Claude Code configs for existing projects, and upgrading settings. The perfect starting point for vibe coding newcomers.",
+  },
   bkit: {
     desc: "PDCA methodology-based structured workflow. Automates PRD → design → implementation → verification.",
     longDesc: "bkit introduces PDCA (Plan-Do-Check-Act) methodology to Claude Code, systematizing the development process. It connects PRD analysis, design documents, implementation, gap analysis, and completion reports into a single flow. It's a framework for designing the development process itself with AI, not just generating code.",
@@ -133,6 +137,7 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
 export const reasonsEn: Record<string, string> = {
   omc: "Complex multi-agent tasks detected. 32 specialized agents process in parallel to accelerate development.",
   superpowers: "Script or automation tasks included. Optimized for quickly understanding and modifying existing code.",
+  "bkit-starter": "Perfect for Claude Code beginners. Guides you step by step from first project setup to learning.",
   bkit: "Project needs PRD or design-based development. PDCA workflow manages from planning to verification systematically.",
   ralph: "Project has many repetitive implementation tasks. Auto-loops until PRD completion with clean git history.",
   taskmaster: "Project needs task decomposition and management. Auto-breaks PRDs into sub-tasks and tracks dependencies.",
