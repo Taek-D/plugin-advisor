@@ -2,8 +2,10 @@
 
 import { useState, useRef, useCallback, DragEvent } from "react";
 
+type InputMode = "text" | "file" | "github";
+
 type Props = {
-  onAnalyze: (text: string) => void;
+  onAnalyze: (text: string, mode: InputMode) => void;
   disabled: boolean;
 };
 
@@ -87,7 +89,7 @@ export default function InputPanel({ onAnalyze, disabled }: Props) {
         content = data.content;
       }
       if (!content.trim()) throw new Error("내용을 입력해주세요");
-      onAnalyze(content);
+      onAnalyze(content, mode);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "알 수 없는 오류";
       setErr(msg);

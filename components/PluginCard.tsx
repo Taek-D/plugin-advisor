@@ -1,6 +1,6 @@
 "use client";
 
-import type { Plugin, Recommendation } from "@/lib/types";
+import type { Plugin, Recommendation, VersionInfo } from "@/lib/types";
 import HighlightedText from "./HighlightedText";
 
 type Props = {
@@ -10,6 +10,7 @@ type Props = {
   inConflict: boolean;
   onToggle: () => void;
   onDetail: () => void;
+  version?: VersionInfo;
 };
 
 export default function PluginCard({
@@ -19,6 +20,7 @@ export default function PluginCard({
   inConflict,
   onToggle,
   onDetail,
+  version,
 }: Props) {
   return (
     <div
@@ -65,6 +67,11 @@ export default function PluginCard({
             >
               {plugin.tag}
             </span>
+            {version?.latestVersion && (
+              <span className="rounded-[3px] border border-border-main px-1.5 py-0.5 text-[8px] text-success">
+                {version.latestVersion}
+              </span>
+            )}
             {recommendation.priority === 1 && (
               <span className="rounded-[3px] bg-accent/10 px-1.5 py-0.5 text-[9px] font-bold tracking-wide text-accent">
                 CORE

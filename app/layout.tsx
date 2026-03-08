@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Syne } from "next/font/google";
+import Nav from "@/components/Nav";
 import "./globals.css";
 
 const jetbrains = JetBrains_Mono({
@@ -36,6 +37,7 @@ export default function RootLayout({
       <body
         className={`${jetbrains.variable} ${syne.variable} font-mono bg-main text-text-main antialiased`}
       >
+        <Nav />
         {children}
       </body>
     </html>

@@ -32,20 +32,28 @@ PRD 기반 태스크 목록. 진행 상황을 여기서 추적합니다.
 - [x] 플러그인 DB 별도 파일 관리 (lib/plugins.ts)
 
 ### 배포 & 반응형
-- [ ] 반응형 레이아웃 모바일 최적화
-- [ ] Vercel 배포 설정 & 첫 배포
+- [x] 반응형 레이아웃 모바일 최적화
+- [x] Vercel 배포 설정 & 첫 배포 → https://plugin-advisor.vercel.app
 
 ---
 
 ## P1 — 배포 후 추가
 
-- [ ] 플러그인 DB 확장 (현재 10개 -> 30개+)
-- [ ] 분석 히스토리 저장 (localStorage)
-- [ ] 플러그인 조합 즐겨찾기
-- [ ] 커뮤니티 추천 조합 공유
-- [ ] 플러그인 최신 버전 알림
-- [ ] /plugins 전체 플러그인 목록 페이지
-- [ ] /plugins/[id] 플러그인 상세 페이지
+- [x] 플러그인 DB 확장 (10개 -> 30개, 10개 카테고리, githubRepo 필드 추가)
+- [x] 분석 히스토리 저장 (localStorage, async API, 자동 저장/복원/삭제)
+- [x] 플러그인 조합 즐겨찾기 (localStorage, InstallScript에 저장 버튼, 패널에서 스크립트 복사)
+- [x] 커뮤니티 추천 조합 공유 (Supabase + GitHub OAuth, 갤러리/공유폼/인증 구현)
+- [x] 플러그인 최신 버전 알림 (GitHub API + Next.js revalidate 캐싱, 카드/모달/상세에 표시)
+- [x] /plugins 전체 플러그인 목록 페이지 (검색 + 카테고리 필터 + 반응형 그리드)
+- [x] /plugins/[id] 플러그인 상세 페이지 (SSG 32페이지, 설치가이드, 관련 플러그인)
+
+### P1 추가 구현 사항
+- [x] Nav 컴포넌트 추출 (layout.tsx에서 공유, 라우트별 활성 표시)
+- [x] useAnalysis 훅 추출 (PluginAdvisorApp 200줄 이하 유지)
+- [x] 충돌 감지 일반화 (CONFLICT_PAIRS 배열 기반 동적 감지)
+- [x] Supabase SSR 클라이언트 (읽기전용 RSC + 뮤터블 Route Handler)
+- [x] 인증 미들웨어 (세션 자동 갱신, env 미설정 시 graceful 통과)
+- [x] SQL 마이그레이션 파일 (shared_combos + RLS 정책)
 
 ---
 

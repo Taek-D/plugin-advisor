@@ -1,74 +1,66 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { PLUGINS } from "@/lib/plugins";
-import { recommend } from "@/lib/recommend";
 import { getConflicts } from "@/lib/conflicts";
-import type { AnalysisResult, Plugin } from "@/lib/types";
+import { useAnalysis } from "@/hooks/useAnalysis";
+import { fetchVersions } from "@/lib/versions";
+import type { VersionInfo } from "@/lib/types";
 import InputPanel from "./InputPanel";
 import PluginCard from "./PluginCard";
 import PluginModal from "./PluginModal";
 import ConflictWarning from "./ConflictWarning";
 import InstallScript from "./InstallScript";
+import HistoryPanel from "./HistoryPanel";
+import FavoritesPanel from "./FavoritesPanel";
 
-type Step = "input" | "analyzing" | "result";
+type Panel = "input" | "history" | "favorites";
 
 export default function PluginAdvisorApp() {
-  const [step, setStep] = useState<Step>("input");
-  const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [sel, setSel] = useState<Record<string, boolean>>({});
-  const [detailPlugin, setDetailPlugin] = useState<Plugin | null>(null);
+  const {
+    step,
+    result,
+    selectedIds,
+    detailPlugin,
+    setDetailPlugin,
+    handleAnalyze,
+    restoreFromHistory,
+    reset,
+    togglePlugin,
+    sel,
+  } = useAnalysis();
 
-  const handleAnalyze = useCallback(async (content: string) => {
-    setStep("analyzing");
-    await new Promise((r) => setTimeout(r, 700));
-    const res = recommend(content);
-    setResult(res);
-    const s: Record<string, boolean> = {};
-    res.recommendations.forEach((r) => {
-      s[r.pluginId] = true;
-    });
-    setSel(s);
-    setStep("result");
-  }, []);
-
-  const reset = () => {
-    setStep("input");
-    setResult(null);
-    setSel({});
-    setDetailPlugin(null);
-  };
-
-  const selectedIds = Object.keys(sel).filter((k) => sel[k]);
+  const [panel, setPanel] = useState<Panel>("input");
+  const [versions, setVersions] = useState<Record<string, VersionInfo>>({});
   const conflicts = getConflicts(selectedIds);
+
+  useEffect(() => {
+    if (step === "result" && result) {
+      const ids = result.recommendations.map((r) => r.pluginId);
+      fetchVersions(ids).then(setVersions);
+    }
+  }, [step, result]);
 
   return (
     <>
-      <PluginModal plugin={detailPlugin} onClose={() => setDetailPlugin(null)} />
+      <PluginModal
+        plugin={detailPlugin}
+        onClose={() => setDetailPlugin(null)}
+        version={detailPlugin ? versions[detailPlugin.id] : undefined}
+      />
 
-      {/* Header */}
-      <div className="flex flex-col items-start justify-between border-b border-[#121224] px-4 py-4 sm:flex-row sm:items-center sm:px-6">
-        <div className="flex items-center gap-2">
-          <div className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-accent shadow-[0_0_8px_#3030FF]" />
-          <span className="font-heading text-[11px] font-extrabold tracking-[1.5px] sm:text-[13px] sm:tracking-[2.5px]">
-            PLUGIN ADVISOR
-          </span>
-          <span className="hidden rounded-[3px] border border-[#181848] bg-[#080820] px-1.5 py-0.5 text-[9px] text-accent sm:inline">
-            Claude Code · {Object.keys(PLUGINS).length} plugins
-          </span>
-        </div>
-        {step === "result" && (
+      {step === "result" && (
+        <div className="px-4 pt-2 sm:px-6">
           <button
             onClick={reset}
-            className="mt-2 rounded border border-border-main px-3 py-1.5 font-mono text-[10px] text-text-sub hover:border-[#30306A] hover:text-[#CCC] sm:mt-0"
+            className="rounded border border-border-main px-3 py-1.5 font-mono text-[10px] text-text-sub hover:border-[#30306A] hover:text-[#CCC]"
           >
-            ← 다시
+            ← 다시 분석
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       <div className="mx-auto max-w-[660px] px-4 py-8 sm:px-5">
-        {/* INPUT */}
         {step === "input" && (
           <div className="animate-fade-in">
             <h1 className="mb-1.5 font-heading text-[18px] font-extrabold sm:text-[22px]">
@@ -79,30 +71,60 @@ export default function PluginAdvisorApp() {
               찾아드려요.{" "}
               <span className="text-accent">API 호출 없이 즉시</span> 분석해요.
             </p>
-            <InputPanel onAnalyze={handleAnalyze} disabled={false} />
-            <div className="mt-4 flex flex-wrap gap-[5px]">
-              {Object.values(PLUGINS).map((p) => (
-                <span
-                  key={p.id}
-                  onClick={() => setDetailPlugin(p)}
-                  className="cursor-pointer rounded-[3px] px-1.5 py-0.5 text-[9px] font-bold tracking-wide"
-                  style={{
-                    color: p.color,
-                    background: p.color + "14",
-                    border: `1px solid ${p.color}28`,
-                  }}
+
+            <div className="mb-4 flex gap-1.5">
+              {([
+                { key: "input" as const, label: "분석" },
+                { key: "history" as const, label: "기록" },
+                { key: "favorites" as const, label: "즐겨찾기" },
+              ]).map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setPanel(tab.key)}
+                  className={`rounded-[5px] border px-3 py-[7px] font-mono text-[11px] tracking-wide transition-all ${
+                    panel === tab.key
+                      ? "border-[#30306A] bg-[#101028] text-[#CCC]"
+                      : "border-border-main bg-transparent text-text-sub hover:border-[#30306A] hover:text-[#CCC]"
+                  }`}
                 >
-                  {p.tag}
-                </span>
+                  {tab.label}
+                </button>
               ))}
             </div>
-            <div className="mt-2 text-[10px] text-[#303048]">
-              ↑ 태그 클릭하면 플러그인 상세 볼 수 있어요
-            </div>
+
+            {panel === "input" && (
+              <>
+                <InputPanel onAnalyze={handleAnalyze} disabled={false} />
+                <div className="mt-4 flex flex-wrap gap-[5px]">
+                  {Object.values(PLUGINS).map((p) => (
+                    <span
+                      key={p.id}
+                      onClick={() => setDetailPlugin(p)}
+                      className="cursor-pointer rounded-[3px] px-1.5 py-0.5 text-[9px] font-bold tracking-wide"
+                      style={{
+                        color: p.color,
+                        background: p.color + "14",
+                        border: `1px solid ${p.color}28`,
+                      }}
+                    >
+                      {p.tag}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-2 text-[10px] text-[#303048]">
+                  ↑ 태그 클릭하면 플러그인 상세 볼 수 있어요
+                </div>
+              </>
+            )}
+
+            {panel === "history" && (
+              <HistoryPanel onRestore={restoreFromHistory} />
+            )}
+
+            {panel === "favorites" && <FavoritesPanel />}
           </div>
         )}
 
-        {/* ANALYZING */}
         {step === "analyzing" && (
           <div className="py-[70px] text-center">
             <div className="text-accent">
@@ -119,10 +141,8 @@ export default function PluginAdvisorApp() {
           </div>
         )}
 
-        {/* RESULT */}
         {step === "result" && result && (
           <div className="animate-fade-in">
-            {/* Summary */}
             <div className="mb-4 rounded-[9px] border border-border-main bg-card px-4 py-3.5">
               <div className="mb-1.5 text-[9px] tracking-[2px] text-accent">
                 PROJECT SUMMARY
@@ -130,10 +150,8 @@ export default function PluginAdvisorApp() {
               <div className="text-[13px] leading-[1.7]">{result.summary}</div>
             </div>
 
-            {/* Conflicts */}
             <ConflictWarning conflicts={conflicts} />
 
-            {/* General warning */}
             {result.warning && !conflicts.length && (
               <div className="mb-3.5 rounded-[5px] border border-[#281C00] bg-[#100D00] px-3 py-2 text-[11px] text-warning">
                 ⚠ {result.warning}
@@ -144,7 +162,6 @@ export default function PluginAdvisorApp() {
               추천 조합 — 원하는 것만 선택
             </div>
 
-            {/* Plugin cards */}
             <div className="mb-5 flex flex-col gap-[7px]">
               {result.recommendations.map((rec) => {
                 const p = PLUGINS[rec.pluginId];
@@ -159,16 +176,14 @@ export default function PluginAdvisorApp() {
                       (c) =>
                         c.ids.includes(p.id) && selectedIds.includes(p.id)
                     )}
-                    onToggle={() =>
-                      setSel((s) => ({ ...s, [p.id]: !s[p.id] }))
-                    }
+                    onToggle={() => togglePlugin(p.id)}
                     onDetail={() => setDetailPlugin(p)}
+                    version={versions[p.id]}
                   />
                 );
               })}
             </div>
 
-            {/* Install script */}
             <InstallScript selectedIds={selectedIds} />
           </div>
         )}

@@ -1,15 +1,17 @@
 "use client";
 
 import { useEffect } from "react";
-import type { Plugin } from "@/lib/types";
+import Link from "next/link";
+import type { Plugin, VersionInfo } from "@/lib/types";
 import { PLUGINS } from "@/lib/plugins";
 
 type Props = {
   plugin: Plugin | null;
   onClose: () => void;
+  version?: VersionInfo;
 };
 
-export default function PluginModal({ plugin, onClose }: Props) {
+export default function PluginModal({ plugin, onClose, version }: Props) {
   useEffect(() => {
     if (!plugin) return;
     const handleEsc = (e: KeyboardEvent) => {
@@ -92,19 +94,53 @@ export default function PluginModal({ plugin, onClose }: Props) {
           </div>
         )}
 
-        <a
-          href={plugin.url}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-auto block rounded-md p-2.5 text-center text-[11px] tracking-wide no-underline"
-          style={{
-            color: plugin.color,
-            background: plugin.color + "20",
-            border: `1px solid ${plugin.color}40`,
-          }}
-        >
-          GitHub / 공식 페이지 →
-        </a>
+        {version?.latestVersion && (
+          <div className="mb-3 rounded-[5px] border border-border-main bg-[#060610] px-3 py-2">
+            <div className="flex flex-wrap items-center gap-2 text-[10px]">
+              <span className="font-bold text-success">
+                {version.latestVersion}
+              </span>
+              {version.publishedAt && (
+                <span className="text-[#555]">
+                  {new Date(version.publishedAt).toLocaleDateString("ko-KR")}
+                </span>
+              )}
+              {version.releaseUrl && (
+                <a
+                  href={version.releaseUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-accent hover:underline"
+                >
+                  Release Notes
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="mt-auto flex flex-col gap-2">
+          <a
+            href={plugin.url}
+            target="_blank"
+            rel="noreferrer"
+            className="block rounded-md p-2.5 text-center text-[11px] tracking-wide no-underline"
+            style={{
+              color: plugin.color,
+              background: plugin.color + "20",
+              border: `1px solid ${plugin.color}40`,
+            }}
+          >
+            GitHub / 공식 페이지 →
+          </a>
+          <Link
+            href={`/plugins/${plugin.id}`}
+            onClick={onClose}
+            className="block rounded-md border border-border-main p-2 text-center text-[10px] text-text-sub hover:border-[#30306A] hover:text-[#CCC]"
+          >
+            상세 페이지 보기 →
+          </Link>
+        </div>
       </div>
     </div>
   );

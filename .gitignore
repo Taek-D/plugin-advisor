@@ -13,3 +13,5 @@ next-env.d.ts
 .claude/
 .playwright-mcp/
 START.md
+
+.vercel

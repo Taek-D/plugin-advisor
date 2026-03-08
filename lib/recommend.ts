@@ -1,5 +1,6 @@
 import type { AnalysisResult } from "./types";
 import { PLUGINS, REASONS } from "./plugins";
+import { CONFLICT_PAIRS } from "./conflicts";
 
 export function recommend(text: string): AnalysisResult {
   const lower = text.toLowerCase();
@@ -14,9 +15,13 @@ export function recommend(text: string): AnalysisResult {
     }
   });
 
-  if (scores.omc && scores.superpowers) {
-    scores.superpowers = Math.max(0, scores.superpowers - 1);
-    if (!scores.superpowers) delete scores.superpowers;
+  for (const pair of CONFLICT_PAIRS) {
+    const [a, b] = pair.ids;
+    if (scores[a] && scores[b]) {
+      const weaker = scores[a] < scores[b] ? a : b;
+      scores[weaker] = Math.max(0, scores[weaker] - 1);
+      if (!scores[weaker]) delete scores[weaker];
+    }
   }
 
   const sorted = Object.entries(scores)
