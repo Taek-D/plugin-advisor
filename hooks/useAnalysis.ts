@@ -29,9 +29,9 @@ export function useAnalysis() {
   const handleAnalyze = useCallback(
     async (content: string, mode: InputMode = "text", analysisMode: AnalysisMode = "keyword") => {
       setStep("analyzing");
-      setCurrentMode(analysisMode);
 
       let res: AnalysisResult;
+      let effectiveMode: AnalysisMode = analysisMode;
 
       if (analysisMode === "ai") {
         try {
@@ -45,6 +45,7 @@ export function useAnalysis() {
           res = data;
         } catch {
           // Fallback to keyword analysis
+          effectiveMode = "keyword";
           res = recommend(content);
         }
       } else {
@@ -52,6 +53,7 @@ export function useAnalysis() {
         res = recommend(content);
       }
 
+      setCurrentMode(effectiveMode);
       setResult(res);
       const s: Record<string, boolean> = {};
       res.recommendations.forEach((r) => {
@@ -63,6 +65,9 @@ export function useAnalysis() {
       await saveHistory({
         inputText: content,
         inputMode: mode,
+        analysisMode: effectiveMode,
+        summary: res.summary,
+        warning: res.warning,
         recommendations: res.recommendations,
         selectedIds: res.recommendations.map((r) => r.pluginId),
       });
@@ -73,13 +78,24 @@ export function useAnalysis() {
   );
 
   const restoreFromHistory = useCallback((entry: HistoryEntry) => {
-    const res = recommend(entry.inputText);
+    const res =
+      entry.summary !== undefined || entry.warning !== undefined
+        ? {
+            summary: entry.summary ?? "",
+            recommendations: entry.recommendations,
+            warning: entry.warning ?? null,
+            inputText: entry.inputText,
+          }
+        : recommend(entry.inputText);
+
     setResult(res);
+    setCurrentMode(entry.analysisMode ?? "keyword");
     const s: Record<string, boolean> = {};
     entry.selectedIds.forEach((id) => {
       s[id] = true;
     });
     setSel(s);
+    setDetailPlugin(null);
     setStep("result");
   }, []);
 

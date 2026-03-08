@@ -20,6 +20,7 @@ export default function PluginDetail({ plugin }: Props) {
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
 
   useEffect(() => {
+    setVersion(null);
     fetchVersions([plugin.id]).then((v) => {
       if (v[plugin.id]) setVersion(v[plugin.id]);
     });

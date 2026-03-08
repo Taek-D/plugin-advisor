@@ -11,8 +11,10 @@ function getClient() {
   if (
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
     !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  )
+  ) {
     return null;
+  }
+
   const { createClient } = require("@/lib/supabase/client");
   return createClient();
 }
@@ -45,9 +47,7 @@ export default function CommunityGallery({ initialCombos }: Props) {
 
     supabase.auth
       .getUser()
-      .then(({ data }: { data: { user: User | null } }) =>
-        setUser(data.user)
-      );
+      .then(({ data }: { data: { user: User | null } }) => setUser(data.user));
 
     const {
       data: { subscription },
@@ -63,11 +63,13 @@ export default function CommunityGallery({ initialCombos }: Props) {
   const refreshCombos = async () => {
     const supabase = getClient();
     if (!supabase) return;
+
     const { data } = await supabase
       .from("shared_combos")
       .select("*")
       .order("created_at", { ascending: false })
       .limit(50);
+
     if (data) setCombos(data);
     setShowForm(false);
   };
@@ -75,8 +77,9 @@ export default function CommunityGallery({ initialCombos }: Props) {
   const handleDelete = async (id: string) => {
     const supabase = getClient();
     if (!supabase) return;
+
     await supabase.from("shared_combos").delete().eq("id", id);
-    setCombos((prev) => prev.filter((c) => c.id !== id));
+    setCombos((prev) => prev.filter((combo) => combo.id !== id));
   };
 
   const handleCopy = (pluginIds: string[]) => {
@@ -84,20 +87,15 @@ export default function CommunityGallery({ initialCombos }: Props) {
       t.installScript.scriptComment1,
       "",
       ...pluginIds.flatMap((id) => {
-        const p = PLUGINS[id];
-        return p ? [`# ── ${p.name}`, ...p.install, ""] : [];
+        const plugin = PLUGINS[id];
+        return plugin ? [`# === ${plugin.name}`, ...plugin.install, ""] : [];
       }),
     ].join("\n");
+
     navigator.clipboard.writeText(script);
     setCopied(pluginIds.join(","));
     setTimeout(() => setCopied(null), 2000);
   };
-
-  const cancelLabel = locale === "en" ? "Cancel" : "취소";
-  const shareLabel = locale === "en" ? "+ Share Combo" : "+ 조합 공유";
-  const emptyTitle = locale === "en" ? "No shared combos yet" : "아직 공유된 조합이 없어요";
-  const emptyDesc = locale === "en" ? "Be the first to share your plugin combo!" : "첫 번째로 나만의 플러그인 조합을 공유해보세요!";
-  const browseDesc = locale === "en" ? "Browse plugin combos shared by other developers." : "다른 개발자들이 공유한 플러그인 조합을 둘러보세요.";
 
   return (
     <div>
@@ -106,16 +104,16 @@ export default function CommunityGallery({ initialCombos }: Props) {
           <h1 className="mb-1.5 font-heading text-[18px] font-extrabold sm:text-[22px]">
             {t.community.title}
           </h1>
-          <p className="text-[11px] text-[#484860]">{browseDesc}</p>
+          <p className="text-[11px] text-[#484860]">{t.community.description}</p>
         </div>
         <div className="flex items-center gap-3">
           <AuthButton />
           {user && (
             <button
-              onClick={() => setShowForm(!showForm)}
+              onClick={() => setShowForm((prev) => !prev)}
               className="rounded-[5px] bg-accent/20 px-3 py-1.5 font-mono text-[10px] font-bold text-accent hover:bg-accent/30"
             >
-              {showForm ? cancelLabel : shareLabel}
+              {showForm ? t.community.cancelButton : t.community.shareButton}
             </button>
           )}
         </div>
@@ -129,8 +127,10 @@ export default function CommunityGallery({ initialCombos }: Props) {
 
       {combos.length === 0 ? (
         <div className="rounded-[9px] border border-border-main bg-card px-4 py-12 text-center">
-          <div className="text-[11px] text-text-sub">{emptyTitle}</div>
-          <div className="mt-1 text-[10px] text-[#303048]">{emptyDesc}</div>
+          <div className="text-[11px] text-text-sub">{t.community.emptyTitle}</div>
+          <div className="mt-1 text-[10px] text-[#303048]">
+            {t.community.emptyDescription}
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -141,9 +141,7 @@ export default function CommunityGallery({ initialCombos }: Props) {
             >
               <div className="mb-2 flex items-start justify-between">
                 <div>
-                  <h3 className="text-xs font-bold text-[#CCC]">
-                    {combo.title}
-                  </h3>
+                  <h3 className="text-xs font-bold text-[#CCC]">{combo.title}</h3>
                   {combo.description && (
                     <p className="mt-0.5 text-[10px] text-[#666]">
                       {combo.description}
@@ -155,26 +153,27 @@ export default function CommunityGallery({ initialCombos }: Props) {
                     onClick={() => handleDelete(combo.id)}
                     className="shrink-0 text-[11px] text-text-sub hover:text-error"
                   >
-                    ×
+                    횞
                   </button>
                 )}
               </div>
 
               <div className="mb-3 flex flex-wrap gap-1">
                 {combo.plugin_ids.map((id) => {
-                  const p = PLUGINS[id];
-                  if (!p) return null;
+                  const plugin = PLUGINS[id];
+                  if (!plugin) return null;
+
                   return (
                     <span
                       key={id}
                       className="rounded-[3px] px-1.5 py-0.5 text-[9px] font-bold"
                       style={{
-                        color: p.color,
-                        background: p.color + "14",
-                        border: `1px solid ${p.color}28`,
+                        color: plugin.color,
+                        background: plugin.color + "14",
+                        border: `1px solid ${plugin.color}28`,
                       }}
                     >
-                      {p.tag}
+                      {plugin.tag}
                     </span>
                   );
                 })}

@@ -9,7 +9,8 @@ export const en: Translations = {
   },
   main: {
     title: "What are you building?",
-    subtitle: "Paste your PRD, README, or project description to find the best plugin combo.",
+    subtitle:
+      "Paste your PRD, README, or project description to find the best plugin combo.",
     instantBadge: "Instant analysis, no API calls",
     tabAnalysis: "Analyze",
     tabHistory: "History",
@@ -20,7 +21,8 @@ export const en: Translations = {
     tabText: "Text",
     tabFile: "File",
     tabGithub: "GitHub",
-    placeholder: "Describe your project.\ne.g.) React SaaS dashboard, Python crawler, Unity mobile game,\n     FastAPI backend with auth/payments, PRD-driven development",
+    placeholder:
+      "Describe your project.\ne.g.) React SaaS dashboard, Python crawler, Unity mobile game,\n     FastAPI backend with auth/payments, PRD-driven development",
     fileDrop: "Drop file here",
     fileUploadTitle: "Upload PRD / README",
     fileUploadDesc: ".md .txt",
@@ -33,18 +35,20 @@ export const en: Translations = {
   },
   analysis: {
     analyzing: "Analyzing...",
-    analyzingDesc: "Matching keywords & calculating plugin combos",
+    analyzingDesc: "Matching keywords and calculating plugin combos",
     analyzingAiDesc: "Claude AI is analyzing your project",
     projectSummary: "PROJECT SUMMARY",
     recommendLabel: "Recommended combo — select what you need",
     warningMany: "Too many plugins may cause conflicts. Start with 1-2 core ones.",
-    noKeyword: "Not enough keywords detected. Add more specific details for better accuracy.",
-    noKeywordDefault: "Add more details (tech stack, key features) for more accurate recommendations.",
+    noKeyword:
+      "Not enough keywords detected. Add more specific details for better accuracy.",
+    noKeywordDefault:
+      "Add more details (tech stack, key features) for more accurate recommendations.",
     backToAnalysis: "← Analyze again",
   },
   card: {
     core: "CORE",
-    conflict: "⚡ Conflict",
+    conflict: "⚠ Conflict",
     detail: "Details",
   },
   detail: {
@@ -69,7 +73,8 @@ export const en: Translations = {
     save: "Save",
     copy: "COPY",
     copyDone: "✓ COPIED",
-    guide: "💡 Run these commands in Claude Code terminal in order. You may need to restart claude after installation.",
+    guide:
+      "↳ Run these commands in the Claude Code terminal in order. You may need to restart claude after installation.",
     scriptComment1: "# Claude Code Plugin Install Script",
     scriptComment2: "# Run in Claude Code terminal in order",
   },
@@ -80,6 +85,7 @@ export const en: Translations = {
     submit: "Write Review",
     submitting: "Saving...",
     success: "Review saved!",
+    saveError: "Failed to save review.",
     noReviews: "No reviews yet. Be the first to write one!",
     loginRequired: "Login required.",
   },
@@ -103,6 +109,17 @@ export const en: Translations = {
   },
   community: {
     title: "Community Recommended Combos",
+    description: "Browse plugin combos shared by other developers.",
+    shareButton: "+ Share Combo",
+    cancelButton: "Cancel",
+    emptyTitle: "No shared combos yet",
+    emptyDescription: "Be the first to share your plugin combo!",
+    formTitle: "Share Your Combo",
+    formNamePlaceholder: "Combo title (required)",
+    formDescriptionPlaceholder: "Description (optional)",
+    selectPlugins: "Select plugins",
+    submit: "Share with Community",
+    submitting: "Sharing...",
   },
   auth: {
     login: "Login with GitHub",

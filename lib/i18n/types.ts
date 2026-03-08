@@ -88,6 +88,7 @@ export type Translations = {
     submit: string;
     submitting: string;
     success: string;
+    saveError: string;
     noReviews: string;
     loginRequired: string;
   };
@@ -115,6 +116,17 @@ export type Translations = {
   // Community
   community: {
     title: string;
+    description: string;
+    shareButton: string;
+    cancelButton: string;
+    emptyTitle: string;
+    emptyDescription: string;
+    formTitle: string;
+    formNamePlaceholder: string;
+    formDescriptionPlaceholder: string;
+    selectPlugins: string;
+    submit: string;
+    submitting: string;
   };
   // Auth
   auth: {

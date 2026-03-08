@@ -50,6 +50,9 @@ export type HistoryEntry = {
   date: string;
   inputText: string;
   inputMode: "text" | "file" | "github";
+  analysisMode?: AnalysisMode;
+  summary?: string;
+  warning?: string | null;
   recommendations: Recommendation[];
   selectedIds: string[];
 };
@@ -68,7 +71,6 @@ export type VersionInfo = {
   releaseUrl: string | null;
 };
 
-// P2-1: AI Analysis
 export type AnalysisMode = "keyword" | "ai";
 
 // P2-2: Reviews
