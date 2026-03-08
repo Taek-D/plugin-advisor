@@ -1,16 +1,21 @@
 "use client";
 
 import { useState, useRef, useCallback, DragEvent } from "react";
+import { useI18n } from "@/lib/i18n";
+import type { AnalysisMode } from "@/lib/types";
 
 type InputMode = "text" | "file" | "github";
 
 type Props = {
-  onAnalyze: (text: string, mode: InputMode) => void;
+  onAnalyze: (text: string, mode: InputMode, analysisMode: AnalysisMode) => void;
   disabled: boolean;
+  aiAvailable: boolean;
 };
 
-export default function InputPanel({ onAnalyze, disabled }: Props) {
-  const [mode, setMode] = useState<"text" | "file" | "github">("text");
+export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) {
+  const { t } = useI18n();
+  const [mode, setMode] = useState<InputMode>("text");
+  const [analysisMode, setAnalysisMode] = useState<AnalysisMode>("keyword");
   const [text, setText] = useState("");
   const [ghUrl, setGhUrl] = useState("");
   const [fname, setFname] = useState("");
@@ -88,19 +93,19 @@ export default function InputPanel({ onAnalyze, disabled }: Props) {
         if (!res.ok) throw new Error(data.error);
         content = data.content;
       }
-      if (!content.trim()) throw new Error("내용을 입력해주세요");
-      onAnalyze(content, mode);
+      if (!content.trim()) throw new Error(t.input.noContent);
+      onAnalyze(content, mode, analysisMode);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "알 수 없는 오류";
+      const msg = e instanceof Error ? e.message : "Unknown error";
       setErr(msg);
       setMode("text");
     }
   };
 
   const tabs = [
-    { key: "text" as const, label: "텍스트" },
-    { key: "file" as const, label: "파일" },
-    { key: "github" as const, label: "GitHub" },
+    { key: "text" as const, label: t.input.tabText },
+    { key: "file" as const, label: t.input.tabFile },
+    { key: "github" as const, label: t.input.tabGithub },
   ];
 
   return (
@@ -115,24 +120,38 @@ export default function InputPanel({ onAnalyze, disabled }: Props) {
         <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl border-2 border-dashed border-accent bg-[#080810]/90">
           <div className="text-center">
             <div className="mb-1 text-2xl">📄</div>
-            <div className="text-xs font-bold text-accent">파일을 놓으세요</div>
+            <div className="text-xs font-bold text-accent">{t.input.fileDrop}</div>
           </div>
         </div>
       )}
-      <div className="mb-3.5 flex gap-1.5">
-        {tabs.map((t) => (
+      <div className="mb-3.5 flex items-center justify-between gap-2">
+        <div className="flex gap-1.5">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setMode(tab.key)}
+              className={`rounded-[5px] border px-3.5 py-[7px] font-mono text-[11px] tracking-wide transition-all ${
+                mode === tab.key
+                  ? "border-[#30306A] bg-[#101028] text-[#CCC]"
+                  : "border-border-main bg-transparent text-text-sub hover:border-[#30306A] hover:text-[#CCC]"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        {aiAvailable && (
           <button
-            key={t.key}
-            onClick={() => setMode(t.key)}
-            className={`rounded-[5px] border px-3.5 py-[7px] font-mono text-[11px] tracking-wide transition-all ${
-              mode === t.key
-                ? "border-[#30306A] bg-[#101028] text-[#CCC]"
-                : "border-border-main bg-transparent text-text-sub hover:border-[#30306A] hover:text-[#CCC]"
+            onClick={() => setAnalysisMode(analysisMode === "keyword" ? "ai" : "keyword")}
+            className={`rounded-[5px] border px-3 py-[7px] font-mono text-[10px] tracking-wide transition-all ${
+              analysisMode === "ai"
+                ? "border-[#7C3AED] bg-[#7C3AED]/10 text-[#A78BFA]"
+                : "border-border-main text-text-sub hover:border-[#30306A] hover:text-[#CCC]"
             }`}
           >
-            {t.label}
+            {analysisMode === "ai" ? `✦ ${t.input.aiMode}` : t.input.keywordMode}
           </button>
-        ))}
+        )}
       </div>
 
       {mode === "text" && (
@@ -140,9 +159,7 @@ export default function InputPanel({ onAnalyze, disabled }: Props) {
           rows={8}
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder={
-            "프로젝트를 설명해줘요.\n예) React 기반 SaaS 대시보드, Python 크롤러, Unity 모바일 게임,\n     FastAPI 백엔드 + 인증/결제 포함, PRD 기반 개발 등"
-          }
+          placeholder={t.input.placeholder}
           className="w-full rounded-md border border-border-main bg-card px-3 py-3 font-mono text-xs leading-[1.7] text-[#CCC] outline-none transition-colors placeholder:text-[#252540] focus:border-accent"
           style={{ resize: "vertical" }}
         />
@@ -157,13 +174,13 @@ export default function InputPanel({ onAnalyze, disabled }: Props) {
             <>
               <span className="text-xs text-success">{fname}</span>
               <br />
-              <span className="text-[10px] text-[#333]">클릭해서 변경</span>
+              <span className="text-[10px] text-[#333]">{t.input.fileChange}</span>
             </>
           ) : (
             <>
               <div className="mb-1.5 text-lg">📄</div>
-              <div className="mb-1 text-xs">PRD / README 업로드</div>
-              <div className="text-[10px] text-[#333]">.md .txt</div>
+              <div className="mb-1 text-xs">{t.input.fileUploadTitle}</div>
+              <div className="text-[10px] text-[#333]">{t.input.fileUploadDesc}</div>
             </>
           )}
           <input
@@ -181,7 +198,7 @@ export default function InputPanel({ onAnalyze, disabled }: Props) {
           type="text"
           value={ghUrl}
           onChange={(e) => setGhUrl(e.target.value)}
-          placeholder="https://github.com/owner/repo"
+          placeholder={t.input.ghPlaceholder}
           className="w-full rounded-md border border-border-main bg-card px-3 py-3 font-mono text-xs text-[#CCC] outline-none transition-colors placeholder:text-[#252540] focus:border-accent"
         />
       )}
@@ -195,9 +212,13 @@ export default function InputPanel({ onAnalyze, disabled }: Props) {
       <button
         onClick={handleAnalyze}
         disabled={!canGo || disabled}
-        className="mt-3 w-full rounded-[7px] bg-gradient-to-br from-accent to-[#7C3AED] px-3 py-3.5 font-mono text-xs font-bold tracking-[1.5px] text-white transition-all hover:opacity-85 hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-30"
+        className={`mt-3 w-full rounded-[7px] px-3 py-3.5 font-mono text-xs font-bold tracking-[1.5px] text-white transition-all hover:opacity-85 hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-30 ${
+          analysisMode === "ai"
+            ? "bg-gradient-to-br from-[#7C3AED] to-[#EC4899]"
+            : "bg-gradient-to-br from-accent to-[#7C3AED]"
+        }`}
       >
-        ANALYZE → RECOMMEND
+        {analysisMode === "ai" ? "✦ AI ANALYZE → RECOMMEND" : t.input.analyzeBtn}
       </button>
     </div>
   );

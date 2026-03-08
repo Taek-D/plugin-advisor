@@ -1,6 +1,8 @@
 "use client";
 
 import type { Plugin, Recommendation, VersionInfo } from "@/lib/types";
+import { useI18n } from "@/lib/i18n";
+import { pluginDescEn } from "@/lib/i18n/plugins-en";
 import HighlightedText from "./HighlightedText";
 
 type Props = {
@@ -22,6 +24,9 @@ export default function PluginCard({
   onDetail,
   version,
 }: Props) {
+  const { locale, t } = useI18n();
+  const desc = locale === "en" ? (pluginDescEn[plugin.id]?.desc || plugin.desc) : plugin.desc;
+
   return (
     <div
       className={`rounded-[9px] border bg-card p-4 transition-colors ${
@@ -74,12 +79,12 @@ export default function PluginCard({
             )}
             {recommendation.priority === 1 && (
               <span className="rounded-[3px] bg-accent/10 px-1.5 py-0.5 text-[9px] font-bold tracking-wide text-accent">
-                CORE
+                {t.card.core}
               </span>
             )}
             {inConflict && (
               <span className="rounded-[3px] bg-error/10 px-1.5 py-0.5 text-[9px] font-bold tracking-wide text-error">
-                ⚡ 충돌
+                {t.card.conflict}
               </span>
             )}
             <button
@@ -95,7 +100,7 @@ export default function PluginCard({
                 (e.currentTarget.style.borderColor = "#202038")
               }
             >
-              상세 보기
+              {t.card.detail}
             </button>
           </div>
 
@@ -125,7 +130,7 @@ export default function PluginCard({
             </div>
           )}
 
-          <div className="text-[10px] text-[#404050]">{plugin.desc}</div>
+          <div className="text-[10px] text-[#404050]">{desc}</div>
         </div>
       </div>
     </div>

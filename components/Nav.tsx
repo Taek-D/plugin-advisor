@@ -3,16 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PLUGINS } from "@/lib/plugins";
+import { useI18n } from "@/lib/i18n";
 import AuthButton from "./AuthButton";
-
-const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/plugins", label: "Plugins" },
-  { href: "/community", label: "Community" },
-];
 
 export default function Nav() {
   const pathname = usePathname();
+  const { locale, t, setLocale } = useI18n();
+
+  const links = [
+    { href: "/", label: t.nav.home },
+    { href: "/plugins", label: t.nav.plugins },
+    { href: "/community", label: t.nav.community },
+  ];
 
   return (
     <nav className="flex items-center justify-between border-b border-[#121224] px-4 py-4 sm:px-6">
@@ -24,10 +26,10 @@ export default function Nav() {
           </span>
         </Link>
         <span className="hidden rounded-[3px] border border-[#181848] bg-[#080820] px-1.5 py-0.5 text-[9px] text-accent sm:inline">
-          {Object.keys(PLUGINS).length} plugins
+          {Object.keys(PLUGINS).length} {t.nav.pluginCount}
         </span>
         <div className="flex gap-1">
-          {NAV_LINKS.map((link) => {
+          {links.map((link) => {
             const isActive =
               link.href === "/"
                 ? pathname === "/"
@@ -48,7 +50,15 @@ export default function Nav() {
           })}
         </div>
       </div>
-      <AuthButton />
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => setLocale(locale === "ko" ? "en" : "ko")}
+          className="rounded-[5px] border border-border-main px-2 py-1 font-mono text-[9px] text-text-sub transition-colors hover:border-accent hover:text-accent"
+        >
+          {locale === "ko" ? "EN" : "KO"}
+        </button>
+        <AuthButton />
+      </div>
     </nav>
   );
 }

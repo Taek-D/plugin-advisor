@@ -67,3 +67,24 @@ export type VersionInfo = {
   publishedAt: string | null;
   releaseUrl: string | null;
 };
+
+// P2-1: AI Analysis
+export type AnalysisMode = "keyword" | "ai";
+
+// P2-2: Reviews
+export type Review = {
+  id: string;
+  plugin_id: string;
+  user_id: string;
+  user_name: string;
+  user_avatar: string | null;
+  rating: number;
+  comment: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ReviewStats = {
+  avgRating: number;
+  totalCount: number;
+};

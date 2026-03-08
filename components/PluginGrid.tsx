@@ -3,10 +3,12 @@
 import { useState, useCallback } from "react";
 import { PLUGINS } from "@/lib/plugins";
 import type { PluginCategory } from "@/lib/types";
+import { useI18n } from "@/lib/i18n";
 import PluginSearch from "./PluginSearch";
 import PluginGridCard from "./PluginGridCard";
 
 export default function PluginGrid() {
+  const { t } = useI18n();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<PluginCategory | "all">("all");
 
@@ -38,7 +40,7 @@ export default function PluginGrid() {
       {filtered.length === 0 ? (
         <div className="py-12 text-center">
           <div className="mb-2 text-[11px] text-text-sub">
-            일치하는 플러그인이 없어요
+            {t.pluginsPage.noResults}
           </div>
         </div>
       ) : (

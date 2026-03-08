@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { PLUGINS } from "@/lib/plugins";
 import { saveFavorite } from "@/lib/favorites";
+import { useI18n } from "@/lib/i18n";
 
 type Props = {
   selectedIds: string[];
 };
 
 export default function InstallScript({ selectedIds }: Props) {
+  const { t } = useI18n();
   const [copied, setCopied] = useState(false);
   const [saving, setSaving] = useState(false);
   const [favName, setFavName] = useState("");
@@ -17,8 +19,8 @@ export default function InstallScript({ selectedIds }: Props) {
   if (!selectedIds.length) return null;
 
   const script = [
-    "# Claude Code 플러그인 설치 스크립트",
-    "# Claude Code 터미널에서 순서대로 실행하세요",
+    t.installScript.scriptComment1,
+    t.installScript.scriptComment2,
     "",
     ...selectedIds.flatMap((id) => {
       const p = PLUGINS[id];
@@ -45,7 +47,7 @@ export default function InstallScript({ selectedIds }: Props) {
     <div className="rounded-[9px] border border-[#121224] bg-[#040408] p-4">
       <div className="mb-2.5 flex flex-wrap items-center justify-between gap-2">
         <div className="text-[9px] tracking-[2px] text-[#383850]">
-          INSTALL SCRIPT
+          {t.installScript.title}
         </div>
         <div className="flex items-center gap-2">
           {saving ? (
@@ -55,7 +57,7 @@ export default function InstallScript({ selectedIds }: Props) {
                 value={favName}
                 onChange={(e) => setFavName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSaveFavorite()}
-                placeholder="조합 이름"
+                placeholder={t.installScript.comboName}
                 className="w-[120px] rounded border border-border-main bg-card px-2 py-1.5 font-mono text-[10px] text-[#CCC] outline-none focus:border-accent"
                 autoFocus
               />
@@ -64,7 +66,7 @@ export default function InstallScript({ selectedIds }: Props) {
                 disabled={!favName.trim()}
                 className="rounded-[5px] bg-accent/20 px-3 py-1.5 font-mono text-[9px] font-bold text-accent hover:bg-accent/30 disabled:opacity-30"
               >
-                저장
+                {t.installScript.save}
               </button>
               <button
                 onClick={() => setSaving(false)}
@@ -78,14 +80,14 @@ export default function InstallScript({ selectedIds }: Props) {
               onClick={() => (saved ? undefined : setSaving(true))}
               className="rounded-[5px] border border-border-main px-3 py-1.5 font-mono text-[9px] text-text-sub hover:border-accent hover:text-accent sm:py-2"
             >
-              {saved ? "✓ 저장됨" : "즐겨찾기 저장"}
+              {saved ? t.installScript.saved : t.installScript.saveFavorite}
             </button>
           )}
           <button
             onClick={handleCopy}
             className="min-h-[44px] rounded-[5px] bg-gradient-to-br from-success to-accent px-5 py-2 font-mono text-[11px] font-bold tracking-wide text-white hover:opacity-85 sm:min-h-0"
           >
-            {copied ? "✓ COPIED" : "COPY"}
+            {copied ? t.installScript.copyDone : t.installScript.copy}
           </button>
         </div>
       </div>
@@ -93,8 +95,7 @@ export default function InstallScript({ selectedIds }: Props) {
         {script}
       </pre>
       <div className="mt-2.5 rounded-[5px] bg-[#07070E] px-3 py-2 text-[10px] leading-relaxed text-[#383850]">
-        💡 Claude Code 터미널에서 위 명령어를 순서대로 실행하세요. 설치 후{" "}
-        <code className="text-accent">claude</code> 재시작이 필요할 수 있어요.
+        {t.installScript.guide}
       </div>
     </div>
   );

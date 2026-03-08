@@ -59,6 +59,19 @@ PRD 기반 태스크 목록. 진행 상황을 여기서 추적합니다.
 
 ## P2 — 장기
 
-- [ ] AI 기반 분석 (Claude API 옵션)
-- [ ] 플러그인 리뷰 & 평점
-- [ ] 다국어 지원 (EN/KO)
+- [x] AI 기반 분석 (Claude API 옵션, @anthropic-ai/sdk, 키워드 폴백)
+- [x] 플러그인 리뷰 & 평점 (Supabase plugin_reviews 테이블, StarRating, ReviewSection)
+- [x] 다국어 지원 (EN/KO, Context 기반 i18n, localStorage 저장, 30개 플러그인 영문 번역)
+
+### P2 추가 구현 사항
+- [x] AI 분석 API route (app/api/analyze/route.ts, Claude Sonnet 사용)
+- [x] AI 모드 토글 (InputPanel, 보라색 그라디언트 구분)
+- [x] AI 가용성 자동 감지 (ANTHROPIC_API_KEY 유무)
+- [x] 리뷰 API route (app/api/reviews/route.ts, GET/POST, upsert)
+- [x] StarRating 컴포넌트 (읽기전용/편집 모드, sm/md 사이즈)
+- [x] ReviewSection 컴포넌트 (리뷰 목록 + 작성 폼)
+- [x] 리뷰 SQL 마이그레이션 (RLS 정책, unique 제약)
+- [x] i18n Context Provider (lib/i18n/, ko/en 딕셔너리)
+- [x] 언어 전환 버튼 (Nav에 EN/KO 토글)
+- [x] 30개 플러그인 영문 desc/longDesc/reasons 번역
+- [x] 전체 컴포넌트 i18n 적용 (15개 컴포넌트)

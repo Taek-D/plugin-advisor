@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { PLUGINS } from "@/lib/plugins";
+import { useI18n } from "@/lib/i18n";
 import type { User } from "@supabase/supabase-js";
 import ShareComboForm from "./ShareComboForm";
 import AuthButton from "./AuthButton";
@@ -32,6 +33,7 @@ type Props = {
 };
 
 export default function CommunityGallery({ initialCombos }: Props) {
+  const { locale, t } = useI18n();
   const [combos, setCombos] = useState<SharedCombo[]>(initialCombos);
   const [user, setUser] = useState<User | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -79,7 +81,7 @@ export default function CommunityGallery({ initialCombos }: Props) {
 
   const handleCopy = (pluginIds: string[]) => {
     const script = [
-      "# Claude Code 플러그인 설치 스크립트",
+      t.installScript.scriptComment1,
       "",
       ...pluginIds.flatMap((id) => {
         const p = PLUGINS[id];
@@ -91,16 +93,20 @@ export default function CommunityGallery({ initialCombos }: Props) {
     setTimeout(() => setCopied(null), 2000);
   };
 
+  const cancelLabel = locale === "en" ? "Cancel" : "취소";
+  const shareLabel = locale === "en" ? "+ Share Combo" : "+ 조합 공유";
+  const emptyTitle = locale === "en" ? "No shared combos yet" : "아직 공유된 조합이 없어요";
+  const emptyDesc = locale === "en" ? "Be the first to share your plugin combo!" : "첫 번째로 나만의 플러그인 조합을 공유해보세요!";
+  const browseDesc = locale === "en" ? "Browse plugin combos shared by other developers." : "다른 개발자들이 공유한 플러그인 조합을 둘러보세요.";
+
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="mb-1.5 font-heading text-[18px] font-extrabold sm:text-[22px]">
-            커뮤니티 조합
+            {t.community.title}
           </h1>
-          <p className="text-[11px] text-[#484860]">
-            다른 개발자들이 공유한 플러그인 조합을 둘러보세요.
-          </p>
+          <p className="text-[11px] text-[#484860]">{browseDesc}</p>
         </div>
         <div className="flex items-center gap-3">
           <AuthButton />
@@ -109,7 +115,7 @@ export default function CommunityGallery({ initialCombos }: Props) {
               onClick={() => setShowForm(!showForm)}
               className="rounded-[5px] bg-accent/20 px-3 py-1.5 font-mono text-[10px] font-bold text-accent hover:bg-accent/30"
             >
-              {showForm ? "취소" : "+ 조합 공유"}
+              {showForm ? cancelLabel : shareLabel}
             </button>
           )}
         </div>
@@ -123,12 +129,8 @@ export default function CommunityGallery({ initialCombos }: Props) {
 
       {combos.length === 0 ? (
         <div className="rounded-[9px] border border-border-main bg-card px-4 py-12 text-center">
-          <div className="text-[11px] text-text-sub">
-            아직 공유된 조합이 없어요
-          </div>
-          <div className="mt-1 text-[10px] text-[#303048]">
-            첫 번째로 나만의 플러그인 조합을 공유해보세요!
-          </div>
+          <div className="text-[11px] text-text-sub">{emptyTitle}</div>
+          <div className="mt-1 text-[10px] text-[#303048]">{emptyDesc}</div>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -192,7 +194,9 @@ export default function CommunityGallery({ initialCombos }: Props) {
                     {combo.github_username}
                   </span>
                   <span className="text-[9px] text-[#303048]">
-                    {new Date(combo.created_at).toLocaleDateString("ko-KR")}
+                    {new Date(combo.created_at).toLocaleDateString(
+                      locale === "en" ? "en-US" : "ko-KR"
+                    )}
                   </span>
                 </div>
                 <button
@@ -200,8 +204,8 @@ export default function CommunityGallery({ initialCombos }: Props) {
                   className="rounded border border-border-main px-2 py-1 font-mono text-[9px] text-text-sub hover:border-accent hover:text-accent"
                 >
                   {copied === combo.plugin_ids.join(",")
-                    ? "Copied"
-                    : "Copy Script"}
+                    ? t.installScript.copyDone
+                    : t.favorites.copyScript}
                 </button>
               </div>
             </div>

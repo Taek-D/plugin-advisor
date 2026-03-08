@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Syne } from "next/font/google";
+import { I18nProvider } from "@/lib/i18n";
 import Nav from "@/components/Nav";
 import "./globals.css";
 
@@ -33,12 +34,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
       <body
         className={`${jetbrains.variable} ${syne.variable} font-mono bg-main text-text-main antialiased`}
       >
-        <Nav />
-        {children}
+        <I18nProvider>
+          <Nav />
+          {children}
+        </I18nProvider>
       </body>
     </html>
   );

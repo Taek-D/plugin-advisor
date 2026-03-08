@@ -5,13 +5,17 @@ import Link from "next/link";
 import type { Plugin, VersionInfo } from "@/lib/types";
 import { PLUGINS } from "@/lib/plugins";
 import { fetchVersions } from "@/lib/versions";
+import { useI18n } from "@/lib/i18n";
+import { pluginDescEn } from "@/lib/i18n/plugins-en";
 import RelatedPlugins from "./RelatedPlugins";
+import ReviewSection from "./ReviewSection";
 
 type Props = {
   plugin: Plugin;
 };
 
 export default function PluginDetail({ plugin }: Props) {
+  const { locale, t } = useI18n();
   const [version, setVersion] = useState<VersionInfo | null>(null);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
 
@@ -27,13 +31,17 @@ export default function PluginDetail({ plugin }: Props) {
     setTimeout(() => setCopiedIdx(null), 2000);
   };
 
+  const longDesc = locale === "en"
+    ? (pluginDescEn[plugin.id]?.longDesc || plugin.longDesc)
+    : plugin.longDesc;
+
   return (
     <div>
       <Link
         href="/plugins"
         className="mb-6 inline-block rounded border border-border-main px-3 py-1.5 font-mono text-[10px] text-text-sub hover:border-[#30306A] hover:text-[#CCC]"
       >
-        ← 전체 플러그인
+        {t.detail.backToList}
       </Link>
 
       <div className="mb-6 flex flex-wrap items-center gap-3">
@@ -65,12 +73,12 @@ export default function PluginDetail({ plugin }: Props) {
       </div>
 
       <p className="mb-6 text-xs leading-[1.8] text-[#888]">
-        {plugin.longDesc}
+        {longDesc}
       </p>
 
       <div className="mb-6">
         <div className="mb-2 text-[9px] tracking-[2px] text-[#444]">
-          주요 기능
+          {t.detail.features}
         </div>
         <div className="flex flex-wrap gap-1.5">
           {plugin.features.map((f, i) => (
@@ -91,7 +99,7 @@ export default function PluginDetail({ plugin }: Props) {
 
       <div className="mb-6">
         <div className="mb-2 text-[9px] tracking-[2px] text-[#444]">
-          설치 방법
+          {t.detail.install}
         </div>
         <div className="flex flex-col gap-1.5">
           {plugin.install.map((cmd, i) => (
@@ -106,7 +114,7 @@ export default function PluginDetail({ plugin }: Props) {
                 onClick={() => copyCommand(cmd, i)}
                 className="shrink-0 rounded border border-border-main px-2 py-1 font-mono text-[9px] text-text-sub hover:text-accent"
               >
-                {copiedIdx === i ? "✓" : "COPY"}
+                {copiedIdx === i ? t.detail.copied : t.detail.copy}
               </button>
             </div>
           ))}
@@ -116,7 +124,7 @@ export default function PluginDetail({ plugin }: Props) {
       {version?.latestVersion && (
         <div className="mb-6 rounded-[7px] border border-border-main bg-card p-3">
           <div className="mb-1 text-[9px] tracking-[2px] text-[#444]">
-            최신 버전
+            {t.detail.latestVersion}
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <span className="text-xs font-bold text-success">
@@ -124,7 +132,9 @@ export default function PluginDetail({ plugin }: Props) {
             </span>
             {version.publishedAt && (
               <span className="text-[10px] text-[#555]">
-                {new Date(version.publishedAt).toLocaleDateString("ko-KR")}
+                {new Date(version.publishedAt).toLocaleDateString(
+                  locale === "en" ? "en-US" : "ko-KR"
+                )}
               </span>
             )}
             {version.releaseUrl && (
@@ -146,14 +156,14 @@ export default function PluginDetail({ plugin }: Props) {
           ⚠{" "}
           <strong>
             {plugin.conflicts.map((c) => PLUGINS[c]?.name).join(", ")}
-          </strong>
-          와 함께 사용 시 충돌 가능성이 있어요.
+          </strong>{" "}
+          {t.detail.conflictWarning}
         </div>
       )}
 
       <div className="mb-8">
         <div className="mb-2 text-[9px] tracking-[2px] text-[#444]">
-          키워드
+          {t.detail.keywords}
         </div>
         <div className="flex flex-wrap gap-1">
           {plugin.keywords.map((kw, i) => (
@@ -165,6 +175,10 @@ export default function PluginDetail({ plugin }: Props) {
             </span>
           ))}
         </div>
+      </div>
+
+      <div className="mb-8">
+        <ReviewSection pluginId={plugin.id} />
       </div>
 
       <RelatedPlugins currentId={plugin.id} category={plugin.category} />

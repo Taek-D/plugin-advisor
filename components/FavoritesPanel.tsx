@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import { getFavorites, deleteFavorite } from "@/lib/favorites";
 import { PLUGINS } from "@/lib/plugins";
+import { useI18n } from "@/lib/i18n";
 import type { Favorite } from "@/lib/types";
 
 export default function FavoritesPanel() {
+  const { locale, t } = useI18n();
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -22,7 +24,7 @@ export default function FavoritesPanel() {
 
   const handleCopy = (pluginIds: string[]) => {
     const script = [
-      "# Claude Code 플러그인 설치 스크립트",
+      t.installScript.scriptComment1,
       "",
       ...pluginIds.flatMap((id) => {
         const p = PLUGINS[id];
@@ -40,10 +42,7 @@ export default function FavoritesPanel() {
         <div className="mb-2 text-[9px] tracking-[2px] text-[#383850]">
           FAVORITES
         </div>
-        <div className="text-[11px] text-text-sub">저장된 조합이 없어요</div>
-        <div className="mt-1 text-[10px] text-[#303048]">
-          분석 결과에서 &quot;즐겨찾기 저장&quot;을 눌러보세요
-        </div>
+        <div className="text-[11px] text-text-sub">{t.favorites.empty}</div>
       </div>
     );
   }
@@ -71,7 +70,9 @@ export default function FavoritesPanel() {
                 </span>
                 <div className="flex items-center gap-2">
                   <span className="text-[9px] text-[#303048]">
-                    {new Date(fav.createdAt).toLocaleDateString("ko-KR")}
+                    {new Date(fav.createdAt).toLocaleDateString(
+                      locale === "en" ? "en-US" : "ko-KR"
+                    )}
                   </span>
                   <button
                     onClick={(e) => {
@@ -109,13 +110,13 @@ export default function FavoritesPanel() {
               <div className="mt-3 border-t border-border-main pt-3">
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-[9px] tracking-[2px] text-[#383850]">
-                    INSTALL SCRIPT
+                    {t.installScript.title}
                   </span>
                   <button
                     onClick={() => handleCopy(fav.pluginIds)}
                     className="rounded-[5px] bg-gradient-to-br from-success to-accent px-3 py-1.5 font-mono text-[9px] font-bold text-white hover:opacity-85"
                   >
-                    {copied ? "COPIED" : "COPY"}
+                    {copied ? t.installScript.copyDone : t.installScript.copy}
                   </button>
                 </div>
                 <pre className="overflow-x-auto whitespace-pre-wrap text-[10px] leading-[1.8] text-[#555]">

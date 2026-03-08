@@ -5,6 +5,7 @@ import { PLUGINS } from "@/lib/plugins";
 import { getConflicts } from "@/lib/conflicts";
 import { useAnalysis } from "@/hooks/useAnalysis";
 import { fetchVersions } from "@/lib/versions";
+import { useI18n } from "@/lib/i18n";
 import type { VersionInfo } from "@/lib/types";
 import InputPanel from "./InputPanel";
 import PluginCard from "./PluginCard";
@@ -17,6 +18,7 @@ import FavoritesPanel from "./FavoritesPanel";
 type Panel = "input" | "history" | "favorites";
 
 export default function PluginAdvisorApp() {
+  const { t } = useI18n();
   const {
     step,
     result,
@@ -28,6 +30,8 @@ export default function PluginAdvisorApp() {
     reset,
     togglePlugin,
     sel,
+    aiAvailable,
+    currentMode,
   } = useAnalysis();
 
   const [panel, setPanel] = useState<Panel>("input");
@@ -55,7 +59,7 @@ export default function PluginAdvisorApp() {
             onClick={reset}
             className="rounded border border-border-main px-3 py-1.5 font-mono text-[10px] text-text-sub hover:border-[#30306A] hover:text-[#CCC]"
           >
-            ← 다시 분석
+            {t.analysis.backToAnalysis}
           </button>
         </div>
       )}
@@ -64,19 +68,23 @@ export default function PluginAdvisorApp() {
         {step === "input" && (
           <div className="animate-fade-in">
             <h1 className="mb-1.5 font-heading text-[18px] font-extrabold sm:text-[22px]">
-              어떤 걸 만들고 있나요?
+              {t.main.title}
             </h1>
             <p className="mb-5 text-[11px] leading-[1.8] text-[#484860] sm:mb-6">
-              PRD, README, 프로젝트 설명을 넣으면 최적의 플러그인 조합을
-              찾아드려요.{" "}
-              <span className="text-accent">API 호출 없이 즉시</span> 분석해요.
+              {t.main.subtitle}{" "}
+              <span className="text-accent">{t.main.instantBadge}</span>
+              {aiAvailable && (
+                <span className="ml-1 text-[#A78BFA]">
+                  {" "}· ✦ AI
+                </span>
+              )}
             </p>
 
             <div className="mb-4 flex gap-1.5">
               {([
-                { key: "input" as const, label: "분석" },
-                { key: "history" as const, label: "기록" },
-                { key: "favorites" as const, label: "즐겨찾기" },
+                { key: "input" as const, label: t.main.tabAnalysis },
+                { key: "history" as const, label: t.main.tabHistory },
+                { key: "favorites" as const, label: t.main.tabFavorites },
               ]).map((tab) => (
                 <button
                   key={tab.key}
@@ -94,7 +102,11 @@ export default function PluginAdvisorApp() {
 
             {panel === "input" && (
               <>
-                <InputPanel onAnalyze={handleAnalyze} disabled={false} />
+                <InputPanel
+                  onAnalyze={handleAnalyze}
+                  disabled={false}
+                  aiAvailable={aiAvailable}
+                />
                 <div className="mt-4 flex flex-wrap gap-[5px]">
                   {Object.values(PLUGINS).map((p) => (
                     <span
@@ -112,7 +124,7 @@ export default function PluginAdvisorApp() {
                   ))}
                 </div>
                 <div className="mt-2 text-[10px] text-[#303048]">
-                  ↑ 태그 클릭하면 플러그인 상세 볼 수 있어요
+                  {t.main.tagHint}
                 </div>
               </>
             )}
@@ -127,16 +139,16 @@ export default function PluginAdvisorApp() {
 
         {step === "analyzing" && (
           <div className="py-[70px] text-center">
-            <div className="text-accent">
+            <div className={currentMode === "ai" ? "text-[#A78BFA]" : "text-accent"}>
               <span className="mx-[3px] inline-block animate-blink text-[22px]">●</span>
               <span className="mx-[3px] inline-block animate-blink text-[22px] [animation-delay:0.2s]">●</span>
               <span className="mx-[3px] inline-block animate-blink text-[22px] [animation-delay:0.4s]">●</span>
             </div>
             <div className="mt-4 font-heading text-[15px] font-extrabold">
-              분석 중...
+              {t.analysis.analyzing}
             </div>
             <div className="text-[11px] text-[#383850]">
-              키워드 매칭 & 플러그인 조합 계산 중
+              {currentMode === "ai" ? t.analysis.analyzingAiDesc : t.analysis.analyzingDesc}
             </div>
           </div>
         )}
@@ -144,8 +156,15 @@ export default function PluginAdvisorApp() {
         {step === "result" && result && (
           <div className="animate-fade-in">
             <div className="mb-4 rounded-[9px] border border-border-main bg-card px-4 py-3.5">
-              <div className="mb-1.5 text-[9px] tracking-[2px] text-accent">
-                PROJECT SUMMARY
+              <div className="mb-1.5 flex items-center gap-2">
+                <span className="text-[9px] tracking-[2px] text-accent">
+                  {t.analysis.projectSummary}
+                </span>
+                {currentMode === "ai" && (
+                  <span className="rounded-[3px] bg-[#7C3AED]/15 px-1.5 py-0.5 text-[8px] font-bold text-[#A78BFA]">
+                    AI
+                  </span>
+                )}
               </div>
               <div className="text-[13px] leading-[1.7]">{result.summary}</div>
             </div>
@@ -159,7 +178,7 @@ export default function PluginAdvisorApp() {
             )}
 
             <div className="mb-2 text-[9px] tracking-[2px] text-[#383850]">
-              추천 조합 — 원하는 것만 선택
+              {t.analysis.recommendLabel}
             </div>
 
             <div className="mb-5 flex flex-col gap-[7px]">

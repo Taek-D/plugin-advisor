@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getHistory, deleteHistory, clearHistory } from "@/lib/history";
+import { useI18n } from "@/lib/i18n";
 import type { HistoryEntry } from "@/lib/types";
 
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
 };
 
 export default function HistoryPanel({ onRestore }: Props) {
+  const { locale, t } = useI18n();
   const [entries, setEntries] = useState<HistoryEntry[]>([]);
 
   useEffect(() => {
@@ -31,10 +33,7 @@ export default function HistoryPanel({ onRestore }: Props) {
         <div className="mb-2 text-[9px] tracking-[2px] text-[#383850]">
           HISTORY
         </div>
-        <div className="text-[11px] text-text-sub">분석 기록이 없어요</div>
-        <div className="mt-1 text-[10px] text-[#303048]">
-          분석을 실행하면 자동으로 저장돼요
-        </div>
+        <div className="text-[11px] text-text-sub">{t.history.empty}</div>
       </div>
     );
   }
@@ -49,7 +48,7 @@ export default function HistoryPanel({ onRestore }: Props) {
           onClick={handleClear}
           className="rounded border border-border-main px-2 py-1 font-mono text-[9px] text-text-sub hover:border-error hover:text-error"
         >
-          전체 삭제
+          {t.history.delete}
         </button>
       </div>
       <div className="flex flex-col gap-2">
@@ -65,7 +64,9 @@ export default function HistoryPanel({ onRestore }: Props) {
               </span>
               <div className="flex items-center gap-2">
                 <span className="text-[9px] text-[#303048]">
-                  {new Date(entry.date).toLocaleDateString("ko-KR")}
+                  {new Date(entry.date).toLocaleDateString(
+                    locale === "en" ? "en-US" : "ko-KR"
+                  )}
                 </span>
                 <button
                   onClick={(e) => {
@@ -82,8 +83,8 @@ export default function HistoryPanel({ onRestore }: Props) {
               {entry.inputText.slice(0, 200)}
             </div>
             <div className="text-[10px] text-[#404050]">
-              {entry.recommendations.length}개 추천 · {entry.selectedIds.length}
-              개 선택
+              {entry.recommendations.length} {locale === "en" ? "recommended" : "개 추천"} · {entry.selectedIds.length}{" "}
+              {locale === "en" ? "selected" : "개 선택"}
             </div>
           </div>
         ))}

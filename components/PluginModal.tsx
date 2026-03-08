@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import Link from "next/link";
 import type { Plugin, VersionInfo } from "@/lib/types";
 import { PLUGINS } from "@/lib/plugins";
+import { useI18n } from "@/lib/i18n";
+import { pluginDescEn } from "@/lib/i18n/plugins-en";
 
 type Props = {
   plugin: Plugin | null;
@@ -12,6 +14,8 @@ type Props = {
 };
 
 export default function PluginModal({ plugin, onClose, version }: Props) {
+  const { locale, t } = useI18n();
+
   useEffect(() => {
     if (!plugin) return;
     const handleEsc = (e: KeyboardEvent) => {
@@ -26,6 +30,10 @@ export default function PluginModal({ plugin, onClose, version }: Props) {
   }, [plugin, onClose]);
 
   if (!plugin) return null;
+
+  const longDesc = locale === "en"
+    ? (pluginDescEn[plugin.id]?.longDesc || plugin.longDesc)
+    : plugin.longDesc;
 
   return (
     <div
@@ -60,12 +68,12 @@ export default function PluginModal({ plugin, onClose, version }: Props) {
         </div>
 
         <p className="mb-4 text-xs leading-[1.8] text-[#888]">
-          {plugin.longDesc}
+          {longDesc}
         </p>
 
         <div className="mb-3.5">
           <div className="mb-2 text-[9px] tracking-[2px] text-[#444]">
-            주요 기능
+            {t.detail.features}
           </div>
           <div className="flex flex-wrap gap-1.5">
             {plugin.features.map((f, i) => (
@@ -89,8 +97,8 @@ export default function PluginModal({ plugin, onClose, version }: Props) {
             ⚠{" "}
             <strong>
               {plugin.conflicts.map((c) => PLUGINS[c]?.name).join(", ")}
-            </strong>
-            와 함께 사용 시 충돌 가능성이 있어요.
+            </strong>{" "}
+            {t.detail.conflictWarning}
           </div>
         )}
 
@@ -102,7 +110,9 @@ export default function PluginModal({ plugin, onClose, version }: Props) {
               </span>
               {version.publishedAt && (
                 <span className="text-[#555]">
-                  {new Date(version.publishedAt).toLocaleDateString("ko-KR")}
+                  {new Date(version.publishedAt).toLocaleDateString(
+                    locale === "en" ? "en-US" : "ko-KR"
+                  )}
                 </span>
               )}
               {version.releaseUrl && (
@@ -131,14 +141,14 @@ export default function PluginModal({ plugin, onClose, version }: Props) {
               border: `1px solid ${plugin.color}40`,
             }}
           >
-            GitHub / 공식 페이지 →
+            {t.detail.githubLink}
           </a>
           <Link
             href={`/plugins/${plugin.id}`}
             onClick={onClose}
             className="block rounded-md border border-border-main p-2 text-center text-[10px] text-text-sub hover:border-[#30306A] hover:text-[#CCC]"
           >
-            상세 페이지 보기 →
+            {t.detail.detailPage}
           </Link>
         </div>
       </div>

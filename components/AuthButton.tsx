@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type { User } from "@supabase/supabase-js";
+import { useI18n } from "@/lib/i18n";
 
 function getClient() {
   if (
@@ -14,6 +15,7 @@ function getClient() {
 }
 
 export default function AuthButton() {
+  const { t } = useI18n();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -79,7 +81,7 @@ export default function AuthButton() {
           onClick={handleLogout}
           className="rounded border border-border-main px-2 py-1 font-mono text-[9px] text-text-sub hover:border-error hover:text-error"
         >
-          Logout
+          {t.auth.logout}
         </button>
       </div>
     );
@@ -90,7 +92,7 @@ export default function AuthButton() {
       onClick={handleLogin}
       className="rounded-[5px] border border-border-main px-2.5 py-1.5 font-mono text-[10px] text-text-sub hover:border-[#30306A] hover:text-[#CCC]"
     >
-      GitHub Login
+      {t.auth.login}
     </button>
   );
 }

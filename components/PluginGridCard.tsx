@@ -1,24 +1,18 @@
+"use client";
+
 import Link from "next/link";
 import type { Plugin } from "@/lib/types";
-
-const CATEGORY_LABELS: Record<string, string> = {
-  orchestration: "오케스트레이션",
-  workflow: "워크플로",
-  "code-quality": "코드 품질",
-  testing: "테스팅",
-  documentation: "문서화",
-  data: "데이터",
-  security: "보안",
-  integration: "통합",
-  "ui-ux": "UI/UX",
-  devops: "DevOps",
-};
+import { useI18n } from "@/lib/i18n";
+import { pluginDescEn } from "@/lib/i18n/plugins-en";
 
 type Props = {
   plugin: Plugin;
 };
 
 export default function PluginGridCard({ plugin }: Props) {
+  const { locale, t } = useI18n();
+  const desc = locale === "en" ? (pluginDescEn[plugin.id]?.desc || plugin.desc) : plugin.desc;
+
   return (
     <Link
       href={`/plugins/${plugin.id}`}
@@ -35,14 +29,14 @@ export default function PluginGridCard({ plugin }: Props) {
           {plugin.tag}
         </span>
         <span className="rounded-[3px] border border-border-main px-1.5 py-0.5 text-[8px] text-text-sub">
-          {CATEGORY_LABELS[plugin.category] ?? plugin.category}
+          {t.categories[plugin.category] ?? plugin.category}
         </span>
       </div>
       <h3 className="mb-1 font-heading text-xs font-extrabold text-[#CCC] group-hover:text-white">
         {plugin.name}
       </h3>
       <p className="mb-2.5 text-[11px] leading-[1.7] text-[#666]">
-        {plugin.desc}
+        {desc}
       </p>
       <div className="flex flex-wrap gap-1">
         {plugin.features.slice(0, 3).map((f, i) => (
