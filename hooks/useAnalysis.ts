@@ -32,27 +32,54 @@ export function useAnalysis() {
       setStep("analyzing");
       trackEvent("analysis_start", { mode: analysisMode, inputMode: mode });
 
-      let res: AnalysisResult;
-      let effectiveMode: AnalysisMode = analysisMode;
+      await new Promise((r) => setTimeout(r, 500));
+
+      let res = recommend(content);
+      let effectiveMode: AnalysisMode = "keyword";
 
       if (analysisMode === "ai") {
         try {
           const response = await fetch("/api/analyze", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text: content }),
+            body: JSON.stringify({
+              text: content,
+              candidatePluginIds: res.recommendations.map((item) => item.pluginId),
+            }),
           });
           const data = await response.json();
           if (!response.ok) throw new Error(data.error);
-          res = data;
+
+          type AiRecommendation = {
+            pluginId: string;
+            reason: string;
+            matchedKeywords?: string[];
+          };
+
+          const reasonById = new Map<string, AiRecommendation>(
+            (data.recommendations ?? []).map(
+              (item: AiRecommendation) => [
+                item.pluginId,
+                item,
+              ]
+            )
+          );
+
+          res = {
+            ...res,
+            summary: data.summary || res.summary,
+            warning: data.warning ?? res.warning,
+            recommendations: res.recommendations.map((item) => ({
+              ...item,
+              reason: reasonById.get(item.pluginId)?.reason || item.reason,
+              matchedKeywords:
+                reasonById.get(item.pluginId)?.matchedKeywords || item.matchedKeywords,
+            })),
+          };
+          effectiveMode = "ai";
         } catch {
-          // Fallback to keyword analysis
           effectiveMode = "keyword";
-          res = recommend(content);
         }
-      } else {
-        await new Promise((r) => setTimeout(r, 700));
-        res = recommend(content);
       }
 
       setCurrentMode(effectiveMode);
@@ -76,6 +103,11 @@ export function useAnalysis() {
         warning: res.warning,
         recommendations: res.recommendations,
         selectedIds: res.recommendations.map((r) => r.pluginId),
+        recommendedPackId: res.recommendedPackId,
+        confidenceLevel: res.confidenceLevel,
+        preflightChecks: res.preflightChecks,
+        setupWarnings: res.setupWarnings,
+        notRecommended: res.notRecommended,
       });
 
       return res;
@@ -91,6 +123,11 @@ export function useAnalysis() {
             recommendations: entry.recommendations,
             warning: entry.warning ?? null,
             inputText: entry.inputText,
+            recommendedPackId: entry.recommendedPackId,
+            confidenceLevel: entry.confidenceLevel,
+            preflightChecks: entry.preflightChecks,
+            setupWarnings: entry.setupWarnings,
+            notRecommended: entry.notRecommended,
           }
         : recommend(entry.inputText);
 

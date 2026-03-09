@@ -10,6 +10,35 @@ export type PluginCategory =
   | "ui-ux"
   | "devops";
 
+export type OfficialStatus = "official" | "community" | "unknown";
+export type VerificationStatus = "verified" | "partial" | "unverified";
+export type PluginDifficulty = "beginner" | "intermediate" | "advanced";
+export type PlatformSupport = "windows" | "mac" | "linux";
+export type InstallMode = "safe-copy" | "manual-required" | "external-setup";
+export type MaintenanceStatus = "active" | "unclear" | "stale";
+
+export type PreflightCheck = {
+  id: string;
+  label: string;
+  labelEn: string;
+  required: boolean;
+  pluginId?: string;
+};
+
+export type SetupWarning = {
+  id: string;
+  message: string;
+  messageEn: string;
+  level: "info" | "warning";
+  pluginId?: string;
+};
+
+export type NotRecommendedPlugin = {
+  pluginId: string;
+  reason: string;
+  reasonEn: string;
+};
+
 export type Plugin = {
   id: string;
   name: string;
@@ -24,6 +53,16 @@ export type Plugin = {
   features: string[];
   conflicts: string[];
   keywords: string[];
+  officialStatus: OfficialStatus;
+  verificationStatus: VerificationStatus;
+  difficulty: PluginDifficulty;
+  prerequisites: string[];
+  requiredSecrets: string[];
+  platformSupport: PlatformSupport[];
+  installMode: InstallMode;
+  maintenanceStatus: MaintenanceStatus;
+  bestFor: string[];
+  avoidFor: string[];
 };
 
 export type Recommendation = {
@@ -38,6 +77,11 @@ export type AnalysisResult = {
   recommendations: Recommendation[];
   warning: string | null;
   inputText: string;
+  recommendedPackId?: string;
+  confidenceLevel?: "high" | "medium" | "low";
+  preflightChecks?: PreflightCheck[];
+  setupWarnings?: SetupWarning[];
+  notRecommended?: NotRecommendedPlugin[];
   complements?: Array<{ pluginId: string; reason: string }>;
   redundancies?: Array<{ ids: string[]; msg: string }>;
 };
@@ -57,6 +101,11 @@ export type HistoryEntry = {
   warning?: string | null;
   recommendations: Recommendation[];
   selectedIds: string[];
+  recommendedPackId?: string;
+  confidenceLevel?: "high" | "medium" | "low";
+  preflightChecks?: PreflightCheck[];
+  setupWarnings?: SetupWarning[];
+  notRecommended?: NotRecommendedPlugin[];
 };
 
 export type Favorite = {
@@ -75,3 +124,13 @@ export type VersionInfo = {
 
 export type AnalysisMode = "keyword" | "ai";
 
+export type LeadRequest = {
+  name: string;
+  contact: string;
+  useCase: string;
+  currentProblem: string;
+  desiredPackage:
+    | "personal-setup"
+    | "project-package"
+    | "team-package";
+};

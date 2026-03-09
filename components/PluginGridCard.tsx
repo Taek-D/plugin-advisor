@@ -34,6 +34,15 @@ export default function PluginGridCard({ plugin }: Props) {
           <Badge variant="outline">
             {t.categories[plugin.category] ?? plugin.category}
           </Badge>
+          <Badge variant="outline" className="text-primary">
+            {plugin.installMode === "safe-copy"
+              ? locale === "en"
+                ? "copy-safe"
+                : "검증된 설치"
+              : locale === "en"
+                ? "manual setup"
+                : "수동 설정"}
+          </Badge>
         </div>
         <h3 className="mb-1 font-heading text-sm font-semibold text-muted-foreground group-hover:text-foreground">
           {plugin.name}

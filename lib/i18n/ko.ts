@@ -9,7 +9,7 @@ export const ko: Translations = {
   },
   main: {
     title: "어떤 걸 만들고 있나요?",
-    subtitle: "PRD, README, 프로젝트 설명을 넣으면 최적의 플러그인 조합을 찾아드려요.",
+    subtitle: "프리셋 팩을 고르거나 프로젝트 설명을 넣으면, 처음 세팅을 덜 헤매게 해주는 스타터 세트를 추천해드려요.",
     instantBadge: "API 호출 없이 즉시",
     tabAnalysis: "분석",
     tabHistory: "기록",

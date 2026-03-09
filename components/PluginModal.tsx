@@ -71,6 +71,19 @@ export default function PluginModal({ plugin, onClose, version }: Props) {
             >
               {plugin.tag}
             </Badge>
+            <Badge variant="outline" className="text-primary">
+              {plugin.installMode === "safe-copy"
+                ? locale === "en"
+                  ? "Verified copy-safe"
+                  : "검증된 설치"
+                : plugin.installMode === "external-setup"
+                  ? locale === "en"
+                    ? "Account setup"
+                    : "계정 연결 필요"
+                  : locale === "en"
+                    ? "Manual review"
+                    : "수동 확인 필요"}
+            </Badge>
           </div>
         </DialogHeader>
 
@@ -81,6 +94,11 @@ export default function PluginModal({ plugin, onClose, version }: Props) {
         <div className="mb-3.5">
           <div className="mb-2 text-xs font-medium uppercase tracking-wide text-text-dim">
             {t.detail.features}
+          </div>
+          <div className="mb-2 flex flex-wrap gap-1.5">
+            <Badge variant="outline">{locale === "en" ? plugin.difficulty : `난이도 ${plugin.difficulty}`}</Badge>
+            <Badge variant="outline">{locale === "en" ? plugin.verificationStatus : `검증 ${plugin.verificationStatus}`}</Badge>
+            <Badge variant="outline">{locale === "en" ? plugin.officialStatus : `출처 ${plugin.officialStatus}`}</Badge>
           </div>
           <div className="flex flex-wrap gap-1.5">
             {plugin.features.map((f, i) => (

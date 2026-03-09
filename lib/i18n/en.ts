@@ -10,7 +10,7 @@ export const en: Translations = {
   main: {
     title: "What are you building?",
     subtitle:
-      "Paste your PRD, README, or project description to find the best plugin combo.",
+      "Choose a starter pack or describe your project to get a safer first-time setup recommendation.",
     instantBadge: "Instant analysis, no API calls",
     tabAnalysis: "Analyze",
     tabHistory: "History",

@@ -26,11 +26,12 @@ Respond in valid JSON only (no markdown, no code fences). Format:
 }
 
 Rules:
-- Recommend 3-5 plugins max, sorted by relevance
+- Recommend only from the provided candidate list when one is supplied
+- Keep recommendations to 2-3 plugins max
 - Use Korean for summary, reason, warning
 - Only use plugin IDs from the available list
 - matchedKeywords should reflect actual concepts found in the input
-- If omc and superpowers are both recommended, note potential conflict in warning`;
+- Focus on explaining a safe starter setup rather than maximizing plugin count`;
 
 export async function POST(req: NextRequest) {
   try {
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { text } = await req.json();
+    const { text, candidatePluginIds } = await req.json();
     if (!text || typeof text !== "string") {
       return NextResponse.json(
         { error: "분석할 텍스트가 필요해요." },
@@ -50,15 +51,24 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const allowedPluginIds = Array.isArray(candidatePluginIds)
+      ? candidatePluginIds.filter((pluginId): pluginId is string => typeof pluginId === "string")
+      : [];
+    const availablePlugins = (allowedPluginIds.length > 0
+      ? allowedPluginIds.map((pluginId) => PLUGINS[pluginId]).filter(Boolean)
+      : Object.values(PLUGINS))
+      .map((plugin) => `- ${plugin.id}: ${plugin.name} (${plugin.category}) — ${plugin.desc}`)
+      .join("\n");
+
     const client = new Anthropic({ apiKey });
     const message = await client.messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 1024,
-      system: SYSTEM_PROMPT,
+      system: `${SYSTEM_PROMPT}\n\nAllowed plugins for this request:\n${availablePlugins}`,
       messages: [
         {
           role: "user",
-          content: `다음 프로젝트를 분석하고 최적의 Claude Code 플러그인을 추천해줘:\n\n${text.slice(0, 4000)}`,
+          content: `다음 프로젝트를 분석하고, 초보자도 이해하기 쉬운 한국어 설명으로 안전한 스타터 세트를 설명해줘:\n\n${text.slice(0, 4000)}`,
         },
       ],
     });
@@ -71,7 +81,9 @@ export async function POST(req: NextRequest) {
     const parsed = JSON.parse(content.text);
 
     // Validate plugin IDs
-    const validIds = new Set(Object.keys(PLUGINS));
+    const validIds = new Set(
+      allowedPluginIds.length > 0 ? allowedPluginIds : Object.keys(PLUGINS)
+    );
     const validRecs = parsed.recommendations.filter(
       (r: { pluginId: string }) => validIds.has(r.pluginId)
     );

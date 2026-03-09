@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-
 export default function Nav() {
   const pathname = usePathname();
   const { locale, t, setLocale } = useI18n();
@@ -17,53 +16,89 @@ export default function Nav() {
     { href: "/", label: t.nav.home },
     { href: "/advisor", label: t.nav.advisor },
     { href: "/plugins", label: t.nav.plugins },
+    {
+      href: "/services",
+      label: locale === "en" ? "Setup support" : "세팅 지원",
+    },
   ];
 
   return (
-    <nav className="flex items-center justify-between border-b border-border px-4 py-4 sm:px-6">
-      <div className="flex items-center gap-3 overflow-hidden sm:gap-4">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="h-2 w-2 flex-shrink-0 rounded-full bg-primary" />
-          <span className="font-heading text-xs font-bold tracking-wider sm:text-sm">
-            PLUGIN ADVISOR
-          </span>
-        </Link>
-        <Badge variant="outline" className="hidden sm:inline-flex">
-          {Object.keys(PLUGINS).length} {t.nav.pluginCount}
-        </Badge>
-        <div className="flex gap-0.5 sm:gap-1">
-          {links.map((link) => {
-            const isActive =
-              link.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(link.href);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "cursor-pointer rounded-sm px-3 py-2.5 text-sm transition-colors sm:px-2.5 sm:py-1.5 sm:text-xs",
-                  isActive
-                    ? "bg-card text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
+    <nav className="sticky top-0 z-50 border-b border-white/10 bg-background/72 backdrop-blur-xl">
+      <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center justify-between gap-3 overflow-hidden sm:gap-4">
+            <Link href="/" className="flex min-w-0 items-center gap-3">
+              <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10">
+                <div className="h-2.5 w-2.5 rounded-full bg-primary" />
+              </div>
+              <div className="min-w-0">
+                <div className="font-heading text-xs font-bold tracking-[0.24em] text-foreground sm:text-sm">
+                  PLUGIN ADVISOR
+                </div>
+                <div className="hidden text-[11px] text-muted-foreground sm:block">
+                  {locale === "en"
+                    ? "Starter setup, not plugin clutter"
+                    : "플러그인 과시보다 세팅 성공"}
+                </div>
+              </div>
+            </Link>
+
+            <Button
+              variant="outline"
+              size="xs"
+              onClick={() => setLocale(locale === "ko" ? "en" : "ko")}
+              aria-label={locale === "ko" ? "Switch to English" : "영어에서 한국어로 전환"}
+              className="border-white/10 bg-card/55 text-muted-foreground hover:border-primary hover:text-primary md:hidden"
+            >
+              {locale === "ko" ? "EN" : "KO"}
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-2 md:flex-1 md:justify-end">
+            <div className="no-scrollbar -mx-1 overflow-x-auto px-1 md:mx-0 md:px-0">
+              <div className="inline-flex min-w-max rounded-full border border-white/10 bg-card/55 p-1">
+                {links.map((link) => {
+                  const isActive =
+                    link.href === "/"
+                      ? pathname === "/"
+                      : pathname.startsWith(link.href);
+
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={cn(
+                        "cursor-pointer whitespace-nowrap rounded-full px-3 py-2 text-[11px] font-medium transition-colors md:text-xs",
+                        isActive
+                          ? "bg-primary/12 text-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+
+            <Badge
+              variant="outline"
+              className="hidden border-white/10 bg-card/50 text-muted-foreground md:inline-flex"
+            >
+              {Object.keys(PLUGINS).length} {t.nav.pluginCount}
+            </Badge>
+
+            <Button
+              variant="outline"
+              size="xs"
+              onClick={() => setLocale(locale === "ko" ? "en" : "ko")}
+              aria-label={locale === "ko" ? "Switch to English" : "영어에서 한국어로 전환"}
+              className="hidden border-white/10 bg-card/55 text-muted-foreground hover:border-primary hover:text-primary md:inline-flex"
+            >
+              {locale === "ko" ? "EN" : "KO"}
+            </Button>
+          </div>
         </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="xs"
-          onClick={() => setLocale(locale === "ko" ? "en" : "ko")}
-          aria-label={locale === "ko" ? "Switch to English" : "한국어로 전환"}
-          className="text-muted-foreground hover:border-primary hover:text-primary"
-        >
-          {locale === "ko" ? "EN" : "KO"}
-        </Button>
       </div>
     </nav>
   );

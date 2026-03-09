@@ -8,6 +8,10 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     desc: "Quick codebase understanding & modification. Low learning curve, instant impact.",
     longDesc: "Superpowers instantly enhances Claude Code's core capabilities. It helps quickly understand existing codebases and minimizes friction in file navigation, search, and modification. The biggest advantage is the immediate impact with zero complex setup. Especially strong for scripts, data analysis, and automation tasks.",
   },
+  "agency-agents": {
+    desc: "A roster of specialist AI agents across engineering, design, marketing, PM, testing, and support.",
+    longDesc: "The Agency is a curated collection of specialist AI agents you can install or reference in Claude Code. It covers frontend, backend, design, marketing, project management, testing, support, and more, making it useful when you want role-based collaboration instead of one generic assistant. It is more manual to set up than a one-line plugin install, so it fits better for advanced or team-style workflows.",
+  },
   "bkit-starter": {
     desc: "Beginner-friendly Claude Code setup guide. First project creation, learning curriculum, and auto-config generation.",
     longDesc: "bkit Starter is an onboarding tool for Claude Code beginners. It guides you step by step through creating your first project, a structured learning curriculum, auto-generating Claude Code configs for existing projects, and upgrading settings. The perfect starting point for vibe coding newcomers.",
@@ -23,6 +27,14 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
   taskmaster: {
     desc: "PRD-based automatic task breakdown & dependency management. Core of AI agent workflows.",
     longDesc: "Taskmaster AI automatically breaks down PRDs or requirement documents into detailed tasks and manages dependency graphs. AI determines each task's priority and complexity to suggest optimal execution order. Integrating with Claude Code enables automatic next-task recommendations and real-time progress tracking.",
+  },
+  gsd: {
+    desc: "A spec-driven workflow system focused on roadmap execution and context quality over long builds.",
+    longDesc: "Get Shit Done (GSD) is a workflow system for Claude Code, Codex, and similar runtimes that pushes spec-driven development from project questions to execution and verification. It helps reduce context drift by organizing requirements, roadmap phases, and execution checkpoints into a repeatable flow. It fits especially well when you are building against PRDs, milestones, and longer-term delivery plans.",
+  },
+  fireauto: {
+    desc: "A command-driven Claude Code automation pack for SEO, security, PRD writing, UI upgrades, and launch prep.",
+    longDesc: "fireauto bundles repeated Claude Code workflows into ready-made commands. It can help with first-time setup, planning, Reddit-style market research, SEO checks, security reviews, design improvements, and looped execution. It is especially useful for solo builders who want a more practical command layer around service launch work.",
   },
   "sequential-thinking": {
     desc: "Step-by-step problem decomposition for complex thinking. Powerful for architecture design and debugging.",
@@ -137,10 +149,13 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
 export const reasonsEn: Record<string, string> = {
   omc: "Complex multi-agent tasks detected. 32 specialized agents process in parallel to accelerate development.",
   superpowers: "Script or automation tasks included. Optimized for quickly understanding and modifying existing code.",
+  "agency-agents": "Role-based specialist collaboration is important here. The Agency is useful when you want frontend, backend, marketing, and PM-style personas to work as a structured team.",
   "bkit-starter": "Perfect for Claude Code beginners. Guides you step by step from first project setup to learning.",
   bkit: "Project needs PRD or design-based development. PDCA workflow manages from planning to verification systematically.",
   ralph: "Project has many repetitive implementation tasks. Auto-loops until PRD completion with clean git history.",
   taskmaster: "Project needs task decomposition and management. Auto-breaks PRDs into sub-tasks and tracks dependencies.",
+  gsd: "A roadmap and spec-driven workflow is important here. GSD helps stabilize long-running builds with structured planning, execution, and verification.",
+  fireauto: "This looks like a launch-oriented workflow with SEO, security, research, or UI polish. fireauto bundles those practical commands into one plugin set.",
   "sequential-thinking": "Complex reasoning or design needed. Step-by-step thinking improves architecture quality.",
   todoist: "Project includes task management. Todoist integration enables real-time dev task tracking.",
   linear: "Team project management needed. Linear issue tracking connects development and project management.",

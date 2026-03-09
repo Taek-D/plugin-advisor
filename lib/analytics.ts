@@ -1,4 +1,5 @@
 type EventName =
+  | "landing_view"
   | "analysis_start"
   | "analysis_complete"
   | "script_copy"
@@ -6,7 +7,12 @@ type EventName =
   | "onboarding_complete"
   | "favorite_save"
   | "plugin_detail_view"
-  | "preset_select";
+  | "preset_select"
+  | "preflight_checked"
+  | "install_complete"
+  | "lead_submit"
+  | "service_cta_click"
+  | "guide_view";
 
 type EventPayload = Record<string, string | number | boolean>;
 

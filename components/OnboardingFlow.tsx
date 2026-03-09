@@ -19,6 +19,7 @@ import { PLUGINS } from "@/lib/plugins";
 import { useI18n } from "@/lib/i18n";
 import { pluginDescEn } from "@/lib/i18n/plugins-en";
 import { PACK_FIRST_RUN } from "@/lib/first-run-tips";
+import { getManualSetupPlugins, getSafeCopyPlugins } from "@/lib/setup";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -42,7 +43,9 @@ export default function OnboardingFlow({ pack, onBack }: Props) {
   const plugins = pack.pluginIds.map((id) => PLUGINS[id]).filter(Boolean);
   const packName = locale === "en" ? pack.nameEn : pack.name;
 
-  const allCommands = plugins.flatMap((p) => p.install);
+  const safePlugins = getSafeCopyPlugins(pack.pluginIds);
+  const manualPlugins = getManualSetupPlugins(pack.pluginIds);
+  const allCommands = safePlugins.flatMap((p) => p.install);
   const totalCmds = allCommands.length;
   const doneCmds = checkedCmds.size;
 
@@ -226,7 +229,7 @@ export default function OnboardingFlow({ pack, onBack }: Props) {
 
           {/* Commands per plugin */}
           <div className="mb-4 space-y-2.5">
-            {plugins.map((plugin) => (
+            {safePlugins.map((plugin) => (
               <div
                 key={plugin.id}
                 className="rounded-md border border-border bg-background p-3"
@@ -284,6 +287,51 @@ export default function OnboardingFlow({ pack, onBack }: Props) {
               </div>
             ))}
           </div>
+
+          {manualPlugins.length > 0 && (
+            <Card className="mb-4 p-3">
+              <div className="mb-2 text-xs font-semibold text-foreground">
+                {locale === "en"
+                  ? "Manual or account setup required"
+                  : "수동 확인 또는 계정 연결이 필요한 플러그인"}
+              </div>
+              <div className="space-y-3">
+                {manualPlugins.map((plugin) => (
+                  <div
+                    key={plugin.id}
+                    className="rounded-md border border-border bg-background p-3"
+                  >
+                    <div className="mb-1.5 flex flex-wrap items-center gap-2">
+                      <Badge
+                        className="border-transparent"
+                        style={{ color: plugin.color, background: plugin.color + "18" }}
+                      >
+                        {plugin.tag}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">{plugin.name}</span>
+                    </div>
+                    <div className="space-y-1.5">
+                      {plugin.install.map((cmd, i) => (
+                        <div key={i} className="rounded-md border border-border px-2.5 py-2">
+                          <code className="block overflow-x-auto text-xs text-muted-foreground">{cmd}</code>
+                        </div>
+                      ))}
+                    </div>
+                    {(plugin.prerequisites.length > 0 || plugin.requiredSecrets.length > 0) && (
+                      <div className="mt-2 space-y-1 text-xs text-muted-foreground">
+                        {plugin.prerequisites.map((item) => (
+                          <div key={`${plugin.id}-${item}`}>• {item}</div>
+                        ))}
+                        {plugin.requiredSecrets.map((item) => (
+                          <div key={`${plugin.id}-${item}`}>• {item}</div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </Card>
+          )}
 
           {/* Troubleshooting section */}
           <Card className="mb-4">

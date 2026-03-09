@@ -24,7 +24,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Plugin Advisor — Claude Code",
   description:
-    "PRD / README / GitHub URL을 입력하면 최적의 Claude Code 플러그인 조합을 추천해드려요.",
+    "Claude Code 첫 세팅을 덜 헤매게 도와주는 검증된 스타터 스택 설치 어드바이저.",
 };
 
 export const viewport: Viewport = {

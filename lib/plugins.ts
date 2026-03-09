@@ -1,6 +1,231 @@
 import type { Plugin } from "./types";
 
-export const PLUGINS: Record<string, Plugin> = {
+type PluginOperationalFields = Pick<
+  Plugin,
+  | "officialStatus"
+  | "verificationStatus"
+  | "difficulty"
+  | "prerequisites"
+  | "requiredSecrets"
+  | "platformSupport"
+  | "installMode"
+  | "maintenanceStatus"
+  | "bestFor"
+  | "avoidFor"
+>;
+
+type PluginSeed = Omit<
+  Plugin,
+  keyof PluginOperationalFields
+>;
+
+const DEFAULT_PLUGIN_FIELDS: PluginOperationalFields = {
+  officialStatus: "community",
+  verificationStatus: "partial",
+  difficulty: "intermediate",
+  prerequisites: [],
+  requiredSecrets: [],
+  platformSupport: ["windows", "mac", "linux"],
+  installMode: "safe-copy",
+  maintenanceStatus: "active",
+  bestFor: [],
+  avoidFor: [],
+};
+
+const PLUGIN_FIELD_OVERRIDES: Partial<
+  Record<string, Partial<PluginOperationalFields>>
+> = {
+  omc: {
+    difficulty: "advanced",
+    verificationStatus: "partial",
+    bestFor: ["장기 프로젝트", "멀티 에이전트 자동화"],
+    avoidFor: ["Claude Code 첫 설치 직후", "가벼운 개인 실험"],
+  },
+  superpowers: {
+    verificationStatus: "verified",
+    difficulty: "beginner",
+    bestFor: ["기존 코드 읽기", "빠른 생산성 향상"],
+  },
+  "bkit-starter": {
+    verificationStatus: "verified",
+    difficulty: "beginner",
+    bestFor: ["Claude Code 첫 사용", "설정 가이드"],
+  },
+  bkit: {
+    verificationStatus: "verified",
+    difficulty: "intermediate",
+    bestFor: ["PRD 기반 구현", "체계적인 워크플로"],
+  },
+  context7: {
+    verificationStatus: "verified",
+    difficulty: "beginner",
+    bestFor: ["라이브러리 사용", "공식 문서 확인"],
+  },
+  repomix: {
+    verificationStatus: "verified",
+    difficulty: "beginner",
+    bestFor: ["대형 코드베이스 이해", "온보딩"],
+  },
+  playwright: {
+    officialStatus: "official",
+    verificationStatus: "verified",
+    difficulty: "beginner",
+    bestFor: ["웹앱 QA", "브라우저 테스트"],
+  },
+  security: {
+    officialStatus: "official",
+    verificationStatus: "verified",
+    difficulty: "beginner",
+    bestFor: ["인증/결제 앱", "보안 점검"],
+  },
+  firecrawl: {
+    officialStatus: "official",
+    installMode: "external-setup",
+    requiredSecrets: ["Firecrawl API key"],
+    bestFor: ["웹 데이터 수집", "크롤링 자동화"],
+  },
+  exa: {
+    officialStatus: "official",
+    installMode: "external-setup",
+    requiredSecrets: ["Exa API key"],
+    bestFor: ["기술 조사", "시맨틱 검색"],
+  },
+  tavily: {
+    officialStatus: "official",
+    installMode: "external-setup",
+    requiredSecrets: ["Tavily API key"],
+  },
+  perplexity: {
+    officialStatus: "official",
+    installMode: "external-setup",
+    requiredSecrets: ["Perplexity API key"],
+  },
+  "brave-search": {
+    officialStatus: "official",
+    installMode: "external-setup",
+    requiredSecrets: ["Brave Search API key"],
+  },
+  vercel: {
+    officialStatus: "official",
+    installMode: "external-setup",
+    requiredSecrets: ["Vercel account access"],
+    bestFor: ["Next.js 배포", "프리뷰 배포"],
+  },
+  supabase: {
+    officialStatus: "official",
+    installMode: "external-setup",
+    requiredSecrets: ["Supabase project access"],
+    bestFor: ["백엔드 시작", "Auth + DB 구축"],
+  },
+  github: {
+    officialStatus: "official",
+    installMode: "external-setup",
+    requiredSecrets: ["GitHub token"],
+  },
+  slack: {
+    officialStatus: "official",
+    installMode: "external-setup",
+    requiredSecrets: ["Slack workspace token"],
+  },
+  sentry: {
+    officialStatus: "official",
+    installMode: "external-setup",
+    requiredSecrets: ["Sentry auth token"],
+  },
+  notion: {
+    officialStatus: "official",
+    installMode: "external-setup",
+    requiredSecrets: ["Notion integration token"],
+  },
+  figma: {
+    officialStatus: "official",
+    difficulty: "advanced",
+    installMode: "external-setup",
+    verificationStatus: "partial",
+    requiredSecrets: ["Figma API key"],
+  },
+  cloudflare: {
+    officialStatus: "official",
+    difficulty: "advanced",
+    installMode: "external-setup",
+    requiredSecrets: ["Cloudflare API token"],
+  },
+  docker: {
+    officialStatus: "official",
+    difficulty: "advanced",
+    installMode: "external-setup",
+    prerequisites: ["Docker Desktop 또는 Docker Engine"],
+  },
+  postgres: {
+    difficulty: "advanced",
+    installMode: "manual-required",
+    prerequisites: ["접속할 PostgreSQL 연결 문자열"],
+    requiredSecrets: ["Database connection string"],
+    bestFor: ["로컬 DB 디버깅", "SQL 검증"],
+    avoidFor: ["Claude Code 첫 사용"],
+  },
+  filesystem: {
+    difficulty: "advanced",
+    installMode: "manual-required",
+    prerequisites: ["접근 허용 디렉토리 경로"],
+    bestFor: ["파일 자동화", "샌드박스 작업"],
+    avoidFor: ["입문자 기본 세팅"],
+  },
+  uiux: {
+    officialStatus: "unknown",
+    verificationStatus: "unverified",
+    difficulty: "advanced",
+    installMode: "manual-required",
+    maintenanceStatus: "unclear",
+    bestFor: ["디자인 실험"],
+    avoidFor: ["검증된 입문자 세트", "설치 성공률 우선 흐름"],
+  },
+  taskmaster: {
+    verificationStatus: "verified",
+    difficulty: "intermediate",
+    bestFor: ["PRD 분해", "태스크 관리"],
+  },
+  gsd: {
+    verificationStatus: "verified",
+    difficulty: "intermediate",
+    installMode: "safe-copy",
+    bestFor: ["스펙 기반 개발", "로드맵 중심 실행", "장기 프로젝트"],
+    avoidFor: ["가벼운 단발성 실험"],
+  },
+  fireauto: {
+    verificationStatus: "verified",
+    difficulty: "beginner",
+    installMode: "safe-copy",
+    bestFor: ["Claude Code 첫 세팅", "서비스 런칭 전 점검", "SEO/보안/UI 자동화"],
+  },
+  "agency-agents": {
+    verificationStatus: "partial",
+    difficulty: "intermediate",
+    installMode: "manual-required",
+    prerequisites: ["Git으로 저장소를 내려받고 ~/.claude/agents 에 복사하거나 install.sh 실행"],
+    bestFor: ["역할 분리된 AI 팀", "전문가 페르소나 기반 협업"],
+    avoidFor: ["원클릭 스타터 세팅", "설치 직후 가장 첫 플러그인"],
+  },
+  "sequential-thinking": {
+    difficulty: "advanced",
+    bestFor: ["복잡한 추론", "아키텍처 검토"],
+    avoidFor: ["첫 세팅 직후 바로 쓰는 흐름"],
+  },
+  linear: {
+    installMode: "external-setup",
+    requiredSecrets: ["Linear API access"],
+  },
+  todoist: {
+    installMode: "external-setup",
+    requiredSecrets: ["Todoist API token"],
+  },
+  memory: {
+    difficulty: "intermediate",
+    bestFor: ["장기 프로젝트", "세션 간 컨텍스트 유지"],
+  },
+};
+
+const CORE_PLUGINS: Record<string, PluginSeed> = {
   // ─────────────────────────────────────────────
   // Orchestration
   // ─────────────────────────────────────────────
@@ -59,6 +284,35 @@ export const PLUGINS: Record<string, Plugin> = {
       "스크립트", "script", "자동화", "기존 코드", "리팩터", "refactor",
       "수정", "fix", "간단", "분석", "analysis", "데이터", "data", "python",
       "sql", "automation",
+    ],
+  },
+  "agency-agents": {
+    id: "agency-agents",
+    name: "The Agency",
+    tag: "AGCY",
+    color: "#8B5CF6",
+    category: "orchestration",
+    githubRepo: "msitarzewski/agency-agents",
+    desc: "프론트엔드, 백엔드, 마케팅, PM 등 역할별 AI 전문가 에이전트 묶음. 팀처럼 역할을 나눠 쓰고 싶을 때 좋아요.",
+    longDesc:
+      "The Agency는 Claude Code에서 참고하거나 설치해서 쓸 수 있는 역할별 AI 전문가 에이전트 모음이에요. 프론트엔드, 백엔드, 디자인, 마케팅, 프로젝트 관리, 테스트, 지원 등 여러 분야의 에이전트가 정리돼 있어서, 하나의 범용 프롬프트보다 역할을 분리해 작업하고 싶은 팀이나 고급 사용자에게 잘 맞아요. 다만 플러그인 마켓 한 줄 설치보다는 파일 복사나 스크립트 실행이 필요해서 수동 설정 성격이 강해요.",
+    url: "https://github.com/msitarzewski/agency-agents",
+    install: [
+      "git clone https://github.com/msitarzewski/agency-agents.git",
+      "cd agency-agents",
+      "./scripts/install.sh --tool claude-code",
+    ],
+    features: [
+      "61개+ 전문 에이전트",
+      "역할별 페르소나",
+      "멀티툴 설치 스크립트",
+      "마케팅/PM/디자인까지 확장",
+    ],
+    conflicts: [],
+    keywords: [
+      "agency", "agents", "specialist", "specialists", "frontend", "backend",
+      "marketing", "project management", "pm", "design", "testing", "team",
+      "persona", "workflow", "orchestrator", "multi-agent", "roster",
     ],
   },
 
@@ -164,6 +418,61 @@ export const PLUGINS: Record<string, Plugin> = {
       "task", "태스크", "prd", "계획", "plan", "breakdown", "분해",
       "의존성", "dependency", "프로젝트 관리", "project management",
       "우선순위", "priority", "milestone", "마일스톤",
+    ],
+  },
+  gsd: {
+    id: "gsd",
+    name: "Get Shit Done",
+    tag: "GSD",
+    color: "#EF4444",
+    category: "workflow",
+    githubRepo: "gsd-build/get-shit-done",
+    desc: "스펙 기반 개발과 컨텍스트 엔지니어링에 집중한 워크플로 시스템. 장기 프로젝트 품질 유지에 강해요.",
+    longDesc:
+      "Get Shit Done(GSD)는 Claude Code, Codex 같은 런타임에서 스펙 기반 개발을 일관되게 밀어주는 워크플로 시스템이에요. 프로젝트 초기 질문, 요구사항 정리, 로드맵, 단계별 실행과 검증을 한 흐름으로 묶어서 컨텍스트가 흐트러지는 문제를 줄여줘요. PRD, roadmap, phase 중심으로 길게 가져가는 프로젝트에 특히 잘 맞아요.",
+    url: "https://github.com/gsd-build/get-shit-done",
+    install: [
+      "npx get-shit-done-cc@latest",
+    ],
+    features: [
+      "스펙 기반 개발 흐름",
+      "phase/roadmap 중심 실행",
+      "컨텍스트 엔지니어링",
+      "다중 런타임 지원",
+    ],
+    conflicts: [],
+    keywords: [
+      "spec", "spec-driven", "명세", "요구사항", "requirements", "roadmap",
+      "phase", "milestone", "workflow", "planning", "plan", "context engineering",
+      "context rot", "장기 프로젝트", "prd", "execute", "verify",
+    ],
+  },
+  fireauto: {
+    id: "fireauto",
+    name: "fireauto",
+    tag: "FA",
+    color: "#F97316",
+    category: "workflow",
+    githubRepo: "imgompanda/fireauto",
+    desc: "SEO, 보안, PRD, UI 개선 같은 반복 작업을 Claude Code 커맨드로 묶어둔 자동화 플러그인이에요.",
+    longDesc:
+      "fireauto는 Claude Code에서 반복적으로 쓰는 서비스 빌드/런칭 작업을 커맨드로 묶어둔 자동화 플러그인이에요. `/freainer`로 추천 MCP와 LSP, 알림 훅을 한 번에 세팅하고, `/planner`, `/researcher`, `/seo-manager`, `/security-guard`, `/designer`, `/loop` 같은 명령으로 서비스 기획부터 점검까지 이어갈 수 있어요. 특히 1인 개발자나 빠르게 서비스 실험을 돌리는 흐름에 잘 맞아요.",
+    url: "https://github.com/imgompanda/fireauto",
+    install: [
+      "/plugin marketplace add imgompanda/fireauto",
+      "/plugin install fireauto@fireauto",
+    ],
+    features: [
+      "원클릭 초반 세팅",
+      "SEO/보안 자동 점검",
+      "PRD/리서치 자동화",
+      "UI/UX 개선 커맨드",
+    ],
+    conflicts: [],
+    keywords: [
+      "seo", "security", "planner", "research", "researcher", "reddit",
+      "designer", "daisyui", "uiux", "loop", "startup", "서비스", "런칭",
+      "launch", "초보 세팅", "freainer", "lsp", "marketing",
     ],
   },
   "sequential-thinking": {
@@ -934,3 +1243,14 @@ export const PLUGINS: Record<string, Plugin> = {
     ],
   },
 };
+
+export const PLUGINS: Record<string, Plugin> = Object.fromEntries(
+  Object.entries(CORE_PLUGINS).map(([id, plugin]) => [
+    id,
+    {
+      ...DEFAULT_PLUGIN_FIELDS,
+      ...PLUGIN_FIELD_OVERRIDES[id],
+      ...plugin,
+    },
+  ])
+) as Record<string, Plugin>;

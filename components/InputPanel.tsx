@@ -19,7 +19,7 @@ type Props = {
 };
 
 export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const [mode, setMode] = useState<InputMode>("text");
   const [analysisMode, setAnalysisMode] = useState<AnalysisMode>("keyword");
   const [text, setText] = useState("");
@@ -32,48 +32,48 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
   const dragCounter = useRef(0);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const readFile = useCallback((f: File) => {
-    setFname(f.name);
+  const readFile = useCallback((file: File) => {
+    setFname(file.name);
     const reader = new FileReader();
-    reader.onload = (ev) => setFcontent(ev.target?.result as string);
-    reader.readAsText(f);
+    reader.onload = (event) => setFcontent((event.target?.result as string) ?? "");
+    reader.readAsText(file);
   }, []);
 
   const handleFile = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const f = e.target.files?.[0];
-      if (!f) return;
-      readFile(f);
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      readFile(file);
     },
-    [readFile],
+    [readFile]
   );
 
   const handleDrop = useCallback(
-    (e: DragEvent<HTMLDivElement>) => {
-      e.preventDefault();
+    (event: DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
       dragCounter.current = 0;
       setDragging(false);
-      const f = e.dataTransfer.files?.[0];
-      if (!f) return;
+      const file = event.dataTransfer.files?.[0];
+      if (!file) return;
       setMode("file");
-      readFile(f);
+      readFile(file);
     },
-    [readFile],
+    [readFile]
   );
 
-  const handleDragEnter = useCallback((e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    dragCounter.current++;
+  const handleDragEnter = useCallback((event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    dragCounter.current += 1;
     setDragging(true);
   }, []);
 
-  const handleDragOver = useCallback((e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
+  const handleDragOver = useCallback((event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
   }, []);
 
-  const handleDragLeave = useCallback((e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    dragCounter.current--;
+  const handleDragLeave = useCallback((event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    dragCounter.current -= 1;
     if (dragCounter.current === 0) setDragging(false);
   }, []);
 
@@ -82,30 +82,46 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
     (mode === "file" && fcontent) ||
     (mode === "github" && ghUrl.trim());
 
+  const modeHint =
+    mode === "text"
+      ? locale === "en"
+        ? "Paste a README, issue, PRD, or a short project note."
+        : "README, 이슈, PRD, 짧은 프로젝트 설명을 그대로 붙여 넣어도 됩니다."
+      : mode === "file"
+        ? locale === "en"
+          ? "Markdown and plain text work best for a first pass."
+          : "첫 진단은 Markdown이나 txt 파일이 가장 안정적으로 동작합니다."
+        : locale === "en"
+          ? "Use a public GitHub repository URL. If fetch fails, paste the README text instead."
+          : "공개 GitHub 저장소 URL을 넣어주세요. 가져오기에 실패하면 README 텍스트를 직접 붙여 넣는 편이 더 빠릅니다.";
+
   const handleAnalyze = async () => {
     setErr(null);
     setLoading(true);
+
     try {
       let content = "";
+
       if (mode === "text") {
         content = text;
       } else if (mode === "file") {
         content = fcontent;
       } else {
-        const res = await fetch("/api/github", {
+        const response = await fetch("/api/github", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ url: ghUrl }),
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error);
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error);
         content = data.content;
       }
+
       if (!content.trim()) throw new Error(t.input.noContent);
       onAnalyze(content, mode, analysisMode);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "Unknown error";
-      setErr(msg);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      setErr(message);
       setMode("text");
     } finally {
       setLoading(false);
@@ -127,46 +143,72 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
       className="relative"
     >
       {dragging && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-md border-2 border-dashed border-primary bg-card/90">
+        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl border-2 border-dashed border-primary bg-card/90">
           <div className="text-center">
             <FileText className="mx-auto mb-1 h-6 w-6 text-primary" />
             <div className="text-xs font-bold text-primary">{t.input.fileDrop}</div>
           </div>
         </div>
       )}
-      <div className="mb-3.5 flex flex-wrap items-center justify-between gap-2">
-        <TabsList>
-          {tabs.map((tab) => (
-            <TabsTrigger
-              key={tab.key}
-              active={mode === tab.key}
-              onClick={() => setMode(tab.key)}
-            >
-              {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
+
+      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="no-scrollbar -mx-1 overflow-x-auto px-1">
+          <TabsList className="w-max min-w-full rounded-full border border-white/10 bg-white/5 p-1 sm:min-w-0">
+            {tabs.map((tab) => (
+              <TabsTrigger
+                key={tab.key}
+                active={mode === tab.key}
+                className="whitespace-nowrap rounded-full border-transparent px-4 py-2"
+                onClick={() => setMode(tab.key)}
+              >
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
+
         {aiAvailable && (
           <TabsTrigger
             active={analysisMode === "ai"}
             onClick={() => setAnalysisMode(analysisMode === "keyword" ? "ai" : "keyword")}
             className={cn(
+              "w-full justify-center rounded-full border-white/10 bg-white/5 px-4 py-2 lg:w-auto",
               analysisMode === "ai" &&
                 "border-[#7C3AED]/50 bg-[#7C3AED]/10 text-[#A78BFA] hover:border-[#7C3AED]/50 hover:text-[#A78BFA]"
             )}
           >
-            {analysisMode === "ai" ? <span className="flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" />{t.input.aiMode}</span> : t.input.keywordMode}
+            {analysisMode === "ai" ? (
+              <span className="flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5" />
+                {locale === "en" ? "AI explanation boost" : "AI 설명 보강"}
+              </span>
+            ) : locale === "en" ? (
+              "Add AI explanation"
+            ) : (
+              "AI 설명 보강 추가"
+            )}
           </TabsTrigger>
         )}
+      </div>
+
+      <div className="mb-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+        {locale === "en"
+          ? "Use this when you want a quick manual diagnosis instead of starting from a preset pack."
+          : "프리셋 대신 프로젝트 설명을 직접 넣고 빠르게 진단받고 싶을 때 사용하세요."}
+      </div>
+
+      <div className="mb-4 flex items-start gap-2 rounded-2xl border border-primary/15 bg-primary/5 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+        <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+        <span>{modeHint}</span>
       </div>
 
       {mode === "text" && (
         <Textarea
           rows={8}
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={(event) => setText(event.target.value)}
           placeholder={t.input.placeholder}
-          className="leading-relaxed placeholder:text-text-faint focus-visible:ring-primary"
+          className="min-h-[220px] rounded-2xl border-white/10 bg-background/55 leading-relaxed placeholder:text-text-faint focus-visible:ring-primary"
           style={{ resize: "vertical" }}
         />
       )}
@@ -174,7 +216,7 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
       {mode === "file" && (
         <div
           onClick={() => fileRef.current?.click()}
-          className="cursor-pointer rounded-md border-2 border-dashed border-border bg-card p-8 text-center transition-colors hover:border-primary"
+          className="cursor-pointer rounded-2xl border-2 border-dashed border-white/10 bg-background/55 p-8 text-center transition-colors hover:border-primary"
         >
           {fname ? (
             <>
@@ -203,15 +245,18 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
         <Input
           type="text"
           value={ghUrl}
-          onChange={(e) => setGhUrl(e.target.value)}
+          onChange={(event) => setGhUrl(event.target.value)}
           placeholder={t.input.ghPlaceholder}
-          className="h-auto px-4 py-3 text-sm placeholder:text-text-faint focus-visible:ring-primary"
+          className="h-auto rounded-2xl border-white/10 bg-background/55 px-4 py-3 text-sm placeholder:text-text-faint focus-visible:ring-primary"
         />
       )}
 
       {err && (
-        <div className="mt-4 rounded-md border border-border-error-subtle bg-bg-error-subtle px-3 py-2.5 text-sm text-destructive">
-          <span className="inline-flex items-center gap-2"><AlertTriangle className="inline h-4 w-4 flex-shrink-0" />{err}</span>
+        <div className="mt-4 rounded-2xl border border-border-error-subtle bg-bg-error-subtle px-3 py-2.5 text-sm text-destructive">
+          <span className="inline-flex items-center gap-2">
+            <AlertTriangle className="inline h-4 w-4 flex-shrink-0" />
+            {err}
+          </span>
         </div>
       )}
 
@@ -220,7 +265,7 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
         disabled={!canGo || disabled || loading}
         aria-busy={loading}
         className={cn(
-          "mt-4 w-full py-3 text-sm font-semibold",
+          "mt-5 h-12 w-full rounded-full text-sm font-semibold",
           analysisMode === "ai" && "bg-[#7C3AED] hover:bg-[#7C3AED]/90"
         )}
       >
@@ -232,12 +277,22 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
         ) : analysisMode === "ai" ? (
           <span className="flex items-center justify-center gap-1.5">
             <Sparkles className="h-3.5 w-3.5" />
-            AI ANALYZE → RECOMMEND
+            {locale === "en" ? "DIAGNOSE + AI EXPLAIN" : "진단 + AI 설명 보강"}
           </span>
+        ) : locale === "en" ? (
+          "START SETUP DIAGNOSIS"
         ) : (
-          t.input.analyzeBtn
+          "세팅 진단 시작"
         )}
       </Button>
+
+      {mode === "github" && (
+        <p className="mt-3 text-xs leading-relaxed text-text-dim">
+          {locale === "en"
+            ? "Tip: when the repository is private or the README is thin, text input usually gives a better first recommendation."
+            : "팁: 비공개 저장소이거나 README가 짧으면, 텍스트 입력으로 직접 설명하는 편이 첫 추천 품질이 더 좋습니다."}
+        </p>
+      )}
     </div>
   );
 }

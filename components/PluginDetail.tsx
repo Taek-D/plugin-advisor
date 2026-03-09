@@ -64,6 +64,14 @@ export default function PluginDetail({ plugin }: Props) {
             {version.latestVersion}
           </Badge>
         )}
+        <Badge variant="outline">
+          {locale === "en" ? plugin.difficulty : `난이도 ${plugin.difficulty}`}
+        </Badge>
+        <Badge variant="outline">
+          {locale === "en"
+            ? plugin.verificationStatus
+            : `검증 ${plugin.verificationStatus}`}
+        </Badge>
         {plugin.url && (
           <Button variant="outline" size="xs" asChild className="font-mono text-[9px]">
             <a
@@ -106,6 +114,16 @@ export default function PluginDetail({ plugin }: Props) {
         <div className="mb-2 text-[9px] tracking-[2px] text-text-dim">
           {t.detail.install}
         </div>
+        {(plugin.prerequisites.length > 0 || plugin.requiredSecrets.length > 0) && (
+          <div className="mb-3 rounded-md border border-border bg-background px-3 py-2.5 text-xs text-muted-foreground">
+            {plugin.prerequisites.map((item) => (
+              <div key={`${plugin.id}-${item}`}>• {item}</div>
+            ))}
+            {plugin.requiredSecrets.map((item) => (
+              <div key={`${plugin.id}-${item}`}>• {item}</div>
+            ))}
+          </div>
+        )}
         <div className="flex flex-col gap-1.5">
           {plugin.install.map((cmd, i) => (
             <div

@@ -1,144 +1,101 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { recommend } from "../recommend";
 
 describe("recommend()", () => {
-  it("returns recommendations when keywords match", () => {
-    // "react" matches context7, uiux; "test" matches playwright, ralph; "backend" matches omc, supabase
-    const result = recommend("React TypeScript testing backend");
-    expect(result.recommendations.length).toBeGreaterThan(0);
-    // All returned items must have a pluginId
-    result.recommendations.forEach((r) => {
-      expect(typeof r.pluginId).toBe("string");
-      expect(r.pluginId.length).toBeGreaterThan(0);
-    });
+  it("returns the beginner starter pack for beginner-like input", () => {
+    const result = recommend("Claude Code 초보인데 처음 세팅을 도와줘");
+    expect(result.recommendedPackId).toBe("beginner-essential");
+    expect(result.recommendations.length).toBeGreaterThanOrEqual(2);
+    expect(result.recommendations.map((item) => item.pluginId)).toContain("bkit-starter");
   });
 
-  it("returns default recommendations when no keywords match", () => {
-    // Use input with no possible keyword overlap
-    const result = recommend("zzz qqq www");
-    // Default fallback returns bkit and context7
-    const ids = result.recommendations.map((r) => r.pluginId);
-    expect(ids).toContain("bkit");
-    expect(ids).toContain("context7");
+  it("returns the webapp starter pack for web app input", () => {
+    const result = recommend("React Next.js landing page with browser test and deploy");
+    expect(result.recommendedPackId).toBe("webapp-starter");
+    expect(result.recommendations.map((item) => item.pluginId)).toContain("playwright");
   });
 
-  it("includes a warning when no keywords match", () => {
-    const result = recommend("zzz qqq www");
-    // The no-match fallback sets a non-null warning string
-    expect(result.warning).not.toBeNull();
-    expect(typeof result.warning).toBe("string");
+  it("returns the backend starter pack for backend input", () => {
+    const result = recommend("FastAPI backend auth api database");
+    expect(result.recommendedPackId).toBe("backend-start");
+    expect(result.recommendations.map((item) => item.pluginId)).toContain("security");
   });
 
-  it("beginner boost: '초보' input boosts bkit-starter into results", () => {
-    const result = recommend("초보 개발자입니다");
-    const ids = result.recommendations.map((r) => r.pluginId);
-    expect(ids).toContain("bkit-starter");
+  it("returns the data starter pack for crawling input", () => {
+    const result = recommend("웹 크롤링 research search data collect");
+    expect(result.recommendedPackId).toBe("data-research");
+    expect(result.recommendations.map((item) => item.pluginId)).toContain("firecrawl");
   });
 
-  it("beginner boost: 'beginner' input boosts bkit-starter into results", () => {
-    const result = recommend("I am a beginner developer");
-    const ids = result.recommendations.map((r) => r.pluginId);
-    expect(ids).toContain("bkit-starter");
+  it("includes confidence, preflight checks, and setup warnings", () => {
+    const result = recommend("Next.js frontend deploy");
+    expect(result.confidenceLevel).toBeDefined();
+    expect(result.preflightChecks).toBeDefined();
+    expect(result.preflightChecks!.length).toBeGreaterThan(0);
+    expect(result.setupWarnings).toBeDefined();
   });
 
-  it("conflict handling: weaker conflicting plugin gets penalized", () => {
-    // omc and superpowers conflict; input triggers both but heavily favors omc
-    // "멀티에이전트 backend multi complex orchestrat" -> omc gets 5+ keywords
-    // "script" -> superpowers gets 1 keyword
-    // After penalty superpowers score drops and omc should rank higher
-    const result = recommend("멀티에이전트 backend multi complex orchestrat script");
-    const ids = result.recommendations.map((r) => r.pluginId);
-    if (ids.includes("omc") && ids.includes("superpowers")) {
-      const omcPriority = result.recommendations.find((r) => r.pluginId === "omc")!.priority;
-      const spPriority = result.recommendations.find((r) => r.pluginId === "superpowers")!.priority;
-      expect(omcPriority).toBeLessThan(spPriority);
-    } else {
-      // At minimum, omc should appear
-      expect(ids).toContain("omc");
-    }
+  it("holds back high-risk plugins for beginner setups", () => {
+    const result = recommend("초보인데 ui 디자인도 하고 postgres까지 붙이고 싶어");
+    const notRecommendedIds = (result.notRecommended ?? []).map((item) => item.pluginId);
+    expect(notRecommendedIds).toContain("uiux");
+    expect(notRecommendedIds).toContain("postgres");
   });
 
-  it("returns at most 4 recommendations", () => {
-    // Very broad input to match many plugins
+  it("returns 2-3 core recommendations instead of a long stack", () => {
     const result = recommend(
-      "react typescript test backend security auth database sql crawl search " +
-        "멀티에이전트 prd 문서 설계 e2e browser script data notion"
+      "react nextjs browser test deploy auth database crawl search beginner"
     );
-    expect(result.recommendations.length).toBeLessThanOrEqual(4);
+    expect(result.recommendations.length).toBeLessThanOrEqual(3);
   });
 
-  it("warning shown when 4 plugins are recommended", () => {
-    const result = recommend(
-      "react typescript test backend security auth database sql crawl search " +
-        "멀티에이전트 prd 문서 설계 e2e browser script data notion"
-    );
-    if (result.recommendations.length >= 4) {
-      expect(result.warning).toBe(
-        "플러그인이 많으면 충돌 위험이 있어요. 핵심 1-2개 먼저 써보세요."
-      );
-    }
+  it("keeps manual placeholder-heavy plugins out of beginner recommendations", () => {
+    const result = recommend("초보인데 figma filesystem uiux plugin 설치하고 싶어");
+    const recommendedIds = result.recommendations.map((item) => item.pluginId);
+    expect(recommendedIds).not.toContain("uiux");
+    expect(recommendedIds).not.toContain("filesystem");
   });
 
-  it("complement suggestion: omc recommendation surfaces context7 complement", () => {
-    // Trigger omc heavily without context7 keywords
-    const result = recommend("멀티에이전트 backend multi complex orchestrat 대규모 팀");
-    const ids = result.recommendations.map((r) => r.pluginId);
-    if (ids.includes("omc") && !ids.includes("context7")) {
-      expect(result.complements).toBeDefined();
-      const compIds = result.complements!.map((c) => c.pluginId);
-      expect(compIds).toContain("context7");
-    }
+  it("surfaces fireauto for launch-oriented setup work", () => {
+    const result = recommend("서비스 런칭 전에 seo security planner daisyui uiux researcher 흐름을 정리하고 싶어");
+    expect(result.recommendations.map((item) => item.pluginId)).toContain("fireauto");
   });
 
-  it("complement suggestion: playwright recommendation surfaces uiux complement", () => {
-    // Trigger playwright heavily without uiux keywords
-    const result = recommend("e2e test browser qa headless selenium verify");
-    const ids = result.recommendations.map((r) => r.pluginId);
-    if (ids.includes("playwright") && !ids.includes("uiux")) {
-      expect(result.complements).toBeDefined();
-      const compIds = result.complements!.map((c) => c.pluginId);
-      expect(compIds).toContain("uiux");
-    }
+  it("surfaces GSD for spec-driven roadmap workflows", () => {
+    const result = recommend("spec driven roadmap requirements phase milestone workflow execute verify");
+    expect(result.recommendations.map((item) => item.pluginId)).toContain("gsd");
   });
 
-  it("complement pluginId already in recommendations is not added as complement", () => {
-    // omc complement is context7 — if context7 is already recommended, it should not appear in complements
-    const result = recommend("멀티에이전트 backend react nextjs api framework library");
-    const ids = result.recommendations.map((r) => r.pluginId);
-    if (ids.includes("omc") && ids.includes("context7")) {
-      const compIds = (result.complements ?? []).map((c) => c.pluginId);
-      expect(compIds).not.toContain("context7");
-    }
+  it("surfaces agency-agents for specialist team workflows", () => {
+    const result = recommend("Need specialist agents for frontend backend marketing and project management team workflow");
+    expect(result.recommendations.map((item) => item.pluginId)).toContain("agency-agents");
   });
 
-  it("priority values are sequential starting from 1", () => {
-    const result = recommend("react nextjs api framework library");
-    result.recommendations.forEach((r, i) => {
-      expect(r.priority).toBe(i + 1);
-    });
+  it("holds back agency-agents for beginner-first setup", () => {
+    const result = recommend("초보인데 specialist agents 로 frontend backend marketing 팀처럼 쓰고 싶어");
+    const recommendedIds = result.recommendations.map((item) => item.pluginId);
+    const notRecommendedIds = (result.notRecommended ?? []).map((item) => item.pluginId);
+    expect(recommendedIds).not.toContain("agency-agents");
+    expect(notRecommendedIds).toContain("agency-agents");
   });
 
-  it("inputText is echoed back in result", () => {
-    const input = "react typescript test";
-    const result = recommend(input);
-    expect(result.inputText).toBe(input);
+  it("does not surface agency-agents for a simple frontend request", () => {
+    const result = recommend("React frontend component with browser tests");
+    expect(result.recommendations.map((item) => item.pluginId)).not.toContain("agency-agents");
   });
 
-  it("redundancy detection: two search plugins in results yields redundancy warning", () => {
-    // brave-search and tavily both match "search web realtime information"
-    const result = recommend("검색 search 웹 web 실시간 realtime 최신 정보 요약 summary rag");
-    const ids = result.recommendations.map((r) => r.pluginId);
-    const searchPlugins = ["brave-search", "exa", "tavily", "perplexity"];
-    const matchCount = ids.filter((id) => searchPlugins.includes(id)).length;
-    if (matchCount >= 2) {
-      expect(result.redundancies).toBeDefined();
-      expect(result.redundancies!.length).toBeGreaterThan(0);
-    }
+  it("does not surface fireauto for a generic backend security request", () => {
+    const result = recommend("backend auth api security and database");
+    expect(result.recommendations.map((item) => item.pluginId)).not.toContain("fireauto");
   });
 
-  it("matched keywords are returned for matched plugins", () => {
-    const result = recommend("react nextjs");
-    const matchedPlugin = result.recommendations.find((r) => r.matchedKeywords.length > 0);
-    expect(matchedPlugin).toBeDefined();
+  it("does not surface GSD for a generic CRUD implementation request", () => {
+    const result = recommend("build a simple CRUD app with auth and deploy");
+    expect(result.recommendations.map((item) => item.pluginId)).not.toContain("gsd");
+  });
+
+  it("surfaces agency-agents on explicit agency intent even without many role keywords", () => {
+    const result = recommend("I want a dream team of specialist agents for this product");
+    expect(result.recommendations.map((item) => item.pluginId)).toContain("agency-agents");
   });
 });

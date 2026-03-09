@@ -1,142 +1,469 @@
-import type { AnalysisResult } from "./types";
+import type { AnalysisResult, NotRecommendedPlugin, Plugin } from "./types";
 import { PLUGINS } from "./plugins";
 import { REASONS } from "./plugin-reasons";
-import { CONFLICT_PAIRS, getRedundancies } from "./conflicts";
+import { PRESET_PACKS } from "./presets";
+import { buildPreflightChecks, buildSetupWarnings } from "./setup";
 
-export const COMPLEMENTS: Record<string, { pluginId: string; reason: string; reasonEn: string }> = {
-  omc: {
-    pluginId: "context7",
-    reason: "OMC와 함께 쓰면 최신 문서 참조로 정확도가 높아져요.",
-    reasonEn: "Pair with OMC for accurate latest docs reference.",
+const BEGINNER_KEYWORDS = [
+  "초보",
+  "입문",
+  "처음",
+  "시작",
+  "beginner",
+  "first",
+  "starter",
+  "setup",
+];
+
+const PACK_SIGNALS: Record<string, string[]> = {
+  "beginner-essential": [
+    "초보",
+    "입문",
+    "처음",
+    "시작",
+    "learn",
+    "guide",
+    "튜토리얼",
+    "처음 써",
+  ],
+  "webapp-starter": [
+    "react",
+    "next",
+    "next.js",
+    "frontend",
+    "프론트",
+    "landing",
+    "웹앱",
+    "saas",
+    "ui",
+    "browser",
+  ],
+  "backend-start": [
+    "backend",
+    "백엔드",
+    "api",
+    "auth",
+    "인증",
+    "database",
+    "db",
+    "sql",
+    "server",
+    "rest",
+  ],
+  "data-research": [
+    "crawl",
+    "scrape",
+    "크롤링",
+    "리서치",
+    "research",
+    "search",
+    "검색",
+    "data",
+    "데이터 수집",
+    "monitoring",
+  ],
+};
+
+const PACK_SUMMARIES: Record<string, { ko: string; en: string }> = {
+  "beginner-essential": {
+    ko: "Claude Code 첫 세팅에 맞는 기본 조합으로 판단했어요. 학습과 정확한 문서 참조, 빠른 생산성 향상에 집중한 2-3개 세트를 추천해요.",
+    en: "This looks like a first-time Claude Code setup. Recommend a small starter set focused on onboarding, accurate docs, and quick wins.",
   },
-  "bkit-starter": {
-    pluginId: "context7",
-    reason: "입문자에게 최신 라이브러리 문서가 큰 도움이 돼요.",
-    reasonEn: "Latest library docs help beginners a lot.",
+  "webapp-starter": {
+    ko: "웹앱 시작 흐름으로 판단했어요. 공식 문서 확인, 브라우저 테스트, 배포 준비를 균형 있게 잡은 세트를 추천해요.",
+    en: "This looks like a web app workflow. Recommend a balanced set for docs, browser testing, and deployment readiness.",
   },
-  playwright: {
-    pluginId: "uiux",
-    reason: "E2E 테스트와 함께 UI 품질을 높여보세요.",
-    reasonEn: "Boost UI quality alongside E2E testing.",
+  "backend-start": {
+    ko: "백엔드 API 시작 흐름으로 판단했어요. 공식 문서, 보안 점검, 백엔드 연결을 우선하는 세트를 추천해요.",
+    en: "This looks like a backend API workflow. Recommend a set that prioritizes docs, security, and backend setup.",
   },
-  supabase: {
-    pluginId: "security",
-    reason: "백엔드 개발 시 보안 검증은 필수예요.",
-    reasonEn: "Security checks are essential for backend dev.",
-  },
-  firecrawl: {
-    pluginId: "exa",
-    reason: "크롤링 데이터를 시맨틱 검색으로 더 잘 활용해보세요.",
-    reasonEn: "Leverage crawled data better with semantic search.",
+  "data-research": {
+    ko: "데이터 수집과 리서치 흐름으로 판단했어요. 수집, 검색, 코드베이스 파악에 강한 세트를 추천해요.",
+    en: "This looks like a data collection and research workflow. Recommend a set tuned for crawling, search, and codebase understanding.",
   },
 };
 
-const BEGINNER_KEYWORDS = ["초보", "입문", "시작", "beginner", "start", "first"];
+const PACK_EXCLUSIONS: Record<string, string[]> = {
+  "beginner-essential": ["omc", "uiux", "postgres", "filesystem"],
+  "webapp-starter": ["uiux"],
+  "backend-start": ["postgres"],
+  "data-research": [],
+};
+
+const MATCH_WEIGHT = 3;
+const PRESET_BONUS = 4;
+
+const INTENT_SIGNALS = {
+  gsd: [
+    "get shit done",
+    "context rot",
+    "spec-driven",
+    "spec driven",
+    "requirements",
+    "roadmap",
+    "phase",
+    "milestone",
+    "verify-work",
+    "execute-phase",
+    "plan-phase",
+  ],
+  fireauto: [
+    "fireauto",
+    "freainer",
+    "seo-manager",
+    "security-guard",
+    "researcher",
+    "planner",
+    "uiux-upgrade",
+    "daisyui",
+    "reddit",
+    "launch",
+    "런칭",
+    "출시",
+  ],
+  "agency-agents": [
+    "agency agents",
+    "the agency",
+    "specialist agents",
+    "specialist team",
+    "expert personas",
+    "persona-driven",
+    "dream team",
+    "cross-functional",
+    "multi-role",
+    "role-based",
+  ],
+} as const;
+
+const AGENCY_ROLE_SIGNALS = [
+  "frontend",
+  "backend",
+  "marketing",
+  "project management",
+  "pm",
+  "design",
+  "testing",
+  "support",
+  "ux",
+  "devops",
+] as const;
+
+type KeywordMatch = {
+  score: number;
+  matched: string[];
+};
+
+function getKeywordMatches(text: string): Record<string, KeywordMatch> {
+  const lower = text.toLowerCase();
+  const matches: Record<string, KeywordMatch> = {};
+
+  for (const plugin of Object.values(PLUGINS)) {
+    const matched = plugin.keywords.filter((keyword) =>
+      lower.includes(keyword.toLowerCase())
+    );
+    if (matched.length > 0) {
+      matches[plugin.id] = {
+        score: matched.length,
+        matched,
+      };
+    }
+  }
+
+  return matches;
+}
+
+function countSignalHits(lower: string, signals: readonly string[]): number {
+  return signals.reduce(
+    (count, signal) => count + (lower.includes(signal.toLowerCase()) ? 1 : 0),
+    0
+  );
+}
+
+function isBeginner(text: string): boolean {
+  const lower = text.toLowerCase();
+  return BEGINNER_KEYWORDS.some((keyword) => lower.includes(keyword));
+}
+
+function scorePack(
+  packId: string,
+  text: string,
+  matches: Record<string, KeywordMatch>
+): number {
+  const lower = text.toLowerCase();
+  const signalScore =
+    PACK_SIGNALS[packId]?.reduce(
+      (score, keyword) => score + (lower.includes(keyword.toLowerCase()) ? 2 : 0),
+      0
+    ) ?? 0;
+  const preset = PRESET_PACKS.find((pack) => pack.id === packId);
+  if (!preset) return signalScore;
+
+  const pluginScore = preset.pluginIds.reduce(
+    (score, pluginId) => score + (matches[pluginId]?.score ?? 0),
+    0
+  );
+
+  return signalScore + pluginScore;
+}
+
+function getPackId(text: string, matches: Record<string, KeywordMatch>): string {
+  if (isBeginner(text)) return "beginner-essential";
+
+  const packIds = PRESET_PACKS.map((pack) => pack.id);
+  const scores = packIds.map((packId) => ({
+    packId,
+    score: scorePack(packId, text, matches),
+  }));
+  scores.sort((a, b) => b.score - a.score);
+
+  if (!scores[0] || scores[0].score <= 0) {
+    return "beginner-essential";
+  }
+
+  return scores[0].packId;
+}
+
+function getTrustScore(plugin: Plugin, beginnerInput: boolean): number {
+  let score = 0;
+
+  if (plugin.verificationStatus === "verified") score += 4;
+  if (plugin.verificationStatus === "partial") score += 1;
+  if (plugin.verificationStatus === "unverified") score -= 4;
+
+  if (plugin.installMode === "safe-copy") score += 3;
+  if (plugin.installMode === "external-setup") score += 1;
+  if (plugin.installMode === "manual-required") score -= 3;
+
+  if (plugin.difficulty === "beginner") score += 3;
+  if (plugin.difficulty === "advanced") score += beginnerInput ? -5 : -2;
+
+  if (plugin.officialStatus === "official") score += 1;
+  if (plugin.officialStatus === "unknown") score -= 1;
+
+  if (plugin.maintenanceStatus === "unclear") score -= 2;
+  if (plugin.maintenanceStatus === "stale") score -= 3;
+
+  return score;
+}
+
+function getAgencyRoleHitCount(lower: string): number {
+  return countSignalHits(lower, AGENCY_ROLE_SIGNALS);
+}
+
+function getIntentDrivenPluginIds(text: string): string[] {
+  const lower = text.toLowerCase();
+  const ids: string[] = [];
+
+  const gsdHits = countSignalHits(lower, INTENT_SIGNALS.gsd);
+  if (gsdHits >= 2) ids.push("gsd");
+
+  const fireautoHits = countSignalHits(lower, INTENT_SIGNALS.fireauto);
+  if (fireautoHits >= 2) ids.push("fireauto");
+
+  const agencyHits = countSignalHits(lower, INTENT_SIGNALS["agency-agents"]);
+  const roleHits = getAgencyRoleHitCount(lower);
+  if (agencyHits >= 1 || roleHits >= 3) ids.push("agency-agents");
+
+  return ids;
+}
+
+function getCandidatePluginIds(
+  presetPluginIds: string[],
+  matches: Record<string, KeywordMatch>,
+  text: string
+): string[] {
+  const matchedIds = Object.entries(matches)
+    .filter(([, match]) => match.score > 0)
+    .map(([pluginId]) => pluginId);
+  const intentDrivenIds = getIntentDrivenPluginIds(text);
+
+  return Array.from(new Set([...presetPluginIds, ...matchedIds, ...intentDrivenIds]));
+}
+
+function passesIntentGate(pluginId: string, text: string): boolean {
+  const lower = text.toLowerCase();
+
+  if (pluginId === "gsd") {
+    return countSignalHits(lower, INTENT_SIGNALS.gsd) >= 2;
+  }
+
+  if (pluginId === "fireauto") {
+    return countSignalHits(lower, INTENT_SIGNALS.fireauto) >= 2;
+  }
+
+  if (pluginId === "agency-agents") {
+    return (
+      countSignalHits(lower, INTENT_SIGNALS["agency-agents"]) >= 1 ||
+      getAgencyRoleHitCount(lower) >= 3
+    );
+  }
+
+  return true;
+}
+
+function getIntentBoost(pluginId: string, text: string): number {
+  const lower = text.toLowerCase();
+
+  if (pluginId === "gsd") {
+    const hits = countSignalHits(lower, INTENT_SIGNALS.gsd);
+    if (hits >= 4) return 10;
+    if (hits >= 2) return 6;
+    return 0;
+  }
+
+  if (pluginId === "fireauto") {
+    const hits = countSignalHits(lower, INTENT_SIGNALS.fireauto);
+    if (hits >= 4) return 9;
+    if (hits >= 2) return 5;
+    return 0;
+  }
+
+  if (pluginId === "agency-agents") {
+    const explicitHits = countSignalHits(lower, INTENT_SIGNALS["agency-agents"]);
+    const roleHits = getAgencyRoleHitCount(lower);
+    if (explicitHits >= 1) return 10;
+    if (roleHits >= 4) return 7;
+    if (roleHits >= 3) return 4;
+    return 0;
+  }
+
+  return 0;
+}
+
+function buildNotRecommended(
+  packId: string,
+  beginnerInput: boolean,
+  matches: Record<string, KeywordMatch>
+): NotRecommendedPlugin[] {
+  const ids = new Set<string>(PACK_EXCLUSIONS[packId] ?? []);
+  for (const [pluginId, match] of Object.entries(matches)) {
+    if (!match.score) continue;
+    const plugin = PLUGINS[pluginId];
+    if (
+      beginnerInput &&
+      (plugin.difficulty === "advanced" ||
+        plugin.verificationStatus === "unverified" ||
+        plugin.installMode === "manual-required")
+    ) {
+      ids.add(pluginId);
+    }
+  }
+
+  return Array.from(ids)
+    .sort((a, b) => (matches[b]?.score ?? 0) - (matches[a]?.score ?? 0))
+    .map((pluginId) => PLUGINS[pluginId])
+    .filter(Boolean)
+    .slice(0, 3)
+    .map((plugin) => {
+      if (plugin.verificationStatus === "unverified") {
+        return {
+          pluginId: plugin.id,
+          reason: "아직 설치 검증이 충분하지 않아 이번 추천 세트에서는 보수적으로 제외했어요.",
+          reasonEn:
+            "This plugin is not fully verified yet, so it was left out of the starter recommendation.",
+        };
+      }
+      if (plugin.installMode === "manual-required") {
+        return {
+          pluginId: plugin.id,
+          reason: "예시 경로나 수동 치환값이 필요해서 초보자 기본 흐름에서는 제외했어요.",
+          reasonEn:
+            "This plugin needs manual path or placeholder changes, so it was excluded from the beginner-friendly flow.",
+        };
+      }
+      return {
+        pluginId: plugin.id,
+        reason: "첫 세팅보다 익숙해진 뒤에 도입하는 편이 안전한 플러그인이에요.",
+        reasonEn:
+          "This plugin is safer to introduce after you are comfortable with the basics.",
+      };
+    });
+}
+
+function getConfidenceLevel(text: string, packId: string, matches: Record<string, KeywordMatch>) {
+  const packScore = scorePack(packId, text, matches);
+  if (packScore >= 8) return "high" as const;
+  if (packScore >= 3) return "medium" as const;
+  return "low" as const;
+}
 
 export function recommend(text: string): AnalysisResult {
-  const lower = text.toLowerCase();
-  const matchedKeywords: Record<string, string[]> = {};
-  const scores: Record<string, number> = {};
+  const matches = getKeywordMatches(text);
+  const beginnerInput = isBeginner(text);
+  const recommendedPackId = getPackId(text, matches);
+  const preset = PRESET_PACKS.find((pack) => pack.id === recommendedPackId) ?? PRESET_PACKS[0];
+  const presetIds = new Set(preset.pluginIds);
+  const candidatePluginIds = getCandidatePluginIds(preset.pluginIds, matches, text);
 
-  Object.values(PLUGINS).forEach((p) => {
-    const matched = p.keywords.filter((kw) => lower.includes(kw.toLowerCase()));
-    if (matched.length > 0) {
-      scores[p.id] = matched.length;
-      matchedKeywords[p.id] = matched;
-    }
-  });
+  const rankedPlugins = candidatePluginIds
+    .map((pluginId) => {
+      const plugin = PLUGINS[pluginId];
+      const matchScore = matches[pluginId]?.score ?? 0;
+      const trustScore = getTrustScore(plugin, beginnerInput);
+      const presetBonus = presetIds.has(pluginId) ? PRESET_BONUS : 0;
+      const intentBoost = getIntentBoost(pluginId, text);
+      return {
+        plugin,
+        score: trustScore + presetBonus + matchScore * MATCH_WEIGHT + intentBoost,
+        matchScore,
+        intentBoost,
+        matchedKeywords: matches[pluginId]?.matched ?? [],
+      };
+    })
+    .filter(({ plugin, matchScore, intentBoost }) => {
+      if (
+        beginnerInput &&
+        (plugin.installMode === "manual-required" ||
+          (plugin.difficulty === "advanced" &&
+            plugin.verificationStatus === "unverified"))
+      ) {
+        return false;
+      }
 
-  // Beginner boost
-  const isBeginnerInput = BEGINNER_KEYWORDS.some((kw) => lower.includes(kw));
-  if (isBeginnerInput) {
-    scores["bkit-starter"] = (scores["bkit-starter"] ?? 0) + 2;
-    if (!matchedKeywords["bkit-starter"]) {
-      matchedKeywords["bkit-starter"] = [];
-    }
-  }
+      if (presetIds.has(plugin.id)) return true;
+      if (!passesIntentGate(plugin.id, text)) return false;
+      return matchScore > 0 || intentBoost > 0;
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
 
-  for (const pair of CONFLICT_PAIRS) {
-    const [a, b] = pair.ids;
-    if (scores[a] && scores[b]) {
-      const weaker = scores[a] < scores[b] ? a : b;
-      scores[weaker] = Math.max(0, scores[weaker] - 1);
-      if (!scores[weaker]) delete scores[weaker];
-    }
-  }
-
-  const sorted = Object.entries(scores)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 4);
-
-  if (!sorted.length) {
-    return {
-      summary:
-        "특정 키워드가 부족해요. 더 구체적인 설명을 추가하면 정확도가 올라가요.",
-      recommendations: [
-        {
-          pluginId: "bkit",
-          priority: 1,
-          reason: REASONS.bkit,
-          matchedKeywords: [],
-        },
-        {
-          pluginId: "context7",
-          priority: 2,
-          reason: REASONS.context7,
-          matchedKeywords: [],
-        },
-      ],
-      warning:
-        "더 구체적인 내용(기술 스택, 주요 기능 등)을 입력하면 더 정확한 추천이 가능해요.",
-      inputText: text,
-    };
-  }
-
-  const recommendedIds = sorted.map(([id]) => id);
-
-  // Category diversity note
-  const categories = new Set(
-    recommendedIds.map((id) => PLUGINS[id]?.category).filter(Boolean)
-  );
-  const hasDiverseCategories = categories.size >= 3;
-
-  const topPlugin = PLUGINS[sorted[0][0]];
-  const baseSummary = `${topPlugin.name} 중심의 프로젝트로 파악됐어요. ${sorted.length}개 플러그인 조합을 추천해요.`;
-  const summary = hasDiverseCategories
-    ? `${baseSummary} 다양한 카테고리에 걸친 균형 잡힌 조합이에요.`
-    : baseSummary;
-
-  // Complements: collect unique complement suggestions not already in recommended list
-  const complementsMap = new Map<string, string>();
-  for (const id of recommendedIds) {
-    const comp = COMPLEMENTS[id];
-    if (comp && !recommendedIds.includes(comp.pluginId) && !complementsMap.has(comp.pluginId)) {
-      complementsMap.set(comp.pluginId, comp.reason);
-    }
-  }
-  const complements = Array.from(complementsMap.entries()).map(([pluginId, reason]) => ({
-    pluginId,
-    reason,
+  const recommendations = rankedPlugins.map(({ plugin, matchedKeywords }, index) => ({
+    pluginId: plugin.id,
+    priority: index + 1,
+    reason: REASONS[plugin.id] || plugin.desc,
+    matchedKeywords,
   }));
 
-  // Redundancies
-  const redundancyGroups = getRedundancies(recommendedIds);
-  const redundancies = redundancyGroups.map((g) => ({ ids: g.ids, msg: g.msg }));
+  const selectedIds = recommendations.map((recommendation) => recommendation.pluginId);
+  const confidenceLevel = getConfidenceLevel(text, recommendedPackId, matches);
+  const preflightChecks = buildPreflightChecks(selectedIds);
+  const setupWarnings = buildSetupWarnings(selectedIds);
+  const notRecommended = buildNotRecommended(
+    recommendedPackId,
+    beginnerInput,
+    matches
+  );
+
+  const summary =
+    PACK_SUMMARIES[recommendedPackId]?.ko ??
+    "현재 상황에 맞는 검증된 스타터 세트를 추천해요.";
+
+  const warning =
+    confidenceLevel === "low"
+      ? "입력 내용이 아직 넓어요. 어떤 앱을 만들지, 프론트/백엔드/데이터 중 어디가 핵심인지 더 적어주면 추천 정확도가 올라가요."
+      : setupWarnings.length > 0
+        ? "일부 플러그인은 계정 연결이나 수동 설정이 필요해요. 체크리스트를 먼저 확인하고 진행하세요."
+        : null;
 
   return {
     summary,
-    recommendations: sorted.map(([id], i) => ({
-      pluginId: id,
-      priority: i + 1,
-      reason: REASONS[id],
-      matchedKeywords: matchedKeywords[id] || [],
-    })),
-    warning:
-      sorted.length >= 4
-        ? "플러그인이 많으면 충돌 위험이 있어요. 핵심 1-2개 먼저 써보세요."
-        : null,
+    recommendations,
+    warning,
     inputText: text,
-    complements: complements.length > 0 ? complements : undefined,
-    redundancies: redundancies.length > 0 ? redundancies : undefined,
+    recommendedPackId,
+    confidenceLevel,
+    preflightChecks,
+    setupWarnings,
+    notRecommended,
   };
 }
