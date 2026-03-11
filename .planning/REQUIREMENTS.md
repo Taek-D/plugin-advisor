@@ -41,20 +41,29 @@ Deferred to future release.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| VERIFY-01 | — | Pending |
-| VERIFY-02 | — | Pending |
-| VERIFY-03 | — | Pending |
-| VERIFY-04 | — | Pending |
-| VERIFY-05 | — | Pending |
-| VERIFY-06 | — | Pending |
-| UPDATE-01 | — | Pending |
-| UPDATE-02 | — | Pending |
+| VERIFY-01 | Phase 1, 2, 3, 4 | Pending |
+| VERIFY-02 | Phase 1, 2, 3, 4 | Pending |
+| VERIFY-03 | Phase 1, 2, 3, 4 | Pending |
+| VERIFY-04 | Phase 1, 2, 3, 4 | Pending |
+| VERIFY-05 | Phase 1, 2, 3, 4 | Pending |
+| VERIFY-06 | Phase 1, 2, 3, 4 | Pending |
+| UPDATE-01 | Phase 4 | Pending |
+| UPDATE-02 | Phase 4 | Pending |
 
 **Coverage:**
 - v1.0 requirements: 8 total
-- Mapped to phases: 0
-- Unmapped: 8 ⚠️
+- Mapped to phases: 8
+- Unmapped: 0 ✓
+
+**Phase-to-Plugin mapping:**
+
+| Phase | Plugins | Count |
+|-------|---------|-------|
+| Phase 1 | omc, agency-agents, ralph | 3 |
+| Phase 2 | sequential-thinking, brave-search, puppeteer, filesystem, git, postgres, memory, github, slack | 9 |
+| Phase 3 | notion, firecrawl, exa, tavily, perplexity, sentry, figma, docker, cloudflare, vercel | 10 |
+| Phase 4 | todoist, linear, uiux + full status sync + i18n sync | 3 + sync |
 
 ---
 *Requirements defined: 2026-03-11*
-*Last updated: 2026-03-11 after initial definition*
+*Last updated: 2026-03-11 after roadmap creation — traceability mapped*
