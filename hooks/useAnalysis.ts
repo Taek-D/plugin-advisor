@@ -14,18 +14,8 @@ export function useAnalysis() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [sel, setSel] = useState<Record<string, boolean>>({});
   const [detailPlugin, setDetailPlugin] = useState<Plugin | null>(null);
-  const [aiAvailable, setAiAvailable] = useState(false);
+  const [aiAvailable] = useState(false); // AI 분석은 준비 중
   const [currentMode, setCurrentMode] = useState<AnalysisMode>("keyword");
-
-  // Check if AI analysis is available
-  useEffect(() => {
-    fetch("/api/analyze", { method: "POST", body: JSON.stringify({ text: "" }) })
-      .then((r) => {
-        // 503 = no API key, 400 = valid endpoint (key exists)
-        setAiAvailable(r.status !== 503);
-      })
-      .catch(() => setAiAvailable(false));
-  }, []);
 
   const handleAnalyze = useCallback(
     async (content: string, mode: InputMode = "text", analysisMode: AnalysisMode = "keyword") => {
