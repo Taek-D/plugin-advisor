@@ -9,12 +9,12 @@ Requirements for milestone v1.0 — 플러그인 메타데이터 검증.
 
 ### 검증 프로세스
 
-- [ ] **VERIFY-01**: 각 플러그인의 GitHub repo 존재 여부 및 활성 상태 확인
-- [ ] **VERIFY-02**: README 기반으로 desc, longDesc 정확성 검토 및 수정
-- [ ] **VERIFY-03**: features 목록이 실제 기능과 일치하는지 검토 및 수정
-- [ ] **VERIFY-04**: keywords가 실제 용도를 반영하는지 검토 및 수정
-- [ ] **VERIFY-05**: install 명령어가 공식 문서와 일치하는지 확인 및 수정
-- [ ] **VERIFY-06**: conflicts 규칙이 실제로 유효한지 검토
+- [x] **VERIFY-01**: 각 플러그인의 GitHub repo 존재 여부 및 활성 상태 확인
+- [x] **VERIFY-02**: README 기반으로 desc, longDesc 정확성 검토 및 수정
+- [x] **VERIFY-03**: features 목록이 실제 기능과 일치하는지 검토 및 수정
+- [x] **VERIFY-04**: keywords가 실제 용도를 반영하는지 검토 및 수정
+- [x] **VERIFY-05**: install 명령어가 공식 문서와 일치하는지 확인 및 수정
+- [x] **VERIFY-06**: conflicts 규칙이 실제로 유효한지 검토
 
 ### 상태 업데이트
 
@@ -41,12 +41,12 @@ Deferred to future release.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| VERIFY-01 | Phase 1, 2, 3, 4 | Pending |
-| VERIFY-02 | Phase 1, 2, 3, 4 | Pending |
-| VERIFY-03 | Phase 1, 2, 3, 4 | Pending |
-| VERIFY-04 | Phase 1, 2, 3, 4 | Pending |
-| VERIFY-05 | Phase 1, 2, 3, 4 | Pending |
-| VERIFY-06 | Phase 1, 2, 3, 4 | Pending |
+| VERIFY-01 | Phase 1, 2, 3, 4 | Complete |
+| VERIFY-02 | Phase 1, 2, 3, 4 | Complete |
+| VERIFY-03 | Phase 1, 2, 3, 4 | Complete |
+| VERIFY-04 | Phase 1, 2, 3, 4 | Complete |
+| VERIFY-05 | Phase 1, 2, 3, 4 | Complete |
+| VERIFY-06 | Phase 1, 2, 3, 4 | Complete |
 | UPDATE-01 | Phase 4 | Pending |
 | UPDATE-02 | Phase 4 | Pending |
 
