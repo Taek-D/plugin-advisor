@@ -25,7 +25,7 @@ export function getAdminCookieName(): string {
 }
 
 export function getAdminReviewPassword(): string {
-  const password = process.env.ADMIN_REVIEW_PASSWORD;
+  const password = process.env.ADMIN_REVIEW_PASSWORD?.trim();
   if (!password) {
     throw new Error("ADMIN_REVIEW_PASSWORD is not configured.");
   }
@@ -33,7 +33,7 @@ export function getAdminReviewPassword(): string {
 }
 
 export function getAdminSessionSecret(): string {
-  const secret = process.env.ADMIN_SESSION_SECRET;
+  const secret = process.env.ADMIN_SESSION_SECRET?.trim();
   if (!secret) {
     throw new Error("ADMIN_SESSION_SECRET is not configured.");
   }

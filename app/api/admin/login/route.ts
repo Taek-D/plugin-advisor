@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     const expectedPassword = getAdminReviewPassword();
-    if (!safeCompareSecret(body.password, expectedPassword)) {
+    if (!safeCompareSecret(body.password.trim(), expectedPassword)) {
       return NextResponse.json(
         { error: "비밀번호가 올바르지 않습니다." },
         { status: 401 }
