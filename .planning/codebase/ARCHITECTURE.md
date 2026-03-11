@@ -98,7 +98,7 @@
 
 **Plugin:**
 - Purpose: Represents a Claude Code plugin with metadata, keywords, installation info, and operational details
-- Examples: `omc`, `superpowers`, `bkit`, `context7` defined in `lib/plugins.ts`
+- Examples: `omc`, `superpowers`, `bkit`, `context7` among 36 plugins defined in `lib/plugins.ts`
 - Pattern: Static plugin database with operational field overrides per plugin
 
 **Recommendation:**
