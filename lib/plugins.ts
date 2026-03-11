@@ -37,8 +37,8 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
 > = {
   omc: {
     difficulty: "advanced",
-    verificationStatus: "partial",
-    bestFor: ["장기 프로젝트", "멀티 에이전트 자동화"],
+    verificationStatus: "verified",
+    bestFor: ["장기 프로젝트", "멀티 에이전트 자동화", "팀 오케스트레이션"],
     avoidFor: ["Claude Code 첫 설치 직후", "가벼운 개인 실험"],
   },
   superpowers: {
@@ -199,12 +199,19 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     bestFor: ["Claude Code 첫 세팅", "서비스 런칭 전 점검", "SEO/보안/UI 자동화"],
   },
   "agency-agents": {
-    verificationStatus: "partial",
+    verificationStatus: "verified",
     difficulty: "intermediate",
     installMode: "manual-required",
     prerequisites: ["Git으로 저장소를 내려받고 ~/.claude/agents 에 복사하거나 install.sh 실행"],
     bestFor: ["역할 분리된 AI 팀", "전문가 페르소나 기반 협업"],
     avoidFor: ["원클릭 스타터 세팅", "설치 직후 가장 첫 플러그인"],
+  },
+  ralph: {
+    // ralph-wiggum repo (haizelabs/ralph-wiggum) returned 404 as of 2026-03-11 — repo does not exist
+    verificationStatus: "unverified",
+    difficulty: "intermediate",
+    bestFor: ["반복 구현 자동화", "PRD 기반 루프"],
+    avoidFor: ["단발성 작업", "첫 세팅 직후"],
   },
   "sequential-thinking": {
     difficulty: "advanced",
@@ -236,26 +243,26 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     color: "#FF6B35",
     category: "orchestration",
     githubRepo: "Yeachan-Heo/oh-my-claudecode",
-    desc: "32개 전문 에이전트, 멀티에이전트 오케스트레이션. 복잡한 장기 프로젝트의 핵심.",
+    desc: "32개 전문 에이전트, 팀 기반 멀티에이전트 오케스트레이션. 복잡한 장기 프로젝트의 핵심.",
     longDesc:
-      "Oh My ClaudeCode(OMC)는 Claude Code를 멀티에이전트 오케스트레이션 시스템으로 확장하는 플러그인이에요. 32개의 전문 에이전트와 40개 이상의 스킬을 제공하며, 복잡한 작업을 자동으로 병렬 분산 처리해요. autopilot, ralph, ultrawork 등 다양한 실행 모드를 지원하고, Codex · Gemini 같은 외부 AI와도 연동할 수 있어요.",
+      "Oh My ClaudeCode(OMC)는 Claude Code를 팀 기반 멀티에이전트 오케스트레이션 시스템으로 확장하는 플러그인이에요. 32개의 전문 에이전트와 40개 이상의 스킬을 제공하며, Team 모드(team-plan → team-prd → team-exec → team-verify → team-fix 파이프라인)가 핵심 오케스트레이션 방식이에요. autopilot, ralph, ultrawork 등 다양한 실행 모드를 지원하고, tmux CLI를 통해 Codex · Gemini 같은 외부 AI와도 병렬로 협업할 수 있어요. 스마트 모델 라우팅으로 토큰 비용을 30~50% 절감할 수 있어요.",
     url: "https://github.com/Yeachan-Heo/oh-my-claudecode",
     install: [
       "/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode",
       "/plugin install oh-my-claudecode",
-      "/oh-my-claudecode:omc-setup",
+      "/omc-setup",
     ],
     features: [
       "32개 전문 에이전트",
-      "자율 실행 모드",
-      "Codex/Gemini 연동",
-      "토큰 최적화 라우팅",
+      "Team 파이프라인 오케스트레이션",
+      "Codex/Gemini tmux CLI 연동",
+      "토큰 30~50% 절감 라우팅",
     ],
     conflicts: ["superpowers"],
     keywords: [
       "게임", "unity", "신규 서비스", "새 서비스", "멀티에이전트", "대규모",
-      "팀", "complex", "multi", "백엔드", "backend", "full stack", "풀스택",
-      "saas", "플랫폼", "platform", "orchestrat",
+      "팀", "team", "complex", "multi", "백엔드", "backend", "full stack", "풀스택",
+      "saas", "플랫폼", "platform", "orchestrat", "오케스트레이션",
     ],
   },
   superpowers: {
@@ -293,26 +300,26 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     color: "#8B5CF6",
     category: "orchestration",
     githubRepo: "msitarzewski/agency-agents",
-    desc: "프론트엔드, 백엔드, 마케팅, PM 등 역할별 AI 전문가 에이전트 묶음. 팀처럼 역할을 나눠 쓰고 싶을 때 좋아요.",
+    desc: "엔지니어링, 디자인, 마케팅, PM, 테스트 등 90개+ 역할별 AI 전문가 에이전트 묶음. 팀처럼 역할을 나눠 쓰고 싶을 때 좋아요.",
     longDesc:
-      "The Agency는 Claude Code에서 참고하거나 설치해서 쓸 수 있는 역할별 AI 전문가 에이전트 모음이에요. 프론트엔드, 백엔드, 디자인, 마케팅, 프로젝트 관리, 테스트, 지원 등 여러 분야의 에이전트가 정리돼 있어서, 하나의 범용 프롬프트보다 역할을 분리해 작업하고 싶은 팀이나 고급 사용자에게 잘 맞아요. 다만 플러그인 마켓 한 줄 설치보다는 파일 복사나 스크립트 실행이 필요해서 수동 설정 성격이 강해요.",
+      "The Agency는 Claude Code에 복사해서 바로 쓸 수 있는 역할별 AI 전문가 에이전트 모음이에요. 엔지니어링(프론트/백엔드/모바일/AI/DevOps), 디자인, 유료 광고, 마케팅, 프로덕트, PM, 테스트, 지원, 공간 컴퓨팅 등 10개 이상의 부서에 걸쳐 90개 이상의 에이전트가 있어요. 각 에이전트는 고유한 전문성과 페르소나를 갖추고 있어 범용 프롬프트보다 훨씬 깊이 있는 역할 분리가 가능해요. Claude Code용 권장 설치는 에이전트 파일을 ~/.claude/agents/에 복사하는 방식이에요.",
     url: "https://github.com/msitarzewski/agency-agents",
     install: [
       "git clone https://github.com/msitarzewski/agency-agents.git",
-      "cd agency-agents",
-      "./scripts/install.sh --tool claude-code",
+      "cp -r agency-agents/* ~/.claude/agents/",
     ],
     features: [
-      "61개+ 전문 에이전트",
-      "역할별 페르소나",
-      "멀티툴 설치 스크립트",
-      "마케팅/PM/디자인까지 확장",
+      "90개+ 전문 에이전트",
+      "10개 이상 부서별 역할 분리",
+      "Claude Code 네이티브 지원",
+      "멀티툴 변환 스크립트 제공",
     ],
     conflicts: [],
     keywords: [
       "agency", "agents", "specialist", "specialists", "frontend", "backend",
       "marketing", "project management", "pm", "design", "testing", "team",
       "persona", "workflow", "orchestrator", "multi-agent", "roster",
+      "devops", "mobile", "paid media", "support",
     ],
   },
 
@@ -365,6 +372,9 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
       "반복", "iterate",
     ],
   },
+  // NOTE: haizelabs/ralph-wiggum GitHub repo returned 404 as of 2026-03-11.
+  // verificationStatus set to "unverified" in PLUGIN_FIELD_OVERRIDES.
+  // Metadata below is based on original plugin description, not verified README.
   ralph: {
     id: "ralph",
     name: "Ralph Loop",
@@ -374,7 +384,7 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     githubRepo: "haizelabs/ralph-wiggum",
     desc: "자율 코딩 루프. PRD 완료까지 반복 실행 후 git 커밋 자동 처리.",
     longDesc:
-      "Ralph Loop는 Claude Code가 PRD나 태스크 목록을 스스로 처리할 때까지 자율적으로 반복 실행하는 플러그인이에요. 각 반복마다 구현 → 검증 → 커밋을 자동으로 수행하고, 작업이 완료되면 깔끔한 git 히스토리를 남겨줘요. CRUD 구현, 마이그레이션, 테스트 커버리지 향상 같은 반복 작업에 특히 유용해요.",
+      "Ralph Loop는 Claude Code가 PRD나 태스크 목록을 스스로 처리할 때까지 자율적으로 반복 실행하는 플러그인이에요. 각 반복마다 구현 → 검증 → 커밋을 자동으로 수행하고, 작업이 완료되면 깔끔한 git 히스토리를 남겨줘요. CRUD 구현, 마이그레이션, 테스트 커버리지 향상 같은 반복 작업에 특히 유용해요. 단, GitHub 저장소(haizelabs/ralph-wiggum) 접근이 확인되지 않아 설치 가능 여부를 별도로 확인해주세요.",
     url: "https://github.com/haizelabs/ralph-wiggum",
     install: [
       "/plugin marketplace add https://github.com/haizelabs/ralph-wiggum",
