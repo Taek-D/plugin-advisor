@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ExternalLink, Loader2 } from "lucide-react";
+import { ExternalLink, Loader2, PlusCircle } from "lucide-react";
 import type { PluginSuggestion, PluginSuggestionStatus } from "@/lib/types";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -210,6 +210,24 @@ export default function AdminSuggestionReviewCard({ item }: Props) {
               "검토 상태 저장"
             )}
           </Button>
+
+          {status === "approved" && (
+            <Button
+              variant="outline"
+              className="w-full rounded-full gap-2"
+              onClick={() => {
+                const params = new URLSearchParams({
+                  name: item.plugin_name || "",
+                  url: item.repository_url,
+                  desc: item.reason.slice(0, 120),
+                });
+                router.push(`/admin/plugins?add=1&${params.toString()}`);
+              }}
+            >
+              <PlusCircle className="h-4 w-4" />
+              플러그인으로 추가
+            </Button>
+          )}
         </div>
       </div>
     </Card>

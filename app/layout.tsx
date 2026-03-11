@@ -51,7 +51,15 @@ export default function RootLayout({
       >
         <I18nProvider>
           <Nav />
-          {children}
+          <div className="min-h-[calc(100vh-3.5rem)]">{children}</div>
+          <footer className="border-t border-border px-4 py-6 text-center text-xs text-muted-foreground">
+            <a
+              href="/admin/login"
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              관리자
+            </a>
+          </footer>
         </I18nProvider>
       </body>
     </html>

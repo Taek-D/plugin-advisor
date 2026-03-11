@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createPluginSuggestion } from "@/lib/plugin-suggestions-store";
 import { parsePluginSuggestionPayload } from "@/lib/plugin-suggestions";
 import { checkRateLimit, cleanupExpiredEntries } from "@/lib/rate-limit";
+import { SupabaseNotConfiguredError } from "@/lib/supabase-admin";
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,11 +36,16 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    const message =
-      error instanceof Error
-        ? error.message
-        : "플러그인 제안을 저장하는 중 오류가 발생했습니다.";
+    if (error instanceof SupabaseNotConfiguredError) {
+      return NextResponse.json(
+        { error: "플러그인 제안 기능이 현재 사용할 수 없습니다." },
+        { status: 503 }
+      );
+    }
 
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json(
+      { error: "플러그인 제안을 저장하는 중 오류가 발생했습니다." },
+      { status: 500 }
+    );
   }
 }

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { PluginSuggestionStatus } from "@/lib/types";
 import AdminLogoutButton from "@/components/admin/AdminLogoutButton";
 import AdminSuggestionReviewList from "@/components/admin/AdminSuggestionReviewList";
@@ -43,7 +44,15 @@ export default async function AdminSuggestionsPage({ searchParams }: Props) {
             공개로 들어온 플러그인 제안을 검토하고 승인, 보류, 거절 상태를 관리합니다.
           </p>
         </div>
-        <AdminLogoutButton />
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/plugins"
+            className="inline-flex h-10 items-center rounded-full border border-input px-4 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
+            플러그인 관리
+          </Link>
+          <AdminLogoutButton />
+        </div>
       </div>
 
       <form

@@ -54,7 +54,7 @@ export default function PluginSuggestionCallout({
       title:
         locale === "en"
           ? "Suggest a plugin we might be missing"
-          : "내가 모르는 플러그인을 제안할 수 있어요",
+          : "플러그인을 제안할 수 있어요",
       desc:
         locale === "en"
           ? "If you know a useful Claude Code plugin that is not in the catalog yet, send it to the review queue."

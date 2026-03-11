@@ -4,6 +4,17 @@ import { createClient } from "@supabase/supabase-js";
 
 let cachedClient: ReturnType<typeof createClient> | null = null;
 
+export class SupabaseNotConfiguredError extends Error {
+  constructor() {
+    super("Supabase is not configured.");
+    this.name = "SupabaseNotConfiguredError";
+  }
+}
+
+export function isSupabaseConfigured(): boolean {
+  return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+}
+
 export function getSupabaseAdminClient() {
   if (cachedClient) return cachedClient;
 
@@ -11,7 +22,7 @@ export function getSupabaseAdminClient() {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !serviceRoleKey) {
-    throw new Error("Supabase environment variables are not configured.");
+    throw new SupabaseNotConfiguredError();
   }
 
   cachedClient = createClient(url, serviceRoleKey, {

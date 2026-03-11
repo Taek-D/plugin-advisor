@@ -1254,3 +1254,4 @@ export const PLUGINS: Record<string, Plugin> = Object.fromEntries(
     },
   ])
 ) as Record<string, Plugin>;
+

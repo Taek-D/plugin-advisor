@@ -26,9 +26,10 @@ function getBucket(name: string): Map<string, RateLimitEntry> {
 }
 
 function getClientIp(request: NextRequest): string {
+  // Prefer x-real-ip on Vercel (trusted, set by platform)
   return (
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
     request.headers.get("x-real-ip") ??
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
     "unknown"
   );
 }

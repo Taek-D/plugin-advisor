@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { PLUGINS } from "@/lib/plugins";
+import { getAllPlugins } from "@/lib/all-plugins";
 import { REASONS } from "@/lib/plugin-reasons";
 import { checkRateLimit, cleanupExpiredEntries } from "@/lib/rate-limit";
-import type { AnalysisResult } from "@/lib/types";
+import type { AnalysisResult, Plugin } from "@/lib/types";
 
-const SYSTEM_PROMPT = `You are a Claude Code plugin advisor. Given a project description, analyze it and recommend the most suitable plugins from the available list.
+function buildSystemPrompt(plugins: Record<string, Plugin>): string {
+  const list = Object.values(plugins)
+    .map((p) => `- ${p.id}: ${p.name} (${p.category}) — ${p.desc}`)
+    .join("\n");
+
+  return `You are a Claude Code plugin advisor. Given a project description, analyze it and recommend the most suitable plugins from the available list.
 
 Available plugins:
-${Object.values(PLUGINS)
-  .map((p) => `- ${p.id}: ${p.name} (${p.category}) — ${p.desc}`)
-  .join("\n")}
+${list}
 
 Respond in valid JSON only (no markdown, no code fences). Format:
 {
@@ -33,6 +36,9 @@ Rules:
 - Only use plugin IDs from the available list
 - matchedKeywords should reflect actual concepts found in the input
 - Focus on explaining a safe starter setup rather than maximizing plugin count`;
+}
+
+const MAX_INPUT_LENGTH = 10_000;
 
 export async function POST(req: NextRequest) {
   try {
@@ -52,7 +58,7 @@ export async function POST(req: NextRequest) {
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
-        { error: "AI 분석 기능이 설정되지 않았어요. (API 키 없음)" },
+        { error: "AI 분석 기능이 설정되지 않았어요." },
         { status: 503 }
       );
     }
@@ -65,12 +71,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (text.length > MAX_INPUT_LENGTH) {
+      return NextResponse.json(
+        { error: "입력 텍스트가 너무 길어요. 10,000자 이내로 줄여주세요." },
+        { status: 400 }
+      );
+    }
+
+    const plugins = await getAllPlugins();
+
     const allowedPluginIds = Array.isArray(candidatePluginIds)
       ? candidatePluginIds.filter((pluginId): pluginId is string => typeof pluginId === "string")
       : [];
     const availablePlugins = (allowedPluginIds.length > 0
-      ? allowedPluginIds.map((pluginId) => PLUGINS[pluginId]).filter(Boolean)
-      : Object.values(PLUGINS))
+      ? allowedPluginIds.map((pluginId) => plugins[pluginId]).filter(Boolean)
+      : Object.values(plugins))
       .map((plugin) => `- ${plugin.id}: ${plugin.name} (${plugin.category}) — ${plugin.desc}`)
       .join("\n");
 
@@ -78,7 +93,7 @@ export async function POST(req: NextRequest) {
     const message = await client.messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 1024,
-      system: `${SYSTEM_PROMPT}\n\nAllowed plugins for this request:\n${availablePlugins}`,
+      system: `${buildSystemPrompt(plugins)}\n\nAllowed plugins for this request:\n${availablePlugins}`,
       messages: [
         {
           role: "user",
@@ -92,19 +107,37 @@ export async function POST(req: NextRequest) {
       throw new Error("Unexpected response type");
     }
 
-    const parsed = JSON.parse(content.text);
+    let parsed: { summary?: string; recommendations?: unknown[]; warning?: string | null };
+    try {
+      parsed = JSON.parse(content.text) as typeof parsed;
+    } catch {
+      return NextResponse.json(
+        { error: "AI 응답을 처리할 수 없었어요. 다시 시도해 주세요." },
+        { status: 502 }
+      );
+    }
+
+    if (!Array.isArray(parsed.recommendations)) {
+      return NextResponse.json(
+        { error: "AI 응답 형식이 올바르지 않아요. 다시 시도해 주세요." },
+        { status: 502 }
+      );
+    }
 
     // Validate plugin IDs
     const validIds = new Set(
-      allowedPluginIds.length > 0 ? allowedPluginIds : Object.keys(PLUGINS)
+      allowedPluginIds.length > 0 ? allowedPluginIds : Object.keys(plugins)
     );
     const validRecs = parsed.recommendations.filter(
-      (r: { pluginId: string }) => validIds.has(r.pluginId)
+      (r): r is { pluginId: string } =>
+        typeof r === "object" && r !== null && "pluginId" in r &&
+        typeof (r as { pluginId: unknown }).pluginId === "string" &&
+        validIds.has((r as { pluginId: string }).pluginId)
     );
 
     // Fill in default reasons if missing
     const recommendations = validRecs.map(
-      (r: { pluginId: string; priority: number; reason?: string; matchedKeywords?: string[] }, i: number) => ({
+      (r: { pluginId: string; priority?: number; reason?: string; matchedKeywords?: string[] }, i: number) => ({
         pluginId: r.pluginId,
         priority: i + 1,
         reason: r.reason || REASONS[r.pluginId] || "",
@@ -120,7 +153,7 @@ export async function POST(req: NextRequest) {
     };
 
     return NextResponse.json(result);
-  } catch (e) {
+  } catch {
     return NextResponse.json(
       { error: "AI 분석 중 오류가 발생했어요." },
       { status: 500 }

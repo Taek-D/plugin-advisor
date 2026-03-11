@@ -54,7 +54,7 @@ export default function PluginSearch({
             key={key}
             onClick={() => onCategory(key)}
             className={cn(
-              "shrink-0 rounded-full border px-3 py-1.5 font-mono text-[10px] tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              "shrink-0 rounded-full border px-3.5 py-2 font-mono text-xs tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               activeCategory === key
                 ? "border-primary bg-primary/10 text-primary"
                 : "border-border text-muted-foreground hover:border-muted-foreground hover:text-foreground"

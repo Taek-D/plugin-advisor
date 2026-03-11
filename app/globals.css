@@ -35,8 +35,8 @@
     --radius: 0.5rem;
 
     /* Legacy custom tokens mapped to CSS variables */
-    --text-dim: 215 16.3% 46.9%;
-    --text-faint: 215 19.3% 34.5%;
+    --text-dim: 215 16.3% 64%;
+    --text-faint: 215 19.3% 48%;
     --bg-error-subtle: 20 14.3% 9.8%;
     --border-error-subtle: 0 72.2% 30.6%;
     --bg-warning-subtle: 20 14.3% 9.8%;

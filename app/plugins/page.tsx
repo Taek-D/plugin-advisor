@@ -13,7 +13,7 @@ export default function PluginsPage() {
       <h1 className="mb-1.5 font-heading text-[18px] font-extrabold sm:text-[22px]">
         플러그인 둘러보기
       </h1>
-      <p className="mb-6 text-[11px] text-[#484860]">
+      <p className="mb-6 text-[11px] text-muted-foreground">
         메인 추천 흐름과 별도로 전체 플러그인을 카테고리별로 탐색할 수 있어요.
       </p>
 
