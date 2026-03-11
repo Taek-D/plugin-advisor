@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { PLUGINS } from "@/lib/plugins";
 import { REASONS } from "@/lib/plugin-reasons";
+import { checkRateLimit, cleanupExpiredEntries } from "@/lib/rate-limit";
 import type { AnalysisResult } from "@/lib/types";
 
 const SYSTEM_PROMPT = `You are a Claude Code plugin advisor. Given a project description, analyze it and recommend the most suitable plugins from the available list.
@@ -35,6 +36,19 @@ Rules:
 
 export async function POST(req: NextRequest) {
   try {
+    cleanupExpiredEntries();
+    const { allowed } = checkRateLimit(req, {
+      name: "analyze",
+      maxRequests: 5,
+      windowMs: 60_000,
+    });
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "요청이 너무 많아요. 잠시 후 다시 시도해 주세요." },
+        { status: 429 }
+      );
+    }
+
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
@@ -107,7 +121,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(result);
   } catch (e) {
-    const msg = e instanceof Error ? e.message : "AI 분석 중 오류가 발생했어요.";
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return NextResponse.json(
+      { error: "AI 분석 중 오류가 발생했어요." },
+      { status: 500 }
+    );
   }
 }

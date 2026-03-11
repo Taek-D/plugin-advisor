@@ -134,3 +134,38 @@ export type LeadRequest = {
     | "project-package"
     | "team-package";
 };
+
+export type PluginSuggestionStatus =
+  | "pending"
+  | "hold"
+  | "approved"
+  | "rejected";
+
+export type PluginSuggestion = {
+  id: string;
+  created_at: string;
+  status: PluginSuggestionStatus;
+  plugin_name: string | null;
+  repository_url: string;
+  normalized_repo: string | null;
+  reason: string;
+  submitter_name: string | null;
+  contact: string | null;
+  source_page: string | null;
+  admin_notes: string | null;
+  reviewed_at: string | null;
+};
+
+export type PluginSuggestionPayload = {
+  repositoryUrl: string;
+  reason: string;
+  pluginName?: string;
+  submitterName?: string;
+  contact?: string;
+  sourcePage?: string;
+};
+
+export type AdminSuggestionPatch = {
+  status: PluginSuggestionStatus;
+  adminNotes?: string;
+};

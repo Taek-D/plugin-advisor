@@ -12,7 +12,9 @@ type EventName =
   | "install_complete"
   | "lead_submit"
   | "service_cta_click"
-  | "guide_view";
+  | "guide_view"
+  | "plugin_suggestion_open"
+  | "plugin_suggestion_submit";
 
 type EventPayload = Record<string, string | number | boolean>;
 

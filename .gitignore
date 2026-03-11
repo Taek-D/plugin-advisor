@@ -15,3 +15,6 @@ next-env.d.ts
 START.md
 
 .vercel
+
+# Temp screenshots
+*.png
