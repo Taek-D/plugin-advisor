@@ -18,3 +18,5 @@ START.md
 
 # Temp screenshots
 *.png
+!app/icon.png
+!app/apple-icon.png
