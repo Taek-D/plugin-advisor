@@ -113,9 +113,15 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     avoidFor: ["로컬 비즈니스 검색"],
   },
   perplexity: {
+    // ppl-ai/modelcontextprotocol repo confirmed active (2026-03-12).
+    // Package name changed from perplexity-mcp to @perplexity-ai/mcp-server (scoped).
+    // Install uses --env flag to pass PERPLEXITY_API_KEY (confirmed from README).
     officialStatus: "official",
+    verificationStatus: "verified",
     installMode: "external-setup",
-    requiredSecrets: ["Perplexity API key"],
+    requiredSecrets: ["PERPLEXITY_API_KEY"],
+    bestFor: ["기술 조사", "심층 리서치", "추론 분석"],
+    avoidFor: ["API 키 없는 환경"],
   },
   "brave-search": {
     // brave-search was moved from modelcontextprotocol/servers to servers-archived repo.
@@ -157,9 +163,17 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     avoidFor: ["Slack 워크스페이스 없는 환경", "개인 프로젝트"],
   },
   sentry: {
+    // getsentry/sentry-mcp repo confirmed active (2026-03-12).
+    // Primary usage is remote MCP at mcp.sentry.dev (OAuth). Stdio mode uses SENTRY_ACCESS_TOKEN.
+    // Claude Code plugin: claude plugin marketplace add getsentry/sentry-mcp
+    // Stdio install: npx @sentry/mcp-server@latest --access-token=TOKEN
+    // "자동 수정 제안" removed — Sentry MCP reads/analyzes errors, does not auto-fix code.
     officialStatus: "official",
+    verificationStatus: "verified",
     installMode: "external-setup",
-    requiredSecrets: ["Sentry auth token"],
+    requiredSecrets: ["SENTRY_ACCESS_TOKEN"],
+    bestFor: ["프로덕션 에러 디버깅", "이슈 추적", "성능 모니터링"],
+    avoidFor: ["Sentry 계정 없는 환경"],
   },
   notion: {
     officialStatus: "official",
@@ -170,11 +184,21 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     avoidFor: ["실시간 데이터 처리"],
   },
   figma: {
+    // figma/figma-mcp repo does NOT exist (404). Official Figma MCP is a hosted remote server.
+    // Official repo: figma/mcp-server-guide (guide only — server runs at mcp.figma.com/mcp).
+    // Claude Code install: claude plugin install figma@claude-plugins-official (recommended)
+    //   OR: claude mcp add --transport http figma https://mcp.figma.com/mcp (manual)
+    // figma-developer-mcp package is a community tool (GLips/Figma-Context-MCP), not official.
+    // difficulty "advanced" justified: requires Dev/Full seat on paid Figma plan; free users
+    //   get only 6 tool calls/month. OAuth auth flow required.
     officialStatus: "official",
     difficulty: "advanced",
     installMode: "external-setup",
-    verificationStatus: "partial",
-    requiredSecrets: ["Figma API key"],
+    verificationStatus: "verified",
+    requiredSecrets: [],
+    prerequisites: ["Figma Dev or Full seat (Professional/Organization/Enterprise plan)", "Figma OAuth authentication via mcp.figma.com"],
+    bestFor: ["디자인 → 코드 변환", "디자인 시스템 구현", "컴포넌트 코드 생성"],
+    avoidFor: ["Figma 무료 플랜 (월 6회 제한)", "Figma 계정 없는 환경"],
   },
   cloudflare: {
     officialStatus: "official",
@@ -917,24 +941,24 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     color: "#22B8CF",
     category: "data",
     githubRepo: "ppl-ai/modelcontextprotocol",
-    desc: "AI 리서치 엔진 연동. 소스 기반 답변으로 정확한 기술 조사 지원.",
+    desc: "AI 리서치 엔진 연동. 웹 검색·심층 리서치·추론 4가지 툴로 정확한 기술 조사 지원.",
     longDesc:
-      "Perplexity MCP는 AI 기반 리서치 엔진 Perplexity를 Claude Code에서 사용할 수 있게 해주는 서버예요. 기술 질문에 대해 소스를 인용하면서 답변해주고, 최신 정보를 실시간으로 반영해요. 새로운 라이브러리 조사, 기술 비교 분석, 베스트 프랙티스 탐색에 특히 유용해요.",
+      "Perplexity MCP는 AI 기반 리서치 엔진 Perplexity를 Claude Code에서 사용할 수 있게 해주는 서버예요. 4가지 툴을 제공해요: 웹 검색(perplexity_search), 대화형 질문(perplexity_ask), 심층 리서치(perplexity_research), 고급 추론(perplexity_reason). 새로운 라이브러리 조사, 기술 비교 분석, 복잡한 문제 추론에 특히 유용해요. PERPLEXITY_API_KEY 환경변수가 필요해요.",
     url: "https://github.com/ppl-ai/modelcontextprotocol",
     install: [
-      "claude mcp add perplexity -- npx -y perplexity-mcp@latest",
+      'claude mcp add perplexity --env PERPLEXITY_API_KEY="your_key_here" -- npx -y @perplexity-ai/mcp-server',
     ],
     features: [
-      "소스 기반 답변",
-      "실시간 정보 반영",
-      "기술 비교 분석",
-      "인용 링크 제공",
+      "웹 검색 (perplexity_search)",
+      "대화형 AI 질문 (perplexity_ask)",
+      "심층 리서치 (perplexity_research)",
+      "고급 추론 분석 (perplexity_reason)",
     ],
     conflicts: [],
     keywords: [
       "perplexity", "리서치", "research", "조사", "investigate", "비교",
       "compare", "최신 정보", "latest", "소스", "source", "인용",
-      "citation", "기술 조사",
+      "citation", "기술 조사", "추론", "reasoning", "심층",
     ],
   },
   postgres: {
@@ -1002,24 +1026,25 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     color: "#362D59",
     category: "security",
     githubRepo: "getsentry/sentry-mcp",
-    desc: "Sentry 에러 트래킹 연동. 실시간 에러 분석과 디버깅 자동화.",
+    desc: "Sentry 에러 트래킹 연동. 이슈·이벤트·릴리스·프로젝트 조회와 AI 기반 에러 분석.",
     longDesc:
-      "Sentry MCP는 에러 트래킹 플랫폼 Sentry를 Claude Code와 연동해주는 서버예요. 프로덕션 에러를 실시간으로 확인하고, 스택 트레이스를 분석하고, 근본 원인을 파악할 수 있어요. 에러 패턴을 자동으로 분류하고, 관련 코드를 바로 찾아서 수정 방안을 제안해줘요.",
+      "Sentry MCP는 에러 트래킹 플랫폼 Sentry를 Claude Code와 연동해주는 서버예요. 프로덕션 에러를 실시간으로 확인하고, 스택 트레이스를 분석하고, 근본 원인을 파악할 수 있어요. 이슈 상세 조회, 이벤트 첨부파일, 릴리스·팀·프로젝트·DSN 관리 등 다양한 툴을 제공해요. AI 기반 Seer 분석으로 에러 원인을 자동 진단할 수 있어요 (LLM 제공자 설정 필요). 기본 사용은 mcp.sentry.dev 원격 서버(OAuth)로 연결하거나, stdio 모드는 SENTRY_ACCESS_TOKEN이 필요해요.",
     url: "https://github.com/getsentry/sentry-mcp",
     install: [
-      "claude mcp add sentry -- npx -y @sentry/mcp-server",
+      "claude plugin marketplace add getsentry/sentry-mcp",
+      "claude plugin install sentry-mcp@sentry-mcp",
     ],
     features: [
-      "실시간 에러 조회",
-      "스택 트레이스 분석",
-      "에러 패턴 분류",
-      "자동 수정 제안",
+      "이슈 상세 조회 및 검색",
+      "이벤트·스택 트레이스 분석",
+      "릴리스·프로젝트·팀 관리",
+      "AI 기반 에러 진단 (Seer)",
     ],
     conflicts: [],
     keywords: [
       "sentry", "에러", "error", "버그", "bug", "트래킹", "tracking",
       "모니터링", "monitoring", "프로덕션", "production", "스택 트레이스",
-      "stacktrace", "크래시", "crash",
+      "stacktrace", "크래시", "crash", "이슈", "issue", "릴리스", "release",
     ],
   },
 
@@ -1169,25 +1194,29 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     tag: "FIG",
     color: "#F24E1E",
     category: "integration",
-    githubRepo: "figma/figma-mcp",
-    desc: "Figma 디자인 데이터 직접 접근. 디자인 → 코드 변환 자동화.",
+    // figma/figma-mcp does not exist. Official guide repo is figma/mcp-server-guide.
+    // The actual MCP server is hosted remotely at mcp.figma.com/mcp (not open-sourced).
+    githubRepo: "figma/mcp-server-guide",
+    desc: "Figma 공식 원격 MCP. 디자인 컨텍스트 추출, 디자인 → 코드 변환, 변수/스타일 토큰 읽기.",
     longDesc:
-      "Figma MCP는 Figma의 디자인 데이터를 Claude Code에서 직접 접근할 수 있게 해주는 서버예요. 디자인 파일의 레이아웃, 색상, 타이포그래피, 컴포넌트 구조를 읽어서 정확한 코드로 변환해줘요. 디자이너와 개발자 간의 핸드오프를 자동화하고, 디자인 시스템 일관성을 유지하는 데 필수예요.",
-    url: "https://github.com/figma/figma-mcp",
+      "Figma MCP는 Figma가 공식 운영하는 원격 MCP 서버(mcp.figma.com)예요. Claude Code 플러그인으로 한 줄 설치하거나 HTTP 전송으로 수동 연결할 수 있어요. 제공 툴: get_design_context(디자인 → React+Tailwind 변환), get_variable_defs(컬러·스페이싱 토큰 추출), get_metadata(레이어 구조), get_screenshot(시각적 참조), generate_diagram(Mermaid 다이어그램). 무료 플랜은 월 6회 제한이 있어요. Dev/Full 시트 보유자는 Figma REST API와 동일한 속도 제한이 적용돼요.",
+    url: "https://github.com/figma/mcp-server-guide",
     install: [
-      "claude mcp add figma -- npx -y figma-developer-mcp --figma-api-key=YOUR_KEY",
+      "claude plugin install figma@claude-plugins-official",
+      "claude mcp add --transport http figma https://mcp.figma.com/mcp",
     ],
     features: [
-      "디자인 데이터 읽기",
-      "디자인 → 코드 변환",
-      "스타일 토큰 추출",
-      "컴포넌트 구조 분석",
+      "디자인 → 코드 변환 (get_design_context)",
+      "변수·스타일 토큰 추출 (get_variable_defs)",
+      "레이어 메타데이터 조회 (get_metadata)",
+      "스크린샷 캡처 (get_screenshot)",
+      "FigJam 다이어그램 (get_figjam / generate_diagram)",
     ],
     conflicts: [],
     keywords: [
       "figma", "피그마", "디자인", "design", "ui", "목업", "mockup",
       "프로토타입", "prototype", "핸드오프", "handoff", "컴포넌트",
-      "component", "스타일", "style",
+      "component", "스타일", "style", "토큰", "token", "디자인 시스템",
     ],
   },
 

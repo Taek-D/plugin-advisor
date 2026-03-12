@@ -89,8 +89,8 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     longDesc: "Tavily MCP connects Claude Code to a remote AI agent-optimized search server (mcp.tavily.com). It provides four tools: tavily-search (web search with auto-summarization), tavily-extract (structured content extraction from web pages), tavily-map (site URL mapping), and tavily-crawl (systematic site crawling). Requires a TAVILY_API_KEY. Useful for RAG systems, fact checking, and competitor analysis.",
   },
   perplexity: {
-    desc: "AI research engine integration. Source-based answers for accurate tech investigation.",
-    longDesc: "Perplexity MCP lets you use the AI research engine Perplexity from Claude Code. Provides answers with cited sources for tech questions, reflecting latest info in real-time. Especially useful for new library research, tech comparison analysis, and best practices exploration.",
+    desc: "AI research engine integration. Web search, deep research, and reasoning via 4 dedicated tools.",
+    longDesc: "Perplexity MCP connects Claude Code to the Perplexity AI research platform. It provides 4 tools: perplexity_search (ranked web search results), perplexity_ask (conversational AI with real-time web search via sonar-pro), perplexity_research (deep comprehensive research via sonar-deep-research), and perplexity_reason (advanced reasoning via sonar-reasoning-pro). Requires a PERPLEXITY_API_KEY environment variable. Especially useful for new library research, tech comparison analysis, and complex analytical tasks.",
   },
   postgres: {
     desc: "Read-only PostgreSQL access. Schema inspection and safe SQL query execution.",
@@ -101,8 +101,8 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     longDesc: "Security Guidance is an official plugin that detects security vulnerabilities in real-time when Claude writes code. Automatically warns about OWASP Top 10 vulnerabilities including SQL injection, XSS, CSRF, auth bypass, sensitive data exposure. Essential for services handling auth, payments, and personal data.",
   },
   sentry: {
-    desc: "Sentry error tracking integration. Real-time error analysis and automated debugging.",
-    longDesc: "Sentry MCP integrates the error tracking platform Sentry with Claude Code. View production errors in real-time, analyze stack traces, and identify root causes. Automatically classifies error patterns, finds related code, and suggests fixes.",
+    desc: "Sentry error tracking integration. Issue search, event analysis, release management, and AI-powered error diagnosis.",
+    longDesc: "Sentry MCP integrates the error tracking platform Sentry with Claude Code. It provides tools for issue search and detail retrieval, event and stack trace analysis, attachment viewing, and management of releases, teams, projects, and DSNs. The AI-powered Seer analysis can automatically diagnose error root causes (requires LLM provider config). The recommended install is via the Claude Code plugin marketplace. For stdio mode, a SENTRY_ACCESS_TOKEN is required.",
   },
   github: {
     desc: "Full GitHub API integration. 26 tools for files, repos, issues, PRs, branches, and search.",
@@ -125,8 +125,8 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     longDesc: "Supabase MCP fully integrates the open-source BaaS platform Supabase with Claude Code. Handle database migrations, auth setup, storage management, Edge Functions deployment — all within your coding flow. Rapidly builds backends for full-stack app development.",
   },
   figma: {
-    desc: "Direct Figma design data access. Automates design-to-code conversion.",
-    longDesc: "Figma MCP lets you directly access Figma design data from Claude Code. Reads layout, colors, typography, component structure from design files for accurate code conversion. Essential for automating designer-developer handoff and maintaining design system consistency.",
+    desc: "Official Figma remote MCP. Design-to-code conversion, variable/style token extraction, and layer metadata.",
+    longDesc: "Figma MCP is an official remote MCP server hosted by Figma at mcp.figma.com. Install via the Claude Code plugin marketplace (recommended) or connect manually via HTTP transport. Provides tools: get_design_context (design → React+Tailwind code), get_variable_defs (color/spacing token extraction), get_metadata (layer structure), get_screenshot (visual reference), get_figjam and generate_diagram (FigJam diagrams from Mermaid syntax). Free plan users are limited to 6 tool calls/month. Dev/Full seat holders on Professional, Organization, or Enterprise plans have higher rate limits. No API key required — authentication is via Figma OAuth through mcp.figma.com.",
   },
   uiux: {
     desc: "Design systems, components, accessibility. Elevates frontend quality.",
@@ -169,16 +169,16 @@ export const reasonsEn: Record<string, string> = {
   "brave-search": "Real-time web search needed. Brave Search provides privacy-focused web and local business search with a free API tier (2,000 queries/month).",
   exa: "AI-based semantic search needed. Exa provides web, code, and company research via meaning-based search — no API key required for basic use.",
   tavily: "AI agent-optimized search needed. Tavily provides web search with auto-summarization, plus extraction, mapping, and crawling tools via TAVILY_API_KEY.",
-  perplexity: "Tech research and comparison analysis needed. Provides accurate investigation with source-based answers.",
+  perplexity: "Tech research, deep analysis, or reasoning tasks detected. Perplexity MCP provides 4 tools (search, ask, research, reason) with real-time web data via PERPLEXITY_API_KEY.",
   postgres: "PostgreSQL database work included. Directly query schemas and execute SQL.",
   security: "Auth, payments, or personal data handling included. Real-time vulnerability detection maintains code safety.",
-  sentry: "Error tracking and monitoring needed. Sentry integration analyzes production errors in real-time.",
+  sentry: "Error tracking and monitoring needed. Sentry MCP searches issues, analyzes stack traces, and runs AI-powered Seer diagnosis — install via claude plugin marketplace add getsentry/sentry-mcp.",
   github: "GitHub-based collaboration is key. 26 tools let you manage PRs, issues, branches, file ops, and search — all within your coding flow.",
   slack: "Team communication is important. Slack integration enables deploy notifications, error reports, and channel messaging automation via 8 dedicated tools.",
   filesystem: "Heavy local file processing. Safely handle filesystem within sandbox.",
   git: "Git version control is core. Programmatically manipulate local repositories.",
   supabase: "BaaS-based full-stack development. Quickly build DB, auth, storage with Supabase.",
-  figma: "Design-to-code conversion needed. Reads Figma design data directly for accurate implementation.",
+  figma: "Design-to-code conversion needed. Figma's official remote MCP (mcp.figma.com) provides design context, variable tokens, and layer metadata — requires Dev/Full seat on a paid Figma plan.",
   uiux: "Frontend UI development is core. Elevates component quality and design consistency.",
   docker: "Container-based development needed. Docker manages dev environments and deployments consistently.",
   vercel: "Vercel deployment needed. One-click deploy and manage frontend apps.",
