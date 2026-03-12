@@ -133,16 +133,16 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     longDesc: "UI/UX Pro Max is a plugin specialized for frontend development. Supports design system design, component structuring, and accessibility (a11y) review. Provides deep understanding of major frameworks like React, Vue, Svelte and style systems like Tailwind, shadcn/ui. Essential when you need to quickly elevate UI quality and user experience.",
   },
   docker: {
-    desc: "Docker container management. Build, run, view logs directly from IDE.",
-    longDesc: "Docker MCP lets you manage Docker containers directly from Claude Code. Handle image builds, container start/stop, log viewing, docker-compose management within your coding flow. Especially useful for dev environment setup, microservice testing, and CI/CD pipeline debugging.",
+    desc: "Docker MCP Gateway. Manage containerized MCP servers by profile and connect them to Claude Code.",
+    longDesc: "Docker MCP Gateway is a Docker CLI plugin that runs MCP servers as isolated Docker containers via Docker Desktop's MCP Toolkit. You can group multiple MCP servers into profiles and connect them all to Claude Code at once. It supports OAuth flows, secrets management, dynamic tool discovery, and built-in monitoring and call tracing. Requires Docker Desktop 4.40+ with the MCP Toolkit feature enabled. Connect to Claude Code with: docker mcp client connect claude-code --profile <profile-id> --global.",
   },
   vercel: {
-    desc: "Vercel deployment automation. Project management, env vars, domain settings.",
-    longDesc: "Vercel MCP integrates the Vercel deployment platform with Claude Code. Handle project deployments, env var management, domain settings, deployment log viewing within your coding flow. Automates deployment of frameworks like Next.js, SvelteKit, and creates per-PR preview environments.",
+    desc: "Official Vercel remote MCP. Project management, deployment logs, and docs search via OAuth.",
+    longDesc: "Vercel MCP is an official remote MCP server hosted by Vercel at mcp.vercel.com. It uses OAuth authentication — no API key required. Add it to Claude Code with: claude mcp add --transport http vercel https://mcp.vercel.com, then authenticate via /mcp. Provides tools for searching Vercel documentation, listing and managing projects, managing deployments, and analyzing deployment logs. No public GitHub repo — see vercel.com/docs/agent-resources/vercel-mcp for the official reference.",
   },
   cloudflare: {
-    desc: "Cloudflare Workers, KV, R2, D1 management. Essential for edge computing development.",
-    longDesc: "Cloudflare MCP lets you manage Cloudflare's edge platform directly from Claude Code. Handle Workers deployment, KV storage, R2 object storage, D1 SQLite database — the full Cloudflare stack. Essential for quickly building high-performance global services running at the edge.",
+    desc: "Cloudflare's suite of remote MCP servers. 15+ specialized servers for Workers, KV, R2, D1, observability, and Radar.",
+    longDesc: "Cloudflare MCP is a collection of official remote MCP servers hosted by Cloudflare, using OAuth authentication with no API key required. The Workers Bindings server manages KV namespaces, R2 buckets, D1 databases, Workers, and Hyperdrive configs. Other servers cover Workers Builds, Observability (logs and analytics), Radar (global internet traffic insights), Documentation, Browser Rendering, Logpush, AI Gateway, AutoRAG, Audit Logs, DNS Analytics, DEX, CASB, and GraphQL. Connect individual servers via HTTP transport using their respective remote URLs.",
   },
 };
 
@@ -180,7 +180,7 @@ export const reasonsEn: Record<string, string> = {
   supabase: "BaaS-based full-stack development. Quickly build DB, auth, storage with Supabase.",
   figma: "Design-to-code conversion needed. Figma's official remote MCP (mcp.figma.com) provides design context, variable tokens, and layer metadata — requires Dev/Full seat on a paid Figma plan.",
   uiux: "Frontend UI development is core. Elevates component quality and design consistency.",
-  docker: "Container-based development needed. Docker manages dev environments and deployments consistently.",
-  vercel: "Vercel deployment needed. One-click deploy and manage frontend apps.",
-  cloudflare: "Edge computing or global deployment needed. Build high-performance services with Cloudflare Workers.",
+  docker: "Docker-based MCP server management needed. Docker MCP Gateway runs MCP servers as isolated containers via Docker Desktop's MCP Toolkit, with profile-based multi-server management for Claude Code.",
+  vercel: "Vercel project management or deployment automation needed. Vercel's official remote MCP (mcp.vercel.com) connects via OAuth — no API key required.",
+  cloudflare: "Edge computing or Cloudflare infrastructure management needed. Cloudflare's 15+ remote MCP servers cover Workers, KV/R2/D1, observability, Radar, and more — all via OAuth.",
 };

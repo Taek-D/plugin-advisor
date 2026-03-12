@@ -135,10 +135,18 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     avoidFor: ["API 키 없는 환경"],
   },
   vercel: {
+    // Vercel MCP: official remote MCP at https://mcp.vercel.com (OAuth, no API token needed).
+    // No public GitHub repo — githubRepo: null is correct and intentional.
+    // Claude Code install: claude mcp add --transport http vercel https://mcp.vercel.com
+    // @vercel/mcp npm package does NOT exist.
     officialStatus: "official",
+    verificationStatus: "verified",
+    difficulty: "intermediate",
     installMode: "external-setup",
-    requiredSecrets: ["Vercel account access"],
-    bestFor: ["Next.js 배포", "프리뷰 배포"],
+    requiredSecrets: [],
+    prerequisites: ["Vercel 계정", "OAuth 인증 (브라우저 로그인)"],
+    bestFor: ["Next.js 배포", "프리뷰 배포", "Vercel 프로젝트 관리", "배포 로그 분석"],
+    avoidFor: ["Vercel 계정 없는 환경"],
   },
   supabase: {
     officialStatus: "official",
@@ -201,16 +209,30 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     avoidFor: ["Figma 무료 플랜 (월 6회 제한)", "Figma 계정 없는 환경"],
   },
   cloudflare: {
+    // cloudflare/mcp-server-cloudflare: collection of remote MCP servers with OAuth (no API token needed).
+    // 15+ servers: workers-bindings, builds, observability, radar, docs, browser, logpush, ai-gateway, autorag, etc.
+    // Old @cloudflare/mcp-server-cloudflare npm package (v0.2.0) is legacy local server — remote is the current approach.
     officialStatus: "official",
+    verificationStatus: "verified",
     difficulty: "advanced",
     installMode: "external-setup",
-    requiredSecrets: ["Cloudflare API token"],
+    requiredSecrets: [],
+    prerequisites: ["Cloudflare 계정", "OAuth 인증 (브라우저 로그인)"],
+    bestFor: ["Workers 개발", "엣지 컴퓨팅", "KV/R2/D1 관리", "Cloudflare 인프라 관리"],
+    avoidFor: ["Cloudflare 계정 없는 환경"],
   },
   docker: {
+    // docker/docker-mcp: Docker MCP Gateway (Docker CLI plugin), NOT a standalone npx server.
+    // Requires Docker Desktop 4.59+ with MCP Toolkit feature enabled.
+    // Connect to Claude Code via: docker mcp client connect claude-code --profile <profile-id> --global
+    // @docker/mcp-server npm package does NOT exist.
     officialStatus: "official",
+    verificationStatus: "verified",
     difficulty: "advanced",
     installMode: "external-setup",
-    prerequisites: ["Docker Desktop 또는 Docker Engine"],
+    prerequisites: ["Docker Desktop 4.40+ (MCP Toolkit 기능 활성화)"],
+    bestFor: ["컨테이너 기반 MCP 서버 관리", "Docker 기반 개발 환경", "멀티 MCP 서버 프로파일 관리"],
+    avoidFor: ["Docker Desktop 없는 환경", "간단한 단일 MCP 서버 연결"],
   },
   postgres: {
     // Moved to servers-archived; npm package @modelcontextprotocol/server-postgres v0.6.2 still functional
@@ -1262,18 +1284,22 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     color: "#2496ED",
     category: "devops",
     githubRepo: "docker/docker-mcp",
-    desc: "Docker 컨테이너 관리. 빌드, 실행, 로그 조회를 IDE에서 직접.",
+    desc: "Docker MCP Gateway. 컨테이너화된 MCP 서버를 프로파일로 관리하고 Claude Code에 연결.",
     longDesc:
-      "Docker MCP는 Docker 컨테이너를 Claude Code에서 직접 관리할 수 있게 해주는 서버예요. 이미지 빌드, 컨테이너 실행/중지, 로그 조회, docker-compose 관리 등을 코딩 흐름 안에서 처리할 수 있어요. 개발 환경 설정, 마이크로서비스 테스트, CI/CD 파이프라인 디버깅에 특히 유용해요.",
+      "Docker MCP Gateway는 Docker Desktop의 MCP Toolkit을 통해 MCP 서버를 Docker 컨테이너로 실행하고 관리하는 CLI 플러그인이에요. 프로파일 단위로 여러 MCP 서버를 묶어 Claude Code에 한 번에 연결할 수 있고, OAuth 인증 흐름과 시크릿 관리, 동적 툴 디스커버리, 모니터링을 지원해요. Docker Desktop 4.40+ (MCP Toolkit 활성화)가 필요하며, `docker mcp client connect claude-code --profile <profile-id> --global` 명령으로 연결해요.",
     url: "https://github.com/docker/docker-mcp",
     install: [
-      "claude mcp add docker -- npx -y @docker/mcp-server",
+      "# Docker Desktop 4.40+ 및 MCP Toolkit 활성화 필요",
+      "docker mcp catalog pull mcp/docker-mcp-catalog",
+      "docker mcp profile create --name dev-tools --server catalog://mcp/docker-mcp-catalog/github",
+      "docker mcp client connect claude-code --profile dev-tools --global",
     ],
     features: [
-      "컨테이너 관리",
-      "이미지 빌드",
-      "로그 실시간 조회",
-      "Docker Compose 지원",
+      "컨테이너 기반 MCP 서버 실행 (격리 환경)",
+      "프로파일로 멀티 MCP 서버 관리",
+      "OAuth 및 시크릿 관리",
+      "동적 툴 디스커버리",
+      "빌트인 모니터링 및 트레이싱",
     ],
     conflicts: [],
     keywords: [
@@ -1288,19 +1314,22 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     tag: "VCL",
     color: "#000000",
     category: "devops",
+    // No public GitHub repo — Vercel MCP is a hosted remote server at mcp.vercel.com.
+    // @vercel/mcp npm package does NOT exist. githubRepo: null is correct.
     githubRepo: null,
-    desc: "Vercel 배포 자동화. 프로젝트 관리, 환경변수, 도메인 설정.",
+    desc: "Vercel 공식 원격 MCP. 프로젝트 관리, 배포 로그, 문서 검색을 OAuth로 연결.",
     longDesc:
-      "Vercel MCP는 Vercel 배포 플랫폼을 Claude Code와 연동해주는 서버예요. 프로젝트 배포, 환경 변수 관리, 도메인 설정, 배포 로그 조회 등을 코딩 흐름 안에서 직접 처리할 수 있어요. Next.js, SvelteKit 같은 프레임워크의 배포를 자동화하고, 프리뷰 배포로 PR별 테스트 환경을 만들 수 있어요.",
-    url: "https://vercel.com/docs/mcp",
+      "Vercel MCP는 Vercel이 공식 호스팅하는 원격 MCP 서버(mcp.vercel.com)예요. OAuth 인증 방식으로 API 키가 필요 없어요. Claude Code에서 `claude mcp add --transport http vercel https://mcp.vercel.com` 명령으로 추가하고, `/mcp`로 인증 후 사용해요. Vercel 문서 검색, 프로젝트 목록 조회, 배포 관리, 배포 로그 분석 등을 지원해요. 공개 GitHub repo가 없으며 vercel.com/docs/agent-resources/vercel-mcp에서 공식 문서를 확인할 수 있어요.",
+    url: "https://vercel.com/docs/agent-resources/vercel-mcp",
     install: [
-      "claude mcp add vercel -- npx -y @vercel/mcp",
+      "claude mcp add --transport http vercel https://mcp.vercel.com",
+      "# Claude Code 내에서 /mcp 실행 후 OAuth 로그인",
     ],
     features: [
-      "원클릭 배포",
-      "환경 변수 관리",
-      "프리뷰 배포",
-      "배포 로그 조회",
+      "Vercel 문서 검색",
+      "프로젝트 목록 조회 및 관리",
+      "배포 현황 조회 및 관리",
+      "배포 로그 분석",
     ],
     conflicts: [],
     keywords: [
@@ -1316,18 +1345,22 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     color: "#F38020",
     category: "devops",
     githubRepo: "cloudflare/mcp-server-cloudflare",
-    desc: "Cloudflare Workers, KV, R2, D1 관리. 엣지 컴퓨팅 개발 필수.",
+    desc: "Cloudflare 원격 MCP 서버 모음. Workers, KV, R2, D1, 관찰성, Radar 등 15개+ 서버.",
     longDesc:
-      "Cloudflare MCP는 Cloudflare의 엣지 플랫폼을 Claude Code에서 직접 관리할 수 있게 해주는 서버예요. Workers 배포, KV 스토리지, R2 오브젝트 스토리지, D1 SQLite 데이터베이스 등 Cloudflare의 전체 스택을 다룰 수 있어요. 엣지에서 실행되는 고성능 글로벌 서비스를 빠르게 구축할 때 필수예요.",
+      "Cloudflare MCP는 Cloudflare가 공식 운영하는 원격 MCP 서버 모음이에요. OAuth 인증 방식으로 API 키가 필요 없어요. workers-bindings(KV/R2/D1/Workers/Hyperdrive), workers-builds, observability(로그/애널리틱스), radar(인터넷 트래픽 인사이트), docs, browser-rendering, logpush, ai-gateway, autorag, audit-logs, dns-analytics, DEX, CASB, GraphQL 등 15개+ 전문 서버를 제공해요. mcp-remote를 통해 연결하며, Claude Code에서 원격 MCP URL로 추가해요.",
     url: "https://github.com/cloudflare/mcp-server-cloudflare",
     install: [
-      "claude mcp add cloudflare -- npx -y @cloudflare/mcp-server-cloudflare",
+      "# Workers Bindings 서버 (KV/R2/D1/Workers 관리)",
+      "claude mcp add --transport http cloudflare-bindings https://bindings.mcp.cloudflare.com/mcp",
+      "# Observability 서버 (로그/애널리틱스)",
+      "claude mcp add --transport http cloudflare-observability https://observability.mcp.cloudflare.com/mcp",
     ],
     features: [
-      "Workers 배포",
-      "KV/R2/D1 관리",
-      "엣지 컴퓨팅",
-      "글로벌 CDN 설정",
+      "Workers 배포 및 코드 조회",
+      "KV/R2/D1/Hyperdrive 관리",
+      "로그 및 애널리틱스 관찰성",
+      "Radar 인터넷 트래픽 인사이트",
+      "브라우저 렌더링 및 스크린샷",
     ],
     conflicts: [],
     keywords: [
