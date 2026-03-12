@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-stopped_at: Completed 03-01-PLAN.md. Phase 3 plan 1 of 2 complete — notion, firecrawl, exa, tavily verified.
-last_updated: "2026-03-12T05:35:41Z"
-last_activity: 2026-03-12 — Completed 03-01-PLAN.md (notion, firecrawl, exa, tavily metadata verification)
+stopped_at: Completed 03-02-PLAN.md. Phase 3 complete (2 of 2 plans done) — perplexity, sentry, figma verified.
+last_updated: "2026-03-12T05:54:00Z"
+last_activity: 2026-03-12 — Completed 03-02-PLAN.md (perplexity, sentry, figma metadata verification)
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 7
-  completed_plans: 5
-  percent: 71
+  completed_plans: 6
+  percent: 86
 ---
 
 # Project State
@@ -25,19 +25,19 @@ See: .planning/PROJECT.md (updated 2026-03-11)
 
 ## Current Position
 
-Phase: 3 of 4 in progress (Standalone Official Repos)
-Plan: 1 of 2 in Phase 3 complete
-Status: Phase 3 plan 1 complete — proceeding to 03-02
-Last activity: 2026-03-12 — Completed 03-01-PLAN.md (notion, firecrawl, exa, tavily metadata verification)
+Phase: 3 of 4 complete (Standalone Official Repos)
+Plan: 2 of 2 in Phase 3 complete — Phase 3 DONE
+Status: Phase 3 complete — proceeding to Phase 4 (remaining plugins + sync)
+Last activity: 2026-03-12 — Completed 03-02-PLAN.md (perplexity, sentry, figma metadata verification)
 
-Progress: [███████░░░] 71%
+Progress: [████████░░] 86%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
+- Total plans completed: 6
 - Average duration: 12m
-- Total execution time: 60m
+- Total execution time: 70m
 
 **By Phase:**
 
@@ -45,10 +45,10 @@ Progress: [███████░░░] 71%
 |-------|-------|-------|----------|
 | 01-community-orchestration-plugins | 1 | 7m | 7m |
 | 02-official-mcp-monorepo-plugins | 3 | 47m | 16m |
-| 03-platform-official-plugins | 1 (of 2) | 6m | 6m |
+| 03-platform-official-plugins | 2 | 16m | 8m |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (7m), 02-01 (14m), 02-02 (18m), 02-03 (15m), 03-01 (6m)
+- Last 5 plans: 02-01 (14m), 02-02 (18m), 02-03 (15m), 03-01 (6m), 03-02 (10m)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -86,6 +86,16 @@ Progress: [███████░░░] 71%
 - [03-01]: tavily conflicts: [brave-search] 유지 — 둘 다 웹 검색 API로 동시 추천 시 중복; 설계 결정 유효
 - [03-01]: notion features → v2.0 data sources 용어로 업데이트 — v2.0.0에서 database 툴이 data source 툴로 교체됨 (22개 툴)
 - [03-01]: firecrawl features 업데이트 — 실제 14개 툴 반영 (scrape/batch/map/crawl/search/extract/agent/browser); 스케줄링은 README에 없음
+- [03-02]: perplexity package → @perplexity-ai/mcp-server — 구 perplexity-mcp@latest는 잘못된 패키지명; scoped 패키지로 확인
+- [03-02]: perplexity requiredSecrets → PERPLEXITY_API_KEY — README에서 정확한 env var명 확인
+- [03-02]: perplexity features → 4개 실제 툴 (search/ask/research/reason) — perplexity_search, perplexity_ask, perplexity_research, perplexity_reason
+- [03-02]: sentry install → plugin marketplace — README에서 claude plugin marketplace add getsentry/sentry-mcp 권장
+- [03-02]: sentry requiredSecrets → SENTRY_ACCESS_TOKEN — stdio 모드의 정확한 env var명; 원격 모드는 OAuth
+- [03-02]: sentry features: 자동 수정 제안 제거 — Sentry MCP는 에러 읽기/분석만; 코드 자동 수정 없음. Seer AI 진단 추가
+- [03-02]: figma githubRepo → figma/mcp-server-guide — figma/figma-mcp는 404; 공식 가이드 repo는 figma/mcp-server-guide
+- [03-02]: figma install → remote HTTP MCP (mcp.figma.com) — 공식 서버는 Figma가 원격 호스팅; figma-developer-mcp는 커뮤니티 패키지(GLips)
+- [03-02]: figma requiredSecrets → [] — mcp.figma.com OAuth 인증 방식; API 키 불필요
+- [03-02]: figma prerequisites → Dev/Full seat 필요 — 무료 플랜은 월 6회 제한; 유의미한 사용은 유료 플랜 필요
 
 ### Pending Todos
 
@@ -98,5 +108,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: Completed 03-01-PLAN.md. Phase 3 plan 1 of 2 complete — notion, firecrawl, exa, tavily verified.
+Stopped at: Completed 03-02-PLAN.md. Phase 3 complete (2/2 plans) — perplexity, sentry, figma verified.
 Resume file: None
