@@ -41,7 +41,7 @@ Plans:
 Plans:
 - [x] 02-01-PLAN.md — Verify metadata for sequential-thinking, brave-search, puppeteer
 - [x] 02-02-PLAN.md — Verify metadata for filesystem, git, postgres, memory
-- [ ] 02-03-PLAN.md — Verify metadata for github, slack
+- [x] 02-03-PLAN.md — Verify metadata for github, slack
 
 ### Phase 3: Platform & Official Plugins
 **Goal**: 각자 독립 repo를 가진 10개 플러그인(notion, firecrawl, exa, tavily, perplexity, sentry, figma, docker, cloudflare, vercel)의 메타데이터가 공식 문서 기반으로 검증된다
@@ -52,7 +52,12 @@ Plans:
   2. install 명령어가 각 플러그인 공식 문서의 Claude Code 설치 방법과 일치한다 (예: `npx -y @notionhq/notion-mcp-server`)
   3. 요구 API key/토큰 목록(requiredSecrets)이 실제 설정에 필요한 항목과 일치한다
   4. figma, cloudflare, docker처럼 advanced difficulty로 표시된 플러그인의 prerequisites가 실제 요구사항을 반영한다
-**Plans**: TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Verify metadata for notion, firecrawl, exa, tavily
+- [ ] 03-02-PLAN.md — Verify metadata for perplexity, sentry, figma
+- [ ] 03-03-PLAN.md — Verify metadata for docker, cloudflare, vercel
 
 ### Phase 4: Remaining Plugins & Sync
 **Goal**: todoist, linear, uiux 3개 플러그인 검증을 완료하고, 전체 26개 플러그인의 verificationStatus를 업데이트하며, 영문 번역 파일을 동기화한다
@@ -74,5 +79,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. Community Orchestration Plugins | 1/1 | Complete | 2026-03-11 |
 | 2. Official MCP Monorepo Plugins | 3/3 | Complete   | 2026-03-12 |
-| 3. Platform & Official Plugins | 0/TBD | Not started | - |
+| 3. Platform & Official Plugins | 0/3 | Planned | - |
 | 4. Remaining Plugins & Sync | 0/TBD | Not started | - |
