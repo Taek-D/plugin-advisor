@@ -57,8 +57,8 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     longDesc: "Context7 is an MCP server-based plugin that injects the latest official library documentation in real-time when Claude writes code. Enables accurate usage of latest APIs for major libraries like Next.js, Supabase, Prisma, FastAPI, greatly reducing hallucination errors.",
   },
   memory: {
-    desc: "Persistent memory for cross-session context. Ensures consistency in long-term projects.",
-    longDesc: "Memory MCP provides Claude Code with permanent knowledge graph-based memory. It remembers project context, coding style, and business logic learned from previous conversations even after sessions end. No need to repeat explanations for long-term projects, and can be used for knowledge sharing between team members.",
+    desc: "Persistent knowledge graph memory for cross-session context. Ensures consistency in long-term projects.",
+    longDesc: "Memory MCP provides Claude Code with permanent knowledge graph-based memory. You can create entities (people, organizations, events), define typed relations between them, and attach discrete observations to each entity. Tools include create_entities, create_relations, add_observations, delete_entities, delete_relations, read_graph, search_nodes, and open_nodes. No need to repeat explanations for long-term projects — Claude remembers project context, coding style, and business logic across sessions.",
   },
   playwright: {
     desc: "Browser automation & E2E testing. Powerful tool for web app QA.",
@@ -93,8 +93,8 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     longDesc: "Perplexity MCP lets you use the AI research engine Perplexity from Claude Code. Provides answers with cited sources for tech questions, reflecting latest info in real-time. Especially useful for new library research, tech comparison analysis, and best practices exploration.",
   },
   postgres: {
-    desc: "Direct PostgreSQL connection. Schema queries, SQL execution, data analysis.",
-    longDesc: "PostgreSQL MCP lets you directly interact with PostgreSQL databases from Claude Code. Query schemas, execute SQL, analyze data — all within your coding flow. Especially useful for writing migrations, query optimization, data modeling, with safe read-only mode available.",
+    desc: "Read-only PostgreSQL access. Schema inspection and safe SQL query execution.",
+    longDesc: "PostgreSQL MCP provides read-only access to PostgreSQL databases from Claude Code. All queries run inside a READ ONLY transaction for safety — write operations are not supported. The query tool executes any SQL statement, and each table's schema (column names and types) is automatically exposed as an MCP resource at postgres://<host>/<table>/schema. Useful for pre-migration schema review, query optimization, and data analysis. Requires a PostgreSQL connection string as an argument.",
   },
   security: {
     desc: "Real-time security vulnerability detection. Auto-warns about SQL injection, XSS, auth issues.",
@@ -113,12 +113,12 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     longDesc: "Slack MCP lets you use Slack workspace directly from Claude Code. Supports reading/writing channel messages, thread management, user search, file sharing. Integrates team communication into the development process with automatic deploy notifications, error reports, and code review requests.",
   },
   filesystem: {
-    desc: "Safe filesystem access. Directory navigation, file read/write, search.",
-    longDesc: "Filesystem MCP provides safe filesystem access. Uses sandbox mode, operating only within designated directories for security. Supports file read/write, directory creation, file search, metadata queries. Useful for automation tasks with heavy local file processing.",
+    desc: "Sandboxed filesystem access within allowed directories. Read, write, edit, search, and move files.",
+    longDesc: "Filesystem MCP provides safe filesystem access by operating exclusively within designated allowed directories. It supports reading files (text, multi-file), writing and editing files (pattern-based partial edits), creating and navigating directories, viewing directory trees, moving files, and searching by name or content. Supports the MCP Roots protocol so allowed directories can be updated dynamically at runtime. At least one allowed directory path must be provided as an argument.",
   },
   git: {
-    desc: "Direct Git repo manipulation. Automates commits, branches, diff, log management.",
-    longDesc: "Git MCP lets you programmatically manipulate Git repositories from Claude Code. Supports all core Git features: commit creation, branch management, diff viewing, log searching. Unlike GitHub MCP, works with local Git repos so it functions offline and suits complex Git automation.",
+    desc: "Local Git repo manipulation via Python/uvx. Automates commits, branches, diff, staging, and log.",
+    longDesc: "Git MCP is a Python-based server that lets you programmatically manipulate local Git repositories from Claude Code. It provides 12 tools: git_status, git_diff (staged/unstaged), git_commit, git_add, git_reset, git_log (with date filtering), git_create_branch, git_checkout, git_show, git_branch, and more. Unlike GitHub MCP, it works directly with local repos so it functions offline. Requires Python or uvx (uv) to be installed. Install via: claude mcp add git -- uvx mcp-server-git --repository /path/to/repo",
   },
   supabase: {
     desc: "Full Supabase BaaS integration. Manages DB, Auth, Storage, Edge Functions.",

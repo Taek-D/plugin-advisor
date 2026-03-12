@@ -173,18 +173,24 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     prerequisites: ["Docker Desktop 또는 Docker Engine"],
   },
   postgres: {
+    // Moved to servers-archived; npm package @modelcontextprotocol/server-postgres v0.6.2 still functional
+    officialStatus: "official",
+    verificationStatus: "verified",
     difficulty: "advanced",
     installMode: "manual-required",
-    prerequisites: ["접속할 PostgreSQL 연결 문자열"],
-    requiredSecrets: ["Database connection string"],
-    bestFor: ["로컬 DB 디버깅", "SQL 검증"],
-    avoidFor: ["Claude Code 첫 사용"],
+    prerequisites: ["접속할 PostgreSQL 연결 문자열 (postgresql://user:pass@host:port/db)"],
+    requiredSecrets: ["Database connection string (postgresql:// URL)"],
+    bestFor: ["로컬 DB 디버깅", "SQL 검증", "스키마 탐색"],
+    avoidFor: ["Claude Code 첫 사용", "쓰기 작업 필요 시 (읽기 전용)"],
   },
   filesystem: {
-    difficulty: "advanced",
+    // In modelcontextprotocol/servers main branch; package @modelcontextprotocol/server-filesystem v0.6.3 confirmed
+    officialStatus: "official",
+    verificationStatus: "verified",
+    difficulty: "intermediate",
     installMode: "manual-required",
-    prerequisites: ["접근 허용 디렉토리 경로"],
-    bestFor: ["파일 자동화", "샌드박스 작업"],
+    prerequisites: ["접근 허용 디렉토리 경로 (1개 이상 필수)"],
+    bestFor: ["파일 자동화", "샌드박스 파일 작업", "로컬 파일 처리"],
     avoidFor: ["입문자 기본 세팅"],
   },
   uiux: {
@@ -245,8 +251,22 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     requiredSecrets: ["Todoist API token"],
   },
   memory: {
+    // In modelcontextprotocol/servers main branch; package @modelcontextprotocol/server-memory v0.6.3 confirmed
+    officialStatus: "official",
+    verificationStatus: "verified",
     difficulty: "intermediate",
-    bestFor: ["장기 프로젝트", "세션 간 컨텍스트 유지"],
+    bestFor: ["장기 프로젝트", "세션 간 컨텍스트 유지", "반복 설명 제거"],
+    avoidFor: ["단기 실험성 작업"],
+  },
+  git: {
+    // In modelcontextprotocol/servers main branch; Python-based server (mcp-server-git), uses uvx not npx
+    officialStatus: "official",
+    verificationStatus: "verified",
+    difficulty: "intermediate",
+    installMode: "manual-required",
+    prerequisites: ["Git 설치 및 PATH 등록", "Python 또는 uvx (uv) 설치"],
+    bestFor: ["로컬 Git 자동화", "커밋/브랜치 관리", "diff 분석"],
+    avoidFor: ["GitHub API 기반 협업 (→ GitHub MCP 사용)"],
   },
 };
 
@@ -660,10 +680,10 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
       "claude mcp add memory -- npx -y @modelcontextprotocol/server-memory",
     ],
     features: [
-      "지식 그래프 저장",
-      "세션 간 컨텍스트 유지",
-      "자동 엔티티 추출",
-      "관계 기반 검색",
+      "엔티티·관계 생성 및 삭제",
+      "관찰(observation) 추가·제거",
+      "지식 그래프 전체 조회",
+      "노드 검색 및 열람",
     ],
     conflicts: [],
     keywords: [
@@ -908,19 +928,19 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     tag: "PG",
     color: "#336791",
     category: "data",
-    githubRepo: "modelcontextprotocol/servers",
-    desc: "PostgreSQL DB 직접 연결. 스키마 조회, 쿼리 실행, 데이터 분석.",
+    githubRepo: "modelcontextprotocol/servers-archived",
+    desc: "PostgreSQL DB 읽기 전용 연결. 스키마 조회와 SQL 쿼리 실행.",
     longDesc:
-      "PostgreSQL MCP는 PostgreSQL 데이터베이스를 Claude Code에서 직접 조작할 수 있게 해주는 서버예요. 스키마 조회, SQL 쿼리 실행, 데이터 분석을 코딩 흐름 안에서 바로 할 수 있어요. 마이그레이션 작성, 쿼리 최적화, 데이터 모델링에 특히 유용하고, 읽기 전용 모드로 안전하게 사용할 수 있어요.",
-    url: "https://github.com/modelcontextprotocol/servers/tree/main/src/postgres",
+      "PostgreSQL MCP는 PostgreSQL 데이터베이스에 읽기 전용으로 접근할 수 있게 해주는 서버예요. query 툴로 모든 SQL을 READ ONLY 트랜잭션 안에서 안전하게 실행하고, 테이블별 스키마 정보(컬럼명·타입)를 MCP 리소스로 자동 노출해요. 마이그레이션 작성 전 스키마 확인, 쿼리 최적화, 데이터 분석에 유용해요. 쓰기 작업은 지원하지 않아요.",
+    url: "https://github.com/modelcontextprotocol/servers-archived/tree/main/src/postgres",
     install: [
-      "claude mcp add postgres -- npx -y @modelcontextprotocol/server-postgres postgresql://localhost:5432/mydb",
+      "claude mcp add postgres -- npx -y @modelcontextprotocol/server-postgres postgresql://localhost/mydb",
     ],
     features: [
-      "스키마 자동 조회",
-      "SQL 쿼리 실행",
-      "읽기 전용 모드",
-      "다중 DB 연결",
+      "읽기 전용 SQL 쿼리 실행",
+      "테이블 스키마 자동 조회",
+      "MCP 리소스로 스키마 노출",
+      "READ ONLY 트랜잭션 보장",
     ],
     conflicts: [],
     keywords: [
@@ -1052,24 +1072,24 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     color: "#78716C",
     category: "integration",
     githubRepo: "modelcontextprotocol/servers",
-    desc: "안전한 파일 시스템 접근. 디렉토리 탐색, 파일 읽기/쓰기, 검색.",
+    desc: "허용된 디렉토리 내 파일 읽기·쓰기·편집·검색. 샌드박스 보안 모델.",
     longDesc:
-      "Filesystem MCP는 파일 시스템을 안전하게 접근할 수 있게 해주는 서버예요. 지정된 디렉토리 내에서만 작동하는 샌드박스 방식이라 보안이 보장돼요. 파일 읽기/쓰기, 디렉토리 생성, 파일 검색, 메타데이터 조회 등을 지원해요. 로컬 파일 처리가 많은 자동화 작업에 유용해요.",
+      "Filesystem MCP는 지정된 디렉토리 내에서만 동작하는 샌드박스 방식으로 파일 시스템을 안전하게 접근하게 해주는 서버예요. 파일 읽기(텍스트·미디어·다중), 쓰기, 편집(패턴 매칭 기반 부분 수정), 디렉토리 생성·탐색·트리 조회, 파일 이동·검색 등 풍부한 파일 작업을 지원해요. MCP Roots 프로토콜로 런타임 중에도 허용 디렉토리를 동적으로 변경할 수 있어요.",
     url: "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem",
     install: [
       "claude mcp add filesystem -- npx -y @modelcontextprotocol/server-filesystem /path/to/allowed/dir",
     ],
     features: [
-      "샌드박스 파일 접근",
-      "디렉토리 탐색",
-      "파일 검색",
-      "메타데이터 조회",
+      "파일 읽기/쓰기/편집",
+      "디렉토리 탐색 및 트리 조회",
+      "파일 검색 및 이동",
+      "샌드박스 접근 제어 (MCP Roots 지원)",
     ],
     conflicts: [],
     keywords: [
       "파일", "file", "디렉토리", "directory", "폴더", "folder", "읽기",
       "read", "쓰기", "write", "파일 시스템", "filesystem", "로컬",
-      "local", "경로", "path",
+      "local", "경로", "path", "편집", "edit", "검색", "search",
     ],
   },
   git: {
@@ -1079,24 +1099,24 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     color: "#F05032",
     category: "integration",
     githubRepo: "modelcontextprotocol/servers",
-    desc: "Git 저장소 직접 조작. 커밋, 브랜치, diff, 로그 관리 자동화.",
+    desc: "로컬 Git 저장소 직접 조작. 커밋, 브랜치, diff, 로그, 스테이징 자동화.",
     longDesc:
-      "Git MCP는 Git 저장소를 Claude Code에서 프로그래밍 방식으로 조작할 수 있게 해주는 서버예요. 커밋 생성, 브랜치 관리, diff 조회, 로그 검색 등 Git의 핵심 기능을 모두 지원해요. GitHub MCP와 달리 로컬 Git 저장소를 직접 다루기 때문에 오프라인에서도 작동하고, 복잡한 Git 작업 자동화에 적합해요.",
+      "Git MCP는 Git 저장소를 Claude Code에서 프로그래밍 방식으로 조작할 수 있게 해주는 Python 기반 서버예요. git_status, git_diff(스테이지/미스테이지), git_commit, git_add, git_reset, git_log, git_create_branch, git_checkout, git_show, git_branch 등 12개 툴을 제공해요. GitHub MCP와 달리 로컬 저장소를 직접 다루기 때문에 오프라인에서도 작동해요. Python/uvx 환경이 필요해요.",
     url: "https://github.com/modelcontextprotocol/servers/tree/main/src/git",
     install: [
-      "claude mcp add git -- npx -y @modelcontextprotocol/server-git",
+      "claude mcp add git -- uvx mcp-server-git --repository /path/to/repo",
     ],
     features: [
-      "로컬 Git 조작",
-      "커밋/브랜치 관리",
-      "diff 분석",
-      "로그 검색",
+      "커밋/스테이징/리셋",
+      "브랜치 생성 및 체크아웃",
+      "diff 분석 (스테이지/미스테이지)",
+      "로그 검색 (날짜 필터 지원)",
     ],
     conflicts: [],
     keywords: [
       "git", "깃", "커밋", "commit", "브랜치", "branch", "diff",
       "merge", "로그", "log", "버전 관리", "version control", "리베이스",
-      "rebase",
+      "rebase", "스테이징", "staging",
     ],
   },
   supabase: {
