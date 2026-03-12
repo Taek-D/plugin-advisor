@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Completed 02-03-PLAN.md. Phase 2 complete — all 9 MCP monorepo plugins verified.
-last_updated: "2026-03-12T04:46:57.749Z"
-last_activity: 2026-03-12 — Completed 02-03-PLAN.md (github, slack metadata verification)
+status: in_progress
+stopped_at: Completed 03-01-PLAN.md. Phase 3 plan 1 of 2 complete — notion, firecrawl, exa, tavily verified.
+last_updated: "2026-03-12T05:35:41Z"
+last_activity: 2026-03-12 — Completed 03-01-PLAN.md (notion, firecrawl, exa, tavily metadata verification)
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
-  percent: 62
+  total_plans: 7
+  completed_plans: 5
+  percent: 71
 ---
 
 # Project State
@@ -21,23 +21,23 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** 사용자의 프로젝트에 맞는 검증된 Claude Code 플러그인 조합을 정확하게 추천하는 것.
-**Current focus:** Phase 3 — Standalone Official Repos
+**Current focus:** Phase 3 — Standalone Official Repos (plan 2 of 2 remaining)
 
 ## Current Position
 
-Phase: 2 of 4 complete (Official MCP Monorepo Plugins — DONE)
-Plan: 3 of 3 in Phase 2 complete
-Status: Phase 2 complete — proceeding to Phase 3 (Standalone Official Repos)
-Last activity: 2026-03-12 — Completed 02-03-PLAN.md (github, slack metadata verification)
+Phase: 3 of 4 in progress (Standalone Official Repos)
+Plan: 1 of 2 in Phase 3 complete
+Status: Phase 3 plan 1 complete — proceeding to 03-02
+Last activity: 2026-03-12 — Completed 03-01-PLAN.md (notion, firecrawl, exa, tavily metadata verification)
 
-Progress: [██████░░░░] 62%
+Progress: [███████░░░] 71%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 13m
-- Total execution time: 54m
+- Total plans completed: 5
+- Average duration: 12m
+- Total execution time: 60m
 
 **By Phase:**
 
@@ -45,9 +45,10 @@ Progress: [██████░░░░] 62%
 |-------|-------|-------|----------|
 | 01-community-orchestration-plugins | 1 | 7m | 7m |
 | 02-official-mcp-monorepo-plugins | 3 | 47m | 16m |
+| 03-platform-official-plugins | 1 (of 2) | 6m | 6m |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (7m), 02-01 (14m), 02-02 (18m), 02-03 (15m)
+- Last 5 plans: 01-01 (7m), 02-01 (14m), 02-02 (18m), 02-03 (15m), 03-01 (6m)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -77,6 +78,14 @@ Progress: [██████░░░░] 62%
 - [02-03]: slack requiredSecrets → [SLACK_BOT_TOKEN, SLACK_TEAM_ID] — 두 env var 모두 필수 (README 확인)
 - [02-03]: github features 확장 — 26개 툴 문서화; 파일 ops/이슈/PR/검색/브랜치/커밋 6개 차원으로 표현
 - [02-03]: slack features 수정 — 파일 공유 툴 없음 제거; emoji reaction 툴 추가; 8개 실제 툴 반영
+- [03-01]: notion requiredSecrets → NOTION_TOKEN — README에서 권장 env var명 확인 (NOTION_API_KEY 아님)
+- [03-01]: firecrawl install 수정 — /plugin marketplace add firecrawl는 완전히 잘못됨; 올바른 패키지는 firecrawl-mcp
+- [03-01]: exa install → remote HTTP MCP — exa-labs가 mcp.exa.ai 호스팅 서버로 이전; claude mcp add --transport http 사용
+- [03-01]: exa requiredSecrets → [] — 원격 서버 기본 툴(웹/코드/기업 검색)은 API 키 없이 사용 가능
+- [03-01]: tavily install → remote HTTP MCP — mcp.tavily.com 원격 서버; TAVILY_API_KEY를 URL 파라미터로 전달
+- [03-01]: tavily conflicts: [brave-search] 유지 — 둘 다 웹 검색 API로 동시 추천 시 중복; 설계 결정 유효
+- [03-01]: notion features → v2.0 data sources 용어로 업데이트 — v2.0.0에서 database 툴이 data source 툴로 교체됨 (22개 툴)
+- [03-01]: firecrawl features 업데이트 — 실제 14개 툴 반영 (scrape/batch/map/crawl/search/extract/agent/browser); 스케줄링은 README에 없음
 
 ### Pending Todos
 
@@ -89,5 +98,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: Completed 02-03-PLAN.md. Phase 2 complete — all 9 MCP monorepo plugins verified.
+Stopped at: Completed 03-01-PLAN.md. Phase 3 plan 1 of 2 complete — notion, firecrawl, exa, tavily verified.
 Resume file: None

@@ -52,7 +52,7 @@ Plans:
   2. install 명령어가 각 플러그인 공식 문서의 Claude Code 설치 방법과 일치한다 (예: `npx -y @notionhq/notion-mcp-server`)
   3. 요구 API key/토큰 목록(requiredSecrets)이 실제 설정에 필요한 항목과 일치한다
   4. figma, cloudflare, docker처럼 advanced difficulty로 표시된 플러그인의 prerequisites가 실제 요구사항을 반영한다
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
 - [ ] 03-01-PLAN.md — Verify metadata for notion, firecrawl, exa, tavily
@@ -79,5 +79,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. Community Orchestration Plugins | 1/1 | Complete | 2026-03-11 |
 | 2. Official MCP Monorepo Plugins | 3/3 | Complete   | 2026-03-12 |
-| 3. Platform & Official Plugins | 0/3 | Planned | - |
+| 3. Platform & Official Plugins | 1/3 | In Progress|  |
 | 4. Remaining Plugins & Sync | 0/TBD | Not started | - |
