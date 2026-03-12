@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-stopped_at: Completed 02-01-PLAN.md. Phase 2 plan 1 done (sequential-thinking, brave-search, puppeteer verified).
-last_updated: "2026-03-12T04:28:00Z"
-last_activity: 2026-03-12 — Completed 02-01-PLAN.md (sequential-thinking, brave-search, puppeteer metadata verification)
+stopped_at: Completed 02-02-PLAN.md. Phase 2 plan 2 done (filesystem, git, postgres, memory verified).
+last_updated: "2026-03-12T04:53:00Z"
+last_activity: 2026-03-12 — Completed 02-02-PLAN.md (filesystem, git, postgres, memory metadata verification)
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 3
+  completed_plans: 3
   percent: 50
 ---
 
@@ -21,33 +21,33 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** 사용자의 프로젝트에 맞는 검증된 Claude Code 플러그인 조합을 정확하게 추천하는 것.
-**Current focus:** Phase 2 — Official MCP Monorepo Plugins
+**Current focus:** Phase 2 — Official MCP Monorepo Plugins (1 plan remaining: github, slack)
 
 ## Current Position
 
 Phase: 2 of 4 (Official MCP Monorepo Plugins)
-Plan: 1 of 1 in current phase
-Status: Phase 2 plan 1 complete — ready for Phase 3
-Last activity: 2026-03-12 — Completed 02-01-PLAN.md (sequential-thinking, brave-search, puppeteer metadata verification)
+Plan: 2 of 3 in current phase complete
+Status: Phase 2 plan 2 complete — 02-03 (github, slack) remaining
+Last activity: 2026-03-12 — Completed 02-02-PLAN.md (filesystem, git, postgres, memory metadata verification)
 
 Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 11m
-- Total execution time: 21m
+- Total plans completed: 3
+- Average duration: 13m
+- Total execution time: 39m
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-community-orchestration-plugins | 1 | 7m | 7m |
-| 02-official-mcp-monorepo-plugins | 1 | 14m | 14m |
+| 02-official-mcp-monorepo-plugins | 2 | 32m | 16m |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (7m), 02-01 (14m)
+- Last 5 plans: 01-01 (7m), 02-01 (14m), 02-02 (18m)
 - Trend: —
 
 *Updated after each plan completion*
@@ -66,6 +66,11 @@ Progress: [█████░░░░░] 50%
 - [02-01]: sequential-thinking에 officialStatus/verificationStatus 추가 — PLUGIN_FIELD_OVERRIDES에 누락되어 기본값(community/partial)으로 남아 있었음
 - [02-01]: brave-search requiredSecrets에 env var명 추가 — (BRAVE_API_KEY) 포함, README에서 확인
 - [02-01]: puppeteer features 수정 — PDF/네트워크 인터셉트는 README에 없음, 실제 7개 툴 기반으로 수정
+- [02-02]: postgres githubRepo → servers-archived — main 모노레포에서 이동됐지만 npm 패키지는 계속 동작
+- [02-02]: git install npx → uvx — Python 기반 서버(mcp-server-git), npm 패키지 아님. uvx mcp-server-git --repository /path/to/repo
+- [02-02]: postgres features 수정 — 단일 query 툴(READ ONLY)만 존재, 다중 DB 연결 불가 (단일 연결 문자열)
+- [02-02]: memory features 수정 — "자동 엔티티 추출" 제거, 실제 수동 CRUD 툴(create/delete entities/relations, observations) 반영
+- [02-02]: filesystem difficulty advanced → intermediate — 허용 디렉토리 지정 방식은 직관적, advanced 과대표현
 
 ### Pending Todos
 
@@ -78,5 +83,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: Completed 02-01-PLAN.md. Phase 2 plan 1 done (sequential-thinking, brave-search, puppeteer verified).
+Stopped at: Completed 02-02-PLAN.md. Phase 2 plan 2 done (filesystem, git, postgres, memory verified).
 Resume file: None
