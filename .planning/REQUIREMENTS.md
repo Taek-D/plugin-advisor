@@ -18,8 +18,8 @@ Requirements for milestone v1.0 — 플러그인 메타데이터 검증.
 
 ### 상태 업데이트
 
-- [ ] **UPDATE-01**: 검증 결과에 따라 각 플러그인의 verificationStatus 업데이트
-- [ ] **UPDATE-02**: 영문 번역(`lib/i18n/plugins-en.ts`) 동기화
+- [x] **UPDATE-01**: 검증 결과에 따라 각 플러그인의 verificationStatus 업데이트
+- [x] **UPDATE-02**: 영문 번역(`lib/i18n/plugins-en.ts`) 동기화
 
 ## v2 Requirements
 
