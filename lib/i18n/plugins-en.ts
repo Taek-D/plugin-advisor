@@ -105,12 +105,12 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     longDesc: "Sentry MCP integrates the error tracking platform Sentry with Claude Code. View production errors in real-time, analyze stack traces, and identify root causes. Automatically classifies error patterns, finds related code, and suggests fixes.",
   },
   github: {
-    desc: "Full GitHub API integration. Automates PRs, issues, code reviews, repo management.",
-    longDesc: "GitHub MCP makes the entire GitHub API available from Claude Code. Create/review PRs, manage issues, search files, manage branches, create releases — handle all GitHub features within your coding flow. Essential for open source project management or team development workflows.",
+    desc: "Full GitHub API integration. 26 tools for files, repos, issues, PRs, branches, and search.",
+    longDesc: "GitHub MCP makes the GitHub API available directly from Claude Code. It provides 26 tools: create/update/read files, create/fork repositories, create/update/comment on issues, create/review/merge pull requests, manage branches, and search code, issues, and users. Requires a GITHUB_PERSONAL_ACCESS_TOKEN environment variable. Note: this server now lives in modelcontextprotocol/servers-archived; active development has moved to github/github-mcp-server.",
   },
   slack: {
-    desc: "Slack channel/message integration. Automates notifications, channel search, team communication.",
-    longDesc: "Slack MCP lets you use Slack workspace directly from Claude Code. Supports reading/writing channel messages, thread management, user search, file sharing. Integrates team communication into the development process with automatic deploy notifications, error reports, and code review requests.",
+    desc: "Slack channel/message integration. 8 tools for messaging, threads, reactions, and user profiles.",
+    longDesc: "Slack MCP lets you use your Slack workspace directly from Claude Code. It provides 8 tools: list channels, post messages, reply to threads, add emoji reactions, get channel history, get thread replies, list users, and get user profiles. Requires two environment variables: SLACK_BOT_TOKEN (starts with xoxb-) and SLACK_TEAM_ID. Well suited for automating deploy notifications, error reports, and code review requests to Slack.",
   },
   filesystem: {
     desc: "Sandboxed filesystem access within allowed directories. Read, write, edit, search, and move files.",
@@ -173,8 +173,8 @@ export const reasonsEn: Record<string, string> = {
   postgres: "PostgreSQL database work included. Directly query schemas and execute SQL.",
   security: "Auth, payments, or personal data handling included. Real-time vulnerability detection maintains code safety.",
   sentry: "Error tracking and monitoring needed. Sentry integration analyzes production errors in real-time.",
-  github: "GitHub-based collaboration is key. Handle PRs, issues, code reviews within coding flow.",
-  slack: "Team communication is important. Slack integration automates deploy notifications and collaboration.",
+  github: "GitHub-based collaboration is key. 26 tools let you manage PRs, issues, branches, file ops, and search — all within your coding flow.",
+  slack: "Team communication is important. Slack integration enables deploy notifications, error reports, and channel messaging automation via 8 dedicated tools.",
   filesystem: "Heavy local file processing. Safely handle filesystem within sandbox.",
   git: "Git version control is core. Programmatically manipulate local repositories.",
   supabase: "BaaS-based full-stack development. Quickly build DB, auth, storage with Supabase.",
