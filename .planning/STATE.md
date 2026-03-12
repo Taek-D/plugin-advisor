@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-stopped_at: Completed 02-02-PLAN.md. Phase 2 plan 2 done (filesystem, git, postgres, memory verified).
-last_updated: "2026-03-12T04:53:00Z"
-last_activity: 2026-03-12 — Completed 02-02-PLAN.md (filesystem, git, postgres, memory metadata verification)
+stopped_at: Completed 02-03-PLAN.md. Phase 2 complete — all 9 MCP monorepo plugins verified.
+last_updated: "2026-03-12T05:10:00Z"
+last_activity: 2026-03-12 — Completed 02-03-PLAN.md (github, slack metadata verification — Phase 2 done)
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 3
-  completed_plans: 3
-  percent: 50
+  completed_plans: 4
+  percent: 62
 ---
 
 # Project State
@@ -21,34 +21,34 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-11)
 
 **Core value:** 사용자의 프로젝트에 맞는 검증된 Claude Code 플러그인 조합을 정확하게 추천하는 것.
-**Current focus:** Phase 2 — Official MCP Monorepo Plugins (1 plan remaining: github, slack)
+**Current focus:** Phase 3 — Standalone Official Repos
 
 ## Current Position
 
-Phase: 2 of 4 (Official MCP Monorepo Plugins)
-Plan: 2 of 3 in current phase complete
-Status: Phase 2 plan 2 complete — 02-03 (github, slack) remaining
-Last activity: 2026-03-12 — Completed 02-02-PLAN.md (filesystem, git, postgres, memory metadata verification)
+Phase: 2 of 4 complete (Official MCP Monorepo Plugins — DONE)
+Plan: 3 of 3 in Phase 2 complete
+Status: Phase 2 complete — proceeding to Phase 3 (Standalone Official Repos)
+Last activity: 2026-03-12 — Completed 02-03-PLAN.md (github, slack metadata verification)
 
-Progress: [█████░░░░░] 50%
+Progress: [██████░░░░] 62%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
+- Total plans completed: 4
 - Average duration: 13m
-- Total execution time: 39m
+- Total execution time: 54m
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-community-orchestration-plugins | 1 | 7m | 7m |
-| 02-official-mcp-monorepo-plugins | 2 | 32m | 16m |
+| 02-official-mcp-monorepo-plugins | 3 | 47m | 16m |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (7m), 02-01 (14m), 02-02 (18m)
-- Trend: —
+- Last 5 plans: 01-01 (7m), 02-01 (14m), 02-02 (18m), 02-03 (15m)
+- Trend: stable
 
 *Updated after each plan completion*
 
@@ -71,6 +71,12 @@ Progress: [█████░░░░░] 50%
 - [02-02]: postgres features 수정 — 단일 query 툴(READ ONLY)만 존재, 다중 DB 연결 불가 (단일 연결 문자열)
 - [02-02]: memory features 수정 — "자동 엔티티 추출" 제거, 실제 수동 CRUD 툴(create/delete entities/relations, observations) 반영
 - [02-02]: filesystem difficulty advanced → intermediate — 허용 디렉토리 지정 방식은 직관적, advanced 과대표현
+- [02-03]: github githubRepo → servers-archived — main 모노레포 src/github 없음; 후속 개발은 github/github-mcp-server로 이전
+- [02-03]: slack githubRepo → servers-archived — brave-search, puppeteer, postgres와 동일한 이전
+- [02-03]: github requiredSecrets → GITHUB_PERSONAL_ACCESS_TOKEN — README에서 정확한 env var명 확인
+- [02-03]: slack requiredSecrets → [SLACK_BOT_TOKEN, SLACK_TEAM_ID] — 두 env var 모두 필수 (README 확인)
+- [02-03]: github features 확장 — 26개 툴 문서화; 파일 ops/이슈/PR/검색/브랜치/커밋 6개 차원으로 표현
+- [02-03]: slack features 수정 — 파일 공유 툴 없음 제거; emoji reaction 툴 추가; 8개 실제 툴 반영
 
 ### Pending Todos
 
@@ -83,5 +89,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: Completed 02-02-PLAN.md. Phase 2 plan 2 done (filesystem, git, postgres, memory verified).
+Stopped at: Completed 02-03-PLAN.md. Phase 2 complete — all 9 MCP monorepo plugins verified.
 Resume file: None
