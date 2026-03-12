@@ -37,8 +37,8 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     longDesc: "fireauto bundles repeated Claude Code workflows into ready-made commands. It can help with first-time setup, planning, Reddit-style market research, SEO checks, security reviews, design improvements, and looped execution. It is especially useful for solo builders who want a more practical command layer around service launch work.",
   },
   "sequential-thinking": {
-    desc: "Step-by-step problem decomposition for complex thinking. Powerful for architecture design and debugging.",
-    longDesc: "Sequential Thinking MCP processes complex problems by breaking them into sequential thinking steps. It systematically builds hypotheses, validates, and revises at each step. Greatly improves Claude's reasoning quality for tasks requiring deep thinking like architecture design, complex bug tracking, and algorithm optimization.",
+    desc: "Step-by-step problem decomposition with dynamic revision and branching. Powerful for architecture design and complex reasoning.",
+    longDesc: "Sequential Thinking MCP is an official MCP server that breaks complex problems into sequential thinking steps. It supports dynamic thought flows including revision of previous steps, branching into alternative reasoning paths, and adjusting the total thought count as understanding deepens. Even when the full problem scope isn't clear upfront, it can adapt step by step. Especially strong for architecture design, complex bug tracking, and planning tasks that require deep thinking and mid-course corrections.",
   },
   todoist: {
     desc: "Todoist integration for real-time task management. The standard for todo tracking.",
@@ -65,8 +65,8 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     longDesc: "Playwright MCP integrates Microsoft's Playwright with Claude Code for easy browser automation and E2E testing. Automatically verifies complete user scenarios, supports cross-browser testing, screenshot comparison, and performance measurement.",
   },
   puppeteer: {
-    desc: "Chrome-based browser automation. Specialized for screenshots, PDF generation, form testing.",
-    longDesc: "Puppeteer MCP integrates Google's Puppeteer with Claude Code for programmatic Chrome browser control. Supports web page screenshot capture, PDF generation, form auto-fill, network request interception. Directly utilizes Chrome DevTools Protocol for deeper Chrome-specific features.",
+    desc: "Chrome-based browser automation. Navigate pages, capture screenshots, fill forms, and execute JavaScript.",
+    longDesc: "Puppeteer MCP integrates Google's Puppeteer with Claude Code for programmatic Chrome browser control. Provides tools for navigation, screenshot capture, element interaction (click, hover, fill, select), and JavaScript execution. Console logs and screenshots are exposed as MCP resources so Claude can directly inspect them. Choose Puppeteer for Chrome-specific automation, or Playwright for cross-browser E2E testing.",
   },
   notion: {
     desc: "Direct Notion page/DB manipulation. Connect documentation and wiki management with code.",
@@ -77,8 +77,8 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     longDesc: "Firecrawl automates web data collection and scraping. Handles everything from simple HTML parsing to dynamic pages requiring JavaScript rendering. Essential for building crawling-based services like price monitoring, news collection, data pipelines.",
   },
   "brave-search": {
-    desc: "Brave search engine integration. Real-time web search for latest information access.",
-    longDesc: "Brave Search MCP lets you use Brave's privacy-focused search engine from Claude Code. Offers web search and local search modes with real-time access to latest information. Useful for API docs, error message searches, and tracking latest tech trends.",
+    desc: "Brave Search API integration. Supports both web search and local business search.",
+    longDesc: "Brave Search MCP lets you use Brave's privacy-focused search engine from Claude Code. Provides two tools: web search (brave_web_search) with pagination and freshness filtering, and local business search (brave_local_search) that automatically falls back to web search when no local results are found. Requires a Brave Search API key (free tier: 2,000 queries/month). Useful for API docs, error message searches, and tracking latest tech trends.",
   },
   exa: {
     desc: "AI-specialized semantic search. Finds most relevant info based on meaning, not keywords.",
@@ -156,17 +156,17 @@ export const reasonsEn: Record<string, string> = {
   taskmaster: "Project needs task decomposition and management. Auto-breaks PRDs into sub-tasks and tracks dependencies.",
   gsd: "A roadmap and spec-driven workflow is important here. GSD helps stabilize long-running builds with structured planning, execution, and verification.",
   fireauto: "This looks like a launch-oriented workflow with SEO, security, research, or UI polish. fireauto bundles those practical commands into one plugin set.",
-  "sequential-thinking": "Complex reasoning or design needed. Step-by-step thinking improves architecture quality.",
+  "sequential-thinking": "Complex reasoning or design work detected. Sequential Thinking breaks problems into revisable steps with branching support — improving architecture quality and reducing costly reasoning mistakes.",
   todoist: "Project includes task management. Todoist integration enables real-time dev task tracking.",
   linear: "Team project management needed. Linear issue tracking connects development and project management.",
   repomix: "Large codebase or legacy analysis needed. Packs entire code into AI-friendly format for better context understanding.",
   context7: "Uses many external libraries/APIs. Injects latest official docs in real-time to reduce hallucination errors.",
   memory: "Long-term project where cross-session context is important. Persistent memory eliminates repeated explanations.",
   playwright: "E2E testing or browser automation needed. Automates web app quality verification.",
-  puppeteer: "Chrome browser automation needed. Specialized for screenshots, PDF generation, and form testing.",
+  puppeteer: "Chrome browser automation needed. Puppeteer handles navigation, screenshots, form interaction, and JavaScript execution — best for Chrome-specific automation tasks.",
   notion: "Documentation and knowledge management are important. Notion integration syncs dev docs with code.",
   firecrawl: "Web data collection is a core feature. Simplifies scraping automation implementation.",
-  "brave-search": "Real-time web search needed. Brave search provides fast access to latest information.",
+  "brave-search": "Real-time web search needed. Brave Search provides privacy-focused web and local business search with a free API tier (2,000 queries/month).",
   exa: "AI-based semantic search needed. Finds most relevant tech docs based on meaning.",
   tavily: "Search result auto-summarization needed. Provides AI agent-optimized search API.",
   perplexity: "Tech research and comparison analysis needed. Provides accurate investigation with source-based answers.",

@@ -70,7 +70,17 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     officialStatus: "official",
     verificationStatus: "verified",
     difficulty: "beginner",
-    bestFor: ["웹앱 QA", "브라우저 테스트"],
+    bestFor: ["웹앱 QA", "브라우저 테스트", "크로스 브라우저 E2E"],
+  },
+  puppeteer: {
+    // puppeteer was moved from modelcontextprotocol/servers to servers-archived repo.
+    // npm package @modelcontextprotocol/server-puppeteer still functional (2025.5.12).
+    // No API key required — runs headless Chrome locally.
+    officialStatus: "official",
+    verificationStatus: "verified",
+    difficulty: "beginner",
+    bestFor: ["스크린샷/PDF 생성", "Chrome 특화 자동화", "폼 테스트"],
+    avoidFor: ["크로스 브라우저 테스트 필요 시 (Playwright 권장)"],
   },
   security: {
     officialStatus: "official",
@@ -101,9 +111,15 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     requiredSecrets: ["Perplexity API key"],
   },
   "brave-search": {
+    // brave-search was moved from modelcontextprotocol/servers to servers-archived repo.
+    // npm package @modelcontextprotocol/server-brave-search still functional (0.6.2).
+    // Official replacement is brave/brave-search-mcp-server but install command remains compatible.
     officialStatus: "official",
+    verificationStatus: "verified",
     installMode: "external-setup",
-    requiredSecrets: ["Brave Search API key"],
+    requiredSecrets: ["Brave Search API key (BRAVE_API_KEY)"],
+    bestFor: ["실시간 웹 검색", "로컬 비즈니스 검색", "최신 정보 조회"],
+    avoidFor: ["API 키 없는 환경"],
   },
   vercel: {
     officialStatus: "official",
@@ -214,8 +230,10 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     avoidFor: ["단발성 작업", "첫 세팅 직후"],
   },
   "sequential-thinking": {
+    officialStatus: "official",
+    verificationStatus: "verified",
     difficulty: "advanced",
-    bestFor: ["복잡한 추론", "아키텍처 검토"],
+    bestFor: ["복잡한 추론", "아키텍처 검토", "단계별 계획 수립"],
     avoidFor: ["첫 세팅 직후 바로 쓰는 흐름"],
   },
   linear: {
@@ -492,24 +510,24 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     color: "#0EA5E9",
     category: "workflow",
     githubRepo: "modelcontextprotocol/servers",
-    desc: "복잡한 문제를 단계별로 분해해서 사고. 아키텍처 설계와 디버깅에 강력.",
+    desc: "복잡한 문제를 단계별로 분해해서 사고. 수정·분기·재검토가 가능한 동적 추론.",
     longDesc:
-      "Sequential Thinking MCP는 복잡한 문제를 순차적 사고 단계로 분해해서 처리하는 서버예요. 각 단계에서 가설을 세우고, 검증하고, 수정하는 과정을 체계적으로 진행해요. 아키텍처 설계, 복잡한 버그 추적, 알고리즘 최적화 같은 깊은 사고가 필요한 작업에서 Claude의 추론 품질을 크게 향상시켜요.",
+      "Sequential Thinking MCP는 복잡한 문제를 순차적 사고 단계로 분해해서 처리하는 공식 MCP 서버예요. 각 단계에서 사고를 수정하거나 이전 단계를 재검토(revision)하고, 대안적 추론 경로로 분기(branch)하는 동적 사고 흐름을 지원해요. 문제 전체 범위가 처음부터 명확하지 않아도 단계별로 범위를 조정할 수 있어요. 아키텍처 설계, 복잡한 버그 추적, 계획 수립처럼 깊은 사고와 과정 수정이 필요한 작업에 특히 강해요.",
     url: "https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking",
     install: [
       "claude mcp add sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking",
     ],
     features: [
-      "단계별 사고 분해",
-      "가설-검증 루프",
-      "아키텍처 설계 지원",
-      "복잡한 디버깅",
+      "단계별 사고 분해 및 수정",
+      "대안 경로 분기(branching)",
+      "동적 사고 수 조정",
+      "가설 생성 및 검증",
     ],
     conflicts: [],
     keywords: [
       "사고", "thinking", "추론", "reasoning", "아키텍처", "architecture",
       "설계", "design", "디버깅", "debug", "복잡", "complex", "분석",
-      "analysis", "알고리즘", "algorithm",
+      "analysis", "알고리즘", "algorithm", "계획", "plan", "단계",
     ],
   },
   todoist: {
@@ -692,25 +710,25 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     tag: "PPT",
     color: "#40B5A4",
     category: "testing",
-    githubRepo: "modelcontextprotocol/servers",
-    desc: "Chrome 기반 브라우저 자동화. 스크린샷, PDF 생성, 폼 테스트에 특화.",
+    githubRepo: "modelcontextprotocol/servers-archived",
+    desc: "Chrome 기반 브라우저 자동화. 탐색, 스크린샷, 폼 조작, JavaScript 실행 지원.",
     longDesc:
-      "Puppeteer MCP는 Google의 Puppeteer를 Claude Code와 연동해서 Chrome 브라우저를 프로그래밍 방식으로 제어할 수 있게 해줘요. 웹 페이지 스크린샷 캡처, PDF 생성, 폼 자동 입력, 네트워크 요청 가로채기 등을 지원해요. Chrome DevTools Protocol을 직접 활용하기 때문에 Chrome에 특화된 기능을 더 깊게 사용할 수 있어요.",
-    url: "https://github.com/modelcontextprotocol/servers/tree/main/src/puppeteer",
+      "Puppeteer MCP는 Google의 Puppeteer를 Claude Code와 연동해서 Chrome 브라우저를 프로그래밍 방식으로 제어할 수 있게 해줘요. 페이지 탐색, 스크린샷 캡처, 요소 클릭/호버/폼 입력, JavaScript 실행 등 실제 브라우저 상호작용을 자동화해요. 콘솔 로그와 스크린샷을 MCP 리소스로 노출해 클로드가 직접 확인할 수 있어요. 크로스 브라우저가 필요하다면 Playwright를, Chrome 특화 자동화에는 Puppeteer를 선택하세요.",
+    url: "https://github.com/modelcontextprotocol/servers-archived/tree/main/src/puppeteer",
     install: [
       "claude mcp add puppeteer -- npx -y @modelcontextprotocol/server-puppeteer",
     ],
     features: [
-      "Chrome 브라우저 제어",
-      "스크린샷/PDF 생성",
-      "네트워크 인터셉트",
-      "콘솔 로그 모니터링",
+      "페이지 탐색 및 상호작용",
+      "스크린샷 캡처",
+      "폼 입력 및 요소 조작",
+      "JavaScript 실행 & 콘솔 로그",
     ],
     conflicts: ["playwright"],
     keywords: [
       "puppeteer", "chrome", "브라우저", "browser", "스크린샷", "screenshot",
       "pdf", "테스트", "test", "자동화", "automation", "헤드리스", "headless",
-      "크롬",
+      "크롬", "javascript", "폼", "form",
     ],
   },
 
@@ -782,25 +800,25 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     tag: "BRV",
     color: "#FB542B",
     category: "data",
-    githubRepo: "modelcontextprotocol/servers",
-    desc: "Brave 검색 엔진 연동. 실시간 웹 검색으로 최신 정보 접근.",
+    githubRepo: "modelcontextprotocol/servers-archived",
+    desc: "Brave 검색 API 연동. 웹 검색과 로컬 비즈니스 검색을 동시 지원.",
     longDesc:
-      "Brave Search MCP는 Brave의 프라이버시 중심 검색 엔진을 Claude Code에서 사용할 수 있게 해주는 서버예요. 웹 검색과 로컬 검색 두 가지 모드를 제공하고, 실시간으로 최신 정보를 가져올 수 있어요. API 문서, 에러 메시지 검색, 최신 기술 트렌드 파악에 유용해요.",
-    url: "https://github.com/modelcontextprotocol/servers/tree/main/src/brave-search",
+      "Brave Search MCP는 Brave의 프라이버시 중심 검색 엔진을 Claude Code에서 사용할 수 있게 해주는 서버예요. 웹 검색(`brave_web_search`)과 로컬 비즈니스 검색(`brave_local_search`) 두 가지 모드를 제공해요. 로컬 검색 결과가 없을 경우 자동으로 웹 검색으로 폴백해요. 페이지네이션, 신선도 필터, 안전 검색 등 다양한 필터링 옵션도 제공해요. Brave Search API 키가 필요해요. (무료 플랜: 월 2,000 쿼리)",
+    url: "https://github.com/modelcontextprotocol/servers-archived/tree/main/src/brave-search",
     install: [
       "claude mcp add brave-search -- npx -y @modelcontextprotocol/server-brave-search",
     ],
     features: [
-      "실시간 웹 검색",
-      "로컬 검색 지원",
-      "프라이버시 중심",
-      "풍부한 검색 결과",
+      "웹 검색 (페이지네이션/신선도 필터)",
+      "로컬 비즈니스 검색",
+      "자동 폴백 (로컬→웹)",
+      "프라이버시 중심 검색",
     ],
     conflicts: ["tavily"],
     keywords: [
       "검색", "search", "웹", "web", "실시간", "realtime", "최신",
       "latest", "정보", "information", "brave", "트렌드", "trend",
-      "리서치", "research",
+      "리서치", "research", "로컬", "local", "비즈니스", "business",
     ],
   },
   exa: {
