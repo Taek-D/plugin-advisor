@@ -91,7 +91,7 @@ const PACK_EXCLUSIONS: Record<string, string[]> = {
 };
 
 const MATCH_WEIGHT = 3;
-const PRESET_BONUS = 4;
+const PRESET_BONUS = 2;
 
 const INTENT_SIGNALS = {
   gsd: [
@@ -353,7 +353,7 @@ function buildNotRecommended(
     .sort((a, b) => (matches[b]?.score ?? 0) - (matches[a]?.score ?? 0))
     .map((pluginId) => PLUGINS[pluginId])
     .filter(Boolean)
-    .slice(0, 3)
+    .slice(0, 5)
     .map((plugin) => {
       if (plugin.verificationStatus === "unverified") {
         return {
@@ -425,7 +425,7 @@ export function recommend(text: string): AnalysisResult {
       return matchScore > 0 || intentBoost > 0;
     })
     .sort((a, b) => b.score - a.score)
-    .slice(0, 3);
+    .slice(0, 5);
 
   const recommendations = rankedPlugins.map(({ plugin, matchedKeywords }, index) => ({
     pluginId: plugin.id,

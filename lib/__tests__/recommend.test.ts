@@ -42,11 +42,20 @@ describe("recommend()", () => {
     expect(notRecommendedIds).toContain("postgres");
   });
 
-  it("returns 2-3 core recommendations instead of a long stack", () => {
+  it("returns up to 5 core recommendations", () => {
     const result = recommend(
       "react nextjs browser test deploy auth database crawl search beginner"
     );
-    expect(result.recommendations.length).toBeLessThanOrEqual(3);
+    expect(result.recommendations.length).toBeLessThanOrEqual(5);
+  });
+
+  it("recommends non-preset plugins when keywords match strongly", () => {
+    const result = recommend("백엔드 PostgreSQL 결제 시스템 stripe neon database payment");
+    const recommendedIds = result.recommendations.map((item) => item.pluginId);
+    const hasNonPreset = recommendedIds.some(
+      (id) => id === "stripe" || id === "neon"
+    );
+    expect(hasNonPreset).toBe(true);
   });
 
   it("keeps manual placeholder-heavy plugins out of beginner recommendations", () => {
