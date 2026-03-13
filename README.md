@@ -25,7 +25,7 @@ https://plugin-advisor.vercel.app
 - **텍스트 입력**: 프로젝트 설명, PRD, README 텍스트를 붙여넣으면 키워드 기반으로 플러그인 추천
 - **파일 업로드**: 마크다운 파일 업로드 지원
 - **GitHub URL**: GitHub 저장소 URL 입력 시 README를 자동으로 가져와 분석
-- **키워드 분석**: 각 플러그인의 키워드 배열과 입력 텍스트를 매칭하여 스코어 계산, 상위 플러그인 추천
+- **키워드 분석**: 각 플러그인의 키워드 배열과 입력 텍스트를 매칭하여 스코어 계산, 상위 5개 플러그인 추천
 - **프리셋 팩**: 4개의 미리 정의된 스타터 팩 (입문자 기본, 웹앱 시작, 데이터 수집, 백엔드 시작)
 - **설치 스크립트 생성**: 추천된 플러그인의 설치 명령어를 한 번에 복사
 - **충돌 감지**: 선택된 플러그인 간 충돌을 실시간으로 감지하여 경고
@@ -34,7 +34,7 @@ https://plugin-advisor.vercel.app
 
 ### 플러그인 목록 (`/plugins`)
 
-- 36개 등록 플러그인 카드형 목록
+- 42개 등록 플러그인 카드형 목록
 - 카테고리 필터링 (orchestration, workflow, code-quality, testing, documentation, data, security, integration, ui-ux, devops)
 - 텍스트 검색
 - 각 플러그인 상세 페이지 (`/plugins/[id]`)
@@ -72,6 +72,8 @@ https://plugin-advisor.vercel.app
 - 즐겨찾기 (localStorage)
 - 플러그인 버전 정보 (GitHub Releases API)
 - 다크 테마 (#080810 배경)
+- 접근성: 전역 focus-visible ring, 폼 라벨(sr-only), 44px 이상 터치 타겟
+- 비동기 콘텐츠 skeleton loader (버전 정보 등)
 
 ## 준비 중인 기능
 
