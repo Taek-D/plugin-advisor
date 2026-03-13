@@ -45,12 +45,12 @@ export default function PluginDetail({ plugin }: Props) {
 
   return (
     <div>
-      <Button variant="outline" size="xs" asChild className="mb-6 font-mono text-[10px]">
+      <Button variant="outline" size="sm" asChild className="mb-8 font-mono text-xs">
         <Link href="/plugins">{t.detail.backToList}</Link>
       </Button>
 
-      <div className="mb-6 flex flex-wrap items-center gap-3">
-        <h1 className="font-heading text-xl font-extrabold">{plugin.name}</h1>
+      <div className="mb-8 flex flex-wrap items-center gap-3">
+        <h1 className="font-heading text-2xl font-extrabold sm:text-3xl">{plugin.name}</h1>
         <Badge
           className="border-transparent"
           style={{
@@ -73,26 +73,26 @@ export default function PluginDetail({ plugin }: Props) {
             ? plugin.verificationStatus
             : `검증 ${plugin.verificationStatus}`}
         </Badge>
-        <Button variant="outline" size="xs" asChild className="font-mono text-[9px]">
+        <Button variant="outline" size="sm" asChild className="font-mono text-[10px]">
           <a href={plugin.url} target="_blank" rel="noreferrer">
             GitHub <ExternalLink className="ml-1 inline h-3 w-3" />
           </a>
         </Button>
       </div>
 
-      <p className="mb-6 text-xs leading-[1.8] text-muted-foreground">
+      <p className="mb-8 text-sm leading-[1.9] text-muted-foreground">
         {longDesc}
       </p>
 
-      <div className="mb-6">
-        <div className="mb-2 text-[9px] tracking-[2px] text-text-dim">
+      <div className="mb-8">
+        <div className="mb-2.5 text-[11px] font-medium tracking-[2px] text-text-dim">
           {t.detail.features}
         </div>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-2">
           {plugin.features.map((feature) => (
             <span
               key={feature}
-              className="rounded-sm px-2 py-[3px] text-[10px]"
+              className="rounded-sm px-2.5 py-1 text-xs"
               style={{
                 color: plugin.color,
                 background: `${plugin.color}15`,
@@ -105,13 +105,13 @@ export default function PluginDetail({ plugin }: Props) {
         </div>
       </div>
 
-      <div className="mb-6">
-        <div className="mb-2 text-[9px] tracking-[2px] text-text-dim">
+      <div className="mb-8">
+        <div className="mb-2.5 text-[11px] font-medium tracking-[2px] text-text-dim">
           {t.detail.install}
         </div>
 
         {(plugin.prerequisites.length > 0 || plugin.requiredSecrets.length > 0) && (
-          <div className="mb-3 rounded-md border border-border bg-background px-3 py-2.5 text-xs text-muted-foreground">
+          <div className="mb-4 rounded-md border border-border bg-background px-4 py-3 text-sm text-muted-foreground">
             {plugin.prerequisites.map((item) => (
               <div key={`${plugin.id}-prereq-${item}`}>- {item}</div>
             ))}
@@ -121,20 +121,20 @@ export default function PluginDetail({ plugin }: Props) {
           </div>
         )}
 
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           {plugin.install.map((command, index) => (
             <div
               key={`${plugin.id}-${index}`}
-              className="flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2"
+              className="flex items-center gap-2 rounded-md border border-border bg-background px-4 py-2.5"
             >
-              <code className="flex-1 overflow-x-auto text-[11px] text-muted-foreground">
+              <code className="flex-1 overflow-x-auto text-xs text-muted-foreground">
                 {command}
               </code>
               <Button
                 variant="outline"
-                size="xs"
+                size="sm"
                 onClick={() => copyCommand(command, index)}
-                className="shrink-0 font-mono text-[9px]"
+                className="shrink-0 font-mono text-[10px]"
               >
                 {copiedIdx === index ? t.detail.copied : t.detail.copy}
               </Button>
@@ -144,16 +144,16 @@ export default function PluginDetail({ plugin }: Props) {
       </div>
 
       {version?.latestVersion && (
-        <Card className="mb-6 p-3">
-          <div className="mb-1 text-[9px] tracking-[2px] text-text-dim">
+        <Card className="mb-8 p-4">
+          <div className="mb-1.5 text-[11px] font-medium tracking-[2px] text-text-dim">
             {t.detail.latestVersion}
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-xs font-bold text-primary">
+            <span className="text-sm font-bold text-primary">
               {version.latestVersion}
             </span>
             {version.publishedAt && (
-              <span className="text-[10px] text-muted-foreground">
+              <span className="text-xs text-muted-foreground">
                 {new Date(version.publishedAt).toLocaleDateString(
                   locale === "en" ? "en-US" : "ko-KR"
                 )}
@@ -164,7 +164,7 @@ export default function PluginDetail({ plugin }: Props) {
                 href={version.releaseUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[10px] text-primary transition-colors hover:underline"
+                className="text-xs text-primary transition-colors hover:underline"
               >
                 Release Notes <ExternalLink className="ml-1 inline h-3 w-3" />
               </a>
@@ -174,22 +174,22 @@ export default function PluginDetail({ plugin }: Props) {
       )}
 
       {plugin.conflicts.length > 0 && (
-        <div className="mb-6 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-[11px] text-destructive">
+        <div className="mb-8 rounded-md border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
           <AlertTriangle className="mr-1 inline h-3.5 w-3.5" />
           <strong>{plugin.conflicts.map((id) => PLUGINS[id]?.name).join(", ")}</strong>{" "}
           {t.detail.conflictWarning}
         </div>
       )}
 
-      <div className="mb-8">
-        <div className="mb-2 text-[9px] tracking-[2px] text-text-dim">
+      <div className="mb-10">
+        <div className="mb-2.5 text-[11px] font-medium tracking-[2px] text-text-dim">
           {t.detail.keywords}
         </div>
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap gap-1.5">
           {plugin.keywords.map((keyword) => (
             <span
               key={keyword}
-              className="rounded-sm border border-primary/20 bg-primary/5 px-[7px] py-0.5 text-[10px] text-[#7070FF]"
+              className="rounded-sm border border-primary/20 bg-primary/5 px-2 py-0.5 text-xs text-[#7070FF]"
             >
               {keyword}
             </span>

@@ -25,7 +25,7 @@ export default function PluginDetailPage({ params }: Props) {
   if (!plugin) notFound();
 
   return (
-    <div className="mx-auto max-w-[700px] px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-[900px] px-4 py-10 sm:px-6 lg:px-8">
       <PluginDetail plugin={plugin} />
     </div>
   );
