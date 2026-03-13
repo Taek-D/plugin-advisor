@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, ExternalLink } from "lucide-react";
+import { AlertTriangle, Check, ExternalLink } from "lucide-react";
 import type { Plugin, VersionInfo } from "@/lib/types";
 import { PLUGINS } from "@/lib/plugins";
 import { fetchVersions } from "@/lib/versions";
@@ -21,15 +21,17 @@ type Props = {
 export default function PluginDetail({ plugin }: Props) {
   const { locale, t } = useI18n();
   const [version, setVersion] = useState<VersionInfo | null>(null);
+  const [versionLoading, setVersionLoading] = useState(true);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
 
   useEffect(() => {
     setVersion(null);
+    setVersionLoading(true);
     fetchVersions([plugin.id]).then((versions) => {
       if (versions[plugin.id]) {
         setVersion(versions[plugin.id]);
       }
-    });
+    }).finally(() => setVersionLoading(false));
   }, [plugin.id]);
 
   const copyCommand = (command: string, index: number) => {
@@ -136,14 +138,29 @@ export default function PluginDetail({ plugin }: Props) {
                 onClick={() => copyCommand(command, index)}
                 className="shrink-0 font-mono text-[10px]"
               >
-                {copiedIdx === index ? t.detail.copied : t.detail.copy}
+                {copiedIdx === index ? (
+                  <span className="flex items-center gap-1">
+                    <Check className="h-3 w-3 text-primary" />
+                    {t.detail.copied}
+                  </span>
+                ) : (
+                  t.detail.copy
+                )}
               </Button>
             </div>
           ))}
         </div>
       </div>
 
-      {version?.latestVersion && (
+      {versionLoading ? (
+        <Card className="mb-8 p-4">
+          <div className="mb-1.5 h-3 w-24 animate-pulse rounded bg-muted" />
+          <div className="flex items-center gap-3">
+            <div className="h-4 w-16 animate-pulse rounded bg-muted" />
+            <div className="h-3 w-20 animate-pulse rounded bg-muted" />
+          </div>
+        </Card>
+      ) : version?.latestVersion ? (
         <Card className="mb-8 p-4">
           <div className="mb-1.5 text-[11px] font-medium tracking-[2px] text-text-dim">
             {t.detail.latestVersion}
@@ -171,7 +188,7 @@ export default function PluginDetail({ plugin }: Props) {
             )}
           </div>
         </Card>
-      )}
+      ) : null}
 
       {plugin.conflicts.length > 0 && (
         <div className="mb-8 rounded-md border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">

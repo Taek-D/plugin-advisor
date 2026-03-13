@@ -18,9 +18,9 @@ export default function PluginGridCard({ plugin }: Props) {
   return (
     <Link
       href={`/plugins/${plugin.id}`}
-      className="block"
+      className="block h-full"
     >
-      <Card className="group cursor-pointer p-4 transition-colors hover:border-muted-foreground">
+      <Card className="group flex h-full cursor-pointer flex-col p-4 transition-colors hover:border-muted-foreground">
         <div className="mb-2 flex flex-wrap items-center gap-2">
           <Badge
             className="border-transparent"
@@ -47,7 +47,7 @@ export default function PluginGridCard({ plugin }: Props) {
         <h3 className="mb-1 font-heading text-sm font-semibold text-muted-foreground group-hover:text-foreground">
           {plugin.name}
         </h3>
-        <p className="mb-2.5 text-xs leading-[1.7] text-muted-foreground">
+        <p className="mb-2.5 flex-1 text-xs leading-[1.7] text-muted-foreground">
           {desc}
         </p>
         <div className="flex flex-wrap gap-1">

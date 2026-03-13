@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { SearchX } from "lucide-react";
 import { PLUGINS } from "@/lib/plugins";
 import type { PluginCategory } from "@/lib/types";
 import { useI18n } from "@/lib/i18n";
@@ -8,7 +9,7 @@ import PluginSearch from "./PluginSearch";
 import PluginGridCard from "./PluginGridCard";
 
 export default function PluginGrid() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<PluginCategory | "all">("all");
 
@@ -38,9 +39,17 @@ export default function PluginGrid() {
         activeCategory={category}
       />
       {filtered.length === 0 ? (
-        <div className="py-12 text-center">
-          <div className="mb-2 text-[11px] text-muted-foreground">
+        <div className="py-16 text-center">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-border">
+            <SearchX className="h-5 w-5 text-muted-foreground" />
+          </div>
+          <div className="mb-1 text-sm font-medium text-muted-foreground">
             {t.pluginsPage.noResults}
+          </div>
+          <div className="text-xs text-muted-foreground">
+            {locale === "en"
+              ? "Try a different keyword or category"
+              : "다른 키워드나 카테고리를 시도해 보세요"}
           </div>
         </div>
       ) : (

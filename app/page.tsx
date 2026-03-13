@@ -122,18 +122,18 @@ export default function Home() {
                   </span>
                 ))}
               </div>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="/advisor">
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <Link href="/advisor" className="w-full sm:w-auto">
                   <Button
                     size="lg"
-                    className="group h-12 rounded-full bg-primary px-8 text-base font-bold text-primary-foreground hover:bg-primary/90"
+                    className="group h-12 w-full rounded-full bg-primary px-8 text-base font-bold text-primary-foreground hover:bg-primary/90 sm:w-auto"
                   >
                     {locale === "en" ? "Start setup diagnosis" : "세팅 진단 시작하기"}
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </Link>
-                <Link href="/guides">
-                  <Button size="lg" variant="outline" className="h-12 rounded-full border-white/10 bg-white/5 px-8 text-base font-bold">
+                <Link href="/guides" className="w-full sm:w-auto">
+                  <Button size="lg" variant="outline" className="h-12 w-full rounded-full border-white/10 bg-white/5 px-8 text-base font-bold sm:w-auto">
                     {locale === "en" ? "Open starter guides" : "스타터 가이드 보기"}
                   </Button>
                 </Link>
@@ -186,7 +186,7 @@ export default function Home() {
         </div>
 
         <div className="mt-16 grid gap-6 md:grid-cols-3">
-          <Card className="surface-panel-soft rounded-[24px] p-6 transition-colors hover:border-primary/50">
+          <Card className="surface-panel-soft rounded-[24px] p-6">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
               <ShieldCheck className="h-6 w-6 text-primary" />
             </div>
@@ -199,7 +199,7 @@ export default function Home() {
                 : "수많은 플러그인을 뒤지는 대신, 프리셋 팩이나 간단 진단으로 시작점을 먼저 정합니다."}
             </p>
           </Card>
-          <Card className="surface-panel-soft rounded-[24px] p-6 transition-colors hover:border-[#7C3AED]/50">
+          <Card className="surface-panel-soft rounded-[24px] p-6">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-[#7C3AED]/10">
               <Sparkles className="h-6 w-6 text-[#A78BFA]" />
             </div>
@@ -214,7 +214,7 @@ export default function Home() {
                 : "사전 준비물, 계정 연결 필요 여부, 이번에는 보수적으로 제외한 플러그인까지 함께 보여줍니다."}
             </p>
           </Card>
-          <Card className="surface-panel-soft rounded-[24px] p-6 transition-colors hover:border-warning/50">
+          <Card className="surface-panel-soft rounded-[24px] p-6">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-warning/10">
               <MessageSquareMore className="h-6 w-6 text-warning" />
             </div>

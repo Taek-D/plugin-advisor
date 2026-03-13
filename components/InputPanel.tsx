@@ -122,7 +122,6 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown error";
       setErr(message);
-      setMode("text");
     } finally {
       setLoading(false);
     }
@@ -140,7 +139,7 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
       onDragEnter={handleDragEnter}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
-      className="relative"
+      className={cn("relative transition-opacity", loading && "pointer-events-none opacity-60")}
     >
       {dragging && (
         <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl border-2 border-dashed border-primary bg-card/90">
@@ -203,14 +202,20 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
       </div>
 
       {mode === "text" && (
-        <Textarea
-          rows={8}
-          value={text}
-          onChange={(event) => setText(event.target.value)}
-          placeholder={t.input.placeholder}
-          className="min-h-[220px] rounded-2xl border-white/10 bg-background/55 leading-relaxed placeholder:text-text-faint focus-visible:ring-primary"
-          style={{ resize: "vertical" }}
-        />
+        <>
+          <label htmlFor="advisor-text-input" className="sr-only">
+            {t.input.placeholder}
+          </label>
+          <Textarea
+            id="advisor-text-input"
+            rows={8}
+            value={text}
+            onChange={(event) => setText(event.target.value)}
+            placeholder={t.input.placeholder}
+            className="min-h-[220px] rounded-2xl border-white/10 bg-background/55 leading-relaxed placeholder:text-text-faint focus-visible:ring-primary"
+            style={{ resize: "vertical" }}
+          />
+        </>
       )}
 
       {mode === "file" && (
@@ -242,13 +247,19 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
       )}
 
       {mode === "github" && (
-        <Input
-          type="text"
-          value={ghUrl}
-          onChange={(event) => setGhUrl(event.target.value)}
-          placeholder={t.input.ghPlaceholder}
-          className="h-auto rounded-2xl border-white/10 bg-background/55 px-4 py-3 text-sm placeholder:text-text-faint focus-visible:ring-primary"
-        />
+        <>
+          <label htmlFor="advisor-github-input" className="sr-only">
+            {t.input.ghPlaceholder}
+          </label>
+          <Input
+            id="advisor-github-input"
+            type="text"
+            value={ghUrl}
+            onChange={(event) => setGhUrl(event.target.value)}
+            placeholder={t.input.ghPlaceholder}
+            className="h-auto rounded-2xl border-white/10 bg-background/55 px-4 py-3 text-sm placeholder:text-text-faint focus-visible:ring-primary"
+          />
+        </>
       )}
 
       {err && (
