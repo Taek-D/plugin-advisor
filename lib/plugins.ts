@@ -143,6 +143,7 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     avoidFor: ["AWS 계정 없는 환경"],
   },
   atlassian: {
+    // Tier 1 addition — not yet verified against repo README. Queued for v2 verification.
     verificationStatus: "partial",
     difficulty: "intermediate",
     installMode: "external-setup",
@@ -151,6 +152,7 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     avoidFor: ["개인 프로젝트", "Atlassian 미사용 팀"],
   },
   browserbase: {
+    // Tier 1 addition — not yet verified against repo README. Queued for v2 verification.
     verificationStatus: "partial",
     difficulty: "intermediate",
     installMode: "external-setup",
@@ -169,6 +171,7 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     avoidFor: ["결제 기능 없는 프로젝트"],
   },
   neon: {
+    // Tier 1 addition — not yet verified against repo README. Queued for v2 verification.
     officialStatus: "official",
     verificationStatus: "partial",
     difficulty: "intermediate",
@@ -178,6 +181,7 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     avoidFor: ["Neon 미사용 환경"],
   },
   "desktop-commander": {
+    // Tier 1 addition — not yet verified against repo README. Queued for v2 verification.
     verificationStatus: "partial",
     difficulty: "intermediate",
     bestFor: ["터미널 자동화", "프로세스 관리", "Claude Desktop 확장"],
@@ -198,7 +202,9 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     avoidFor: ["Vercel 계정 없는 환경"],
   },
   supabase: {
+    // supabase: official plugin, metadata not yet verified against repo/docs
     officialStatus: "official",
+    verificationStatus: "partial",
     installMode: "external-setup",
     requiredSecrets: ["Supabase project access"],
     bestFor: ["백엔드 시작", "Auth + DB 구축"],
