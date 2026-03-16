@@ -144,6 +144,30 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     desc: "Cloudflare's suite of remote MCP servers. 15+ specialized servers for Workers, KV, R2, D1, observability, and Radar.",
     longDesc: "Cloudflare MCP is a collection of official remote MCP servers hosted by Cloudflare, using OAuth authentication with no API key required. The Workers Bindings server manages KV namespaces, R2 buckets, D1 databases, Workers, and Hyperdrive configs. Other servers cover Workers Builds, Observability (logs and analytics), Radar (global internet traffic insights), Documentation, Browser Rendering, Logpush, AI Gateway, AutoRAG, Audit Logs, DNS Analytics, DEX, CASB, and GraphQL. Connect individual servers via HTTP transport using their respective remote URLs.",
   },
+  aws: {
+    desc: "Official AWS MCP server collection. Supports 13+ services including S3, Lambda, CDK, EKS, and CloudFormation.",
+    longDesc: "AWS MCP is a monorepo of official MCP servers managed by Amazon Labs. It includes 13+ specialized servers: AWS CDK (infrastructure as code), AWS Documentation (doc search), Lambda, ECS, EKS, CloudFormation, S3, Bedrock, Cost Explorer, CloudWatch, and more. Each server can be installed independently as needed. Especially useful for managing AWS infrastructure as code or searching AWS documentation.",
+  },
+  atlassian: {
+    desc: "Jira + Confluence integration MCP. JQL search, issue/sprint management, and wiki page editing.",
+    longDesc: "Atlassian MCP lets you use Jira and Confluence directly from Claude Code. It provides 72+ tools: JQL search, issue creation/editing, sprint management in Jira, and page search/creation/editing in Confluence. Supports both Cloud and Server/Data Center deployments. Useful for handling team project management and documentation in one place within Claude Code.",
+  },
+  browserbase: {
+    desc: "Cloud browser automation. Web navigation, screenshots, and data extraction powered by Stagehand AI.",
+    longDesc: "Browserbase MCP provides web automation through cloud-hosted browsers. Built on the Stagehand AI framework, it supports page navigation, screenshot capture, data extraction, and form input. Unlike Playwright/Puppeteer, it uses managed cloud browsers so no local browser installation is needed. Especially useful in CI/CD environments and server-side automation. Requires a BROWSERBASE_API_KEY.",
+  },
+  stripe: {
+    desc: "Official Stripe MCP. Payment processing, subscriptions, customer management, refunds, and docs search.",
+    longDesc: "Stripe MCP is an official MCP server provided by Stripe. It lets you handle payment processing, customer management, subscription creation/management, refund processing, invoice management, and Stripe documentation search directly from Claude Code. Supports both remote MCP via OAuth (mcp.stripe.com, no API key required) and local installation. Essential for implementing payment features in SaaS or e-commerce projects.",
+  },
+  neon: {
+    desc: "Neon serverless Postgres MCP. Branch management, migration execution, and SQL queries.",
+    longDesc: "Neon MCP is the official MCP server for Neon, a serverless Postgres platform. It lets you create/manage database branches, run SQL migrations, inspect schemas, and execute queries directly from Claude Code. Using Neon's core branching feature (manage databases like Git branches), you can quickly spin up dev/staging environments. Pairs especially well with Next.js + Vercel stacks. Requires a NEON_API_KEY.",
+  },
+  "desktop-commander": {
+    desc: "Desktop MCP for terminal control, diff editing, file search, and in-memory code execution.",
+    longDesc: "Desktop Commander is an MCP server that gives Claude full control over the terminal and filesystem. It supports long-running process management, diff-based file editing, file/directory search, and in-memory Python/Node.js code execution. Particularly useful for Claude Desktop users and powerful for directly managing build/test/deploy processes in local development environments.",
+  },
 };
 
 export const reasonsEn: Record<string, string> = {
@@ -183,4 +207,10 @@ export const reasonsEn: Record<string, string> = {
   docker: "Docker-based MCP server management needed. Docker MCP Gateway runs MCP servers as isolated containers via Docker Desktop's MCP Toolkit, with profile-based multi-server management for Claude Code.",
   vercel: "Vercel project management or deployment automation needed. Vercel's official remote MCP (mcp.vercel.com) connects via OAuth — no API key required.",
   cloudflare: "Edge computing or Cloudflare infrastructure management needed. Cloudflare's 15+ remote MCP servers cover Workers, KV/R2/D1, observability, Radar, and more — all via OAuth.",
+  aws: "AWS infrastructure management detected. AWS MCP provides 13+ specialized servers for CDK, Lambda, S3, CloudFormation, and more — manage your AWS stack directly from Claude Code.",
+  atlassian: "Team project management with Jira/Confluence needed. Atlassian MCP provides 72+ tools for JQL search, issue/sprint management, and wiki page editing — all within your coding flow.",
+  browserbase: "Cloud-based browser automation needed. Browserbase provides managed cloud browsers with Stagehand AI for web navigation, screenshots, and data extraction — no local browser required.",
+  stripe: "Payment integration needed. Stripe's official MCP handles payments, subscriptions, refunds, and documentation search — supports both remote OAuth and local API key modes.",
+  neon: "Serverless Postgres database needed. Neon MCP provides Git-like database branching, migration execution, and SQL queries — pairs well with Next.js + Vercel stacks.",
+  "desktop-commander": "Terminal automation and process management needed. Desktop Commander provides full terminal control, diff-based editing, file search, and in-memory code execution for local development.",
 };
