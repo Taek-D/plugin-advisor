@@ -20,7 +20,7 @@
 ### v1.1 Plugin Optimizer
 
 - [x] **Phase 5: Input & Page Scaffold** — /optimizer 페이지 생성, 붙여넣기/자동완성 입력, 다국어 지원, Coming Soon AI 모드
-- [ ] **Phase 6: Scoring Engine** — 규칙 기반 조합 점수, 충돌 감지, 커버리지 분석, 보완/대체 추천 로직
+- [x] **Phase 6: Scoring Engine** — 규칙 기반 조합 점수, 충돌 감지, 커버리지 분석, 보완/대체 추천 로직 (completed 2026-03-16)
 - [ ] **Phase 7: Results UI Assembly** — 결과 화면 조립, progressive disclosure, 네비게이션 링크, 배포
 
 ## Phase Details
@@ -50,7 +50,7 @@ Plans:
   3. 10개 카테고리 중 현재 조합이 커버하는 카테고리와 미커버 카테고리가 시각적으로 구분된다
   4. 현재 조합에 없는 보완 플러그인이 이미 설치된 플러그인 없이 제안된다
   5. deprecated 또는 unverified 플러그인이 포함된 경우 더 나은 대안 플러그인이 제시된다
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 Plans:
 - [ ] 06-01-PLAN.md — TDD scoring engine: conflict/redundancy detection, 0-100 deduction score, coverage analysis, complement and replacement suggestions
 
@@ -73,7 +73,7 @@ Plans:
 | 3. Platform & Official Plugins | v1.0 | 3/3 | Complete | 2026-03-12 |
 | 4. Remaining Plugins & Sync | v1.0 | 2/2 | Complete | 2026-03-16 |
 | 5. Input & Page Scaffold | v1.1 | 2/2 | Complete | 2026-03-16 |
-| 6. Scoring Engine | v1.1 | 0/1 | Not started | - |
+| 6. Scoring Engine | 1/1 | Complete   | 2026-03-16 | - |
 | 7. Results UI Assembly | v1.1 | 0/TBD | Not started | - |
 
 ---

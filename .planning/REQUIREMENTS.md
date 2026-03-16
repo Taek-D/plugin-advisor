@@ -15,14 +15,14 @@ Requirements for milestone v1.1 — Plugin Optimizer (플러그인 조합 분석
 
 ### 분석 (Analysis)
 
-- [ ] **ANLYS-01**: 입력된 플러그인 조합의 충돌이 감지되고 경고로 표시된다
-- [ ] **ANLYS-02**: 조합 점수가 0-100 범위로 정규화되어 표시된다
-- [ ] **ANLYS-03**: 10개 카테고리별 커버리지 현황이 시각화된다
+- [x] **ANLYS-01**: 입력된 플러그인 조합의 충돌이 감지되고 경고로 표시된다
+- [x] **ANLYS-02**: 조합 점수가 0-100 범위로 정규화되어 표시된다
+- [x] **ANLYS-03**: 10개 카테고리별 커버리지 현황이 시각화된다
 
 ### 추천 (Recommendation)
 
-- [ ] **RECOM-01**: 빠진 카테고리/기능의 보완 플러그인이 제안된다 (설치된 것 제외)
-- [ ] **RECOM-02**: deprecated/unverified 플러그인의 더 나은 대안이 제시된다
+- [x] **RECOM-01**: 빠진 카테고리/기능의 보완 플러그인이 제안된다 (설치된 것 제외)
+- [x] **RECOM-02**: deprecated/unverified 플러그인의 더 나은 대안이 제시된다
 
 ### 페이지/UX
 
@@ -60,11 +60,11 @@ Deferred to future release.
 | PAGE-01 | Phase 5 | Complete (05-02) |
 | PAGE-02 | Phase 5 | Complete (05-02) |
 | PAGE-03 | Phase 5 | Complete (05-01) |
-| ANLYS-01 | Phase 6 | Pending |
-| ANLYS-02 | Phase 6 | Pending |
-| ANLYS-03 | Phase 6 | Pending |
-| RECOM-01 | Phase 6 | Pending |
-| RECOM-02 | Phase 6 | Pending |
+| ANLYS-01 | Phase 6 | Complete |
+| ANLYS-02 | Phase 6 | Complete |
+| ANLYS-03 | Phase 6 | Complete |
+| RECOM-01 | Phase 6 | Complete |
+| RECOM-02 | Phase 6 | Complete |
 | PAGE-04 | Phase 7 | Pending |
 
 **Coverage:**
