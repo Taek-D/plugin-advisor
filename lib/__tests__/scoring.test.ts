@@ -166,9 +166,9 @@ describe("coverage analysis", () => {
     expect(multi.coverage.covered.length + multi.coverage.uncovered.length).toBe(10);
   });
 
-  it("context7 appears in covered (workflow category)", () => {
+  it("context7 appears in covered (code-quality category)", () => {
     const result = scorePlugins(["context7"]);
-    expect(result.coverage.covered).toContain("workflow");
+    expect(result.coverage.covered).toContain("code-quality");
   });
 
   it("uncovered has all 10 categories for empty input", () => {
