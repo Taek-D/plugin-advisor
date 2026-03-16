@@ -54,24 +54,24 @@ Deferred to future release.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INPUT-01 | TBD | Pending |
-| INPUT-02 | TBD | Pending |
-| INPUT-03 | TBD | Pending |
-| ANLYS-01 | TBD | Pending |
-| ANLYS-02 | TBD | Pending |
-| ANLYS-03 | TBD | Pending |
-| RECOM-01 | TBD | Pending |
-| RECOM-02 | TBD | Pending |
-| PAGE-01 | TBD | Pending |
-| PAGE-02 | TBD | Pending |
-| PAGE-03 | TBD | Pending |
-| PAGE-04 | TBD | Pending |
+| INPUT-01 | Phase 5 | Pending |
+| INPUT-02 | Phase 5 | Pending |
+| INPUT-03 | Phase 5 | Pending |
+| PAGE-01 | Phase 5 | Pending |
+| PAGE-02 | Phase 5 | Pending |
+| PAGE-03 | Phase 5 | Pending |
+| ANLYS-01 | Phase 6 | Pending |
+| ANLYS-02 | Phase 6 | Pending |
+| ANLYS-03 | Phase 6 | Pending |
+| RECOM-01 | Phase 6 | Pending |
+| RECOM-02 | Phase 6 | Pending |
+| PAGE-04 | Phase 7 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 12 total
-- Mapped to phases: 0
-- Unmapped: 12 ⚠️
+- Mapped to phases: 12
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-16*
-*Last updated: 2026-03-16 after initial definition*
+*Last updated: 2026-03-16 — traceability mapped to Phases 5-7*
