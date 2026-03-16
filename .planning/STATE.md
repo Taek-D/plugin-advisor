@@ -4,14 +4,14 @@ milestone: v1.1
 milestone_name: Plugin Optimizer
 status: active
 stopped_at: null
-last_updated: "2026-03-16T12:30:00.000Z"
-last_activity: 2026-03-16 — Roadmap defined (Phases 5-7)
+last_updated: "2026-03-16T13:55:00.000Z"
+last_activity: 2026-03-16 — Completed 05-01-PLAN (parser + i18n)
 progress:
   total_phases: 3
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_plans: 2
+  completed_plans: 1
+  percent: 17
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-03-16)
 ## Current Position
 
 ```
-Phase:    5 — Input & Page Scaffold  [NOT STARTED]
-Plan:     —
-Status:   Roadmap defined — ready for phase planning
+Phase:    5 — Input & Page Scaffold  [IN PROGRESS]
+Plan:     05-01 complete, 05-02 next
+Status:   Plan 01 complete — parser, normalizer, i18n done
 
-Progress: [░░░░░░░░░░░░░░░░░░░░] 0%  (0/3 phases)
+Progress: [███░░░░░░░░░░░░░░░░░] 17%  (1/2 plans in phase 5)
 ```
 
 ## Performance Metrics
@@ -39,8 +39,11 @@ Progress: [░░░░░░░░░░░░░░░░░░░░] 0%  (0/
 |--------|-------|
 | Phases defined | 3 (5, 6, 7) |
 | Requirements mapped | 12/12 |
-| Plans defined | TBD |
-| Plans complete | 0 |
+| Plans defined | 2 (Phase 5) |
+| Plans complete | 1 |
+| 05-01 duration | 5 min |
+| 05-01 tasks | 2 |
+| 05-01 files | 6 |
 
 ## Accumulated Context
 
@@ -52,12 +55,15 @@ Progress: [░░░░░░░░░░░░░░░░░░░░] 0%  (0/
 | 2026-03-16 | AI mode as Coming Soon | 규칙 기반 우선 구현, AI는 추후 활성화 |
 | 2026-03-16 | Pure client-side scoring, no new API routes | 42개 플러그인 DB가 이미 클라이언트 정적 임포트 |
 | 2026-03-16 | 3 phases: scaffold → engine → UI | 의존성 그래프 순서: 타입/파서 → 순수 함수 → UI 조립 |
+| 2026-03-16 | Hardcoded alias map instead of Plugin.aliases field | Schema 안정성 유지, alias는 소수 |
+| 2026-03-16 | parseMcpList accepts string[] not PLUGINS object | 순수 함수 패턴, 데이터 의존성 제거 |
+| 2026-03-16 | Substring matching for autocomplete (no Fuse.js) | 42개 DB에서 Fuse.js 불필요, substring으로 충분 |
 
 ### Pending Todos
 
-- Phase 5 planning: `claude mcp list` 파서 edge case 단위 테스트 작성 (parser fragility pitfall)
-- Phase 5 planning: alias 정규화 전략 결정 — aliases 필드 추가 vs 접두/접미사 제거 규칙만 사용
-- Phase 5 planning: Fuse.js 추가 vs substring 매칭 결정 (42개 DB라 substring으로 충분할 가능성 높음)
+- ~~Phase 5 planning: `claude mcp list` 파서 edge case 단위 테스트 작성~~ (done: 15 tests in 05-01)
+- ~~Phase 5 planning: alias 정규화 전략 결정~~ (done: hardcoded alias map, no schema change)
+- ~~Phase 5 planning: Fuse.js 추가 vs substring 매칭 결정~~ (done: substring, 42개 DB 충분)
 - Phase 6 planning: 점수 정규화 공식 문서화 — 0-100 스케일 세부 규칙 확정
 
 ### Blockers/Concerns
@@ -74,5 +80,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-16
-Stopped at: Roadmap defined — Phases 5, 6, 7 created
-Resume with: `/gsd:plan-phase 5`
+Stopped at: Completed 05-01-PLAN.md (parser + i18n foundation)
+Resume with: `/gsd:execute-phase 05-input-page-scaffold` (plan 05-02)

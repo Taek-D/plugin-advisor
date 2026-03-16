@@ -37,7 +37,7 @@
   5. 페이지가 한국어/영어 언어 전환 시 올바르게 번역되어 표시된다
 **Plans:** 2 plans
 Plans:
-- [ ] 05-01-PLAN.md — Pure logic foundation: MCP list parser, normalizer, resolver, i18n translations
+- [x] 05-01-PLAN.md — Pure logic foundation: MCP list parser, normalizer, resolver, i18n translations
 - [ ] 05-02-PLAN.md — Page shell, input components (paste + autocomplete), plugin chips, nav link
 
 ### Phase 6: Scoring Engine
@@ -70,7 +70,7 @@ Plans:
 | 2. Official MCP Monorepo Plugins | v1.0 | 3/3 | Complete | 2026-03-12 |
 | 3. Platform & Official Plugins | v1.0 | 3/3 | Complete | 2026-03-12 |
 | 4. Remaining Plugins & Sync | v1.0 | 2/2 | Complete | 2026-03-16 |
-| 5. Input & Page Scaffold | v1.1 | 0/2 | Not started | - |
+| 5. Input & Page Scaffold | v1.1 | 1/2 | In progress | - |
 | 6. Scoring Engine | v1.1 | 0/TBD | Not started | - |
 | 7. Results UI Assembly | v1.1 | 0/TBD | Not started | - |
 
