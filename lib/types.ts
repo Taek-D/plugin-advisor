@@ -169,3 +169,8 @@ export type AdminSuggestionPatch = {
   status: PluginSuggestionStatus;
   adminNotes?: string;
 };
+
+export type OptimizerInputPlugin = {
+  pluginId: string;
+  source: "paste" | "manual";
+};
