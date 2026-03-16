@@ -10,7 +10,7 @@ Requirements for milestone v1.1 — Plugin Optimizer (플러그인 조합 분석
 ### 입력 (Input)
 
 - [x] **INPUT-01**: 사용자가 `claude mcp list` CLI 결과를 붙여넣으면 플러그인 이름이 자동 추출된다
-- [ ] **INPUT-02**: 사용자가 플러그인 이름을 직접 타이핑하면 42개 DB에서 자동완성 제안된다
+- [x] **INPUT-02**: 사용자가 플러그인 이름을 직접 타이핑하면 42개 DB에서 자동완성 제안된다
 - [x] **INPUT-03**: 붙여넣기/타이핑된 플러그인 이름이 alias 정규화로 DB와 매칭된다
 
 ### 분석 (Analysis)
@@ -26,8 +26,8 @@ Requirements for milestone v1.1 — Plugin Optimizer (플러그인 조합 분석
 
 ### 페이지/UX
 
-- [ ] **PAGE-01**: /optimizer 별도 페이지가 존재하고 네비게이션에서 접근 가능하다
-- [ ] **PAGE-02**: AI 분석 모드가 Coming Soon으로 표시되고 비활성 상태이다
+- [x] **PAGE-01**: /optimizer 별도 페이지가 존재하고 네비게이션에서 접근 가능하다
+- [x] **PAGE-02**: AI 분석 모드가 Coming Soon으로 표시되고 비활성 상태이다
 - [x] **PAGE-03**: /optimizer 페이지가 한국어/영어 다국어를 지원한다
 - [ ] **PAGE-04**: 분석 결과가 progressive disclosure (접기/펼치기)로 표시된다
 
@@ -55,10 +55,10 @@ Deferred to future release.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | INPUT-01 | Phase 5 | Complete (05-01) |
-| INPUT-02 | Phase 5 | Pending |
+| INPUT-02 | Phase 5 | Complete (05-02) |
 | INPUT-03 | Phase 5 | Complete (05-01) |
-| PAGE-01 | Phase 5 | Pending |
-| PAGE-02 | Phase 5 | Pending |
+| PAGE-01 | Phase 5 | Complete (05-02) |
+| PAGE-02 | Phase 5 | Complete (05-02) |
 | PAGE-03 | Phase 5 | Complete (05-01) |
 | ANLYS-01 | Phase 6 | Pending |
 | ANLYS-02 | Phase 6 | Pending |

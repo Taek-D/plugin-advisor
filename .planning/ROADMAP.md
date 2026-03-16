@@ -19,7 +19,7 @@
 
 ### v1.1 Plugin Optimizer
 
-- [ ] **Phase 5: Input & Page Scaffold** — /optimizer 페이지 생성, 붙여넣기/자동완성 입력, 다국어 지원, Coming Soon AI 모드
+- [x] **Phase 5: Input & Page Scaffold** — /optimizer 페이지 생성, 붙여넣기/자동완성 입력, 다국어 지원, Coming Soon AI 모드
 - [ ] **Phase 6: Scoring Engine** — 규칙 기반 조합 점수, 충돌 감지, 커버리지 분석, 보완/대체 추천 로직
 - [ ] **Phase 7: Results UI Assembly** — 결과 화면 조립, progressive disclosure, 네비게이션 링크, 배포
 
@@ -38,7 +38,7 @@
 **Plans:** 2 plans
 Plans:
 - [x] 05-01-PLAN.md — Pure logic foundation: MCP list parser, normalizer, resolver, i18n translations
-- [ ] 05-02-PLAN.md — Page shell, input components (paste + autocomplete), plugin chips, nav link
+- [x] 05-02-PLAN.md — Page shell, input components (paste + autocomplete), plugin chips, nav link
 
 ### Phase 6: Scoring Engine
 **Goal**: 입력된 플러그인 조합에 대해 충돌 감지, 조합 점수, 커버리지 분석, 보완/대체 추천이 모두 계산되어 정확한 결과를 반환한다
@@ -70,7 +70,7 @@ Plans:
 | 2. Official MCP Monorepo Plugins | v1.0 | 3/3 | Complete | 2026-03-12 |
 | 3. Platform & Official Plugins | v1.0 | 3/3 | Complete | 2026-03-12 |
 | 4. Remaining Plugins & Sync | v1.0 | 2/2 | Complete | 2026-03-16 |
-| 5. Input & Page Scaffold | v1.1 | 1/2 | In progress | - |
+| 5. Input & Page Scaffold | v1.1 | 2/2 | Complete | 2026-03-16 |
 | 6. Scoring Engine | v1.1 | 0/TBD | Not started | - |
 | 7. Results UI Assembly | v1.1 | 0/TBD | Not started | - |
 
