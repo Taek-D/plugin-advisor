@@ -68,7 +68,7 @@ Plans:
   2. uiux 플러그인의 githubRepo가 null임을 확인하거나 실제 repo URL을 발견해서 verificationStatus가 적절히 업데이트되었다
   3. lib/plugins.ts에서 검증된 플러그인의 verificationStatus가 "partial"/"unverified"에서 "verified" 또는 근거 있는 값으로 업데이트되었다
   4. lib/i18n/plugins-en.ts의 영문 번역이 lib/plugins.ts의 수정된 내용과 동기화되어 누락되거나 오래된 번역이 없다
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 04-01-PLAN.md — Verify metadata for todoist, linear, uiux (repo check + README verification)
@@ -84,4 +84,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Community Orchestration Plugins | 1/1 | Complete | 2026-03-11 |
 | 2. Official MCP Monorepo Plugins | 3/3 | Complete   | 2026-03-12 |
 | 3. Platform & Official Plugins | 3/3 | Complete   | 2026-03-12 |
-| 4. Remaining Plugins & Sync | 0/2 | Not started | - |
+| 4. Remaining Plugins & Sync | 1/2 | In Progress|  |

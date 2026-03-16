@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: completed
-stopped_at: Completed 03-03-PLAN.md. Phase 3 complete (3/3 plans) — docker, cloudflare, vercel verified.
-last_updated: "2026-03-12T06:03:40.826Z"
-last_activity: 2026-03-12 — Completed 03-03-PLAN.md (docker, cloudflare, vercel metadata verification)
+status: executing
+stopped_at: Completed 04-01-PLAN.md
+last_updated: "2026-03-16T11:12:18.560Z"
+last_activity: 2026-03-16 — Completed 04-01-PLAN.md (todoist, linear, uiux metadata verification)
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 7
-  completed_plans: 7
-  percent: 100
+  total_plans: 9
+  completed_plans: 8
+  percent: 89
 ---
 
 # Project State
@@ -25,19 +25,19 @@ See: .planning/PROJECT.md (updated 2026-03-11)
 
 ## Current Position
 
-Phase: 3 of 4 complete (Standalone Official Repos) — Phase 3 DONE
-Plan: 3 of 3 in Phase 3 complete — all plans done
-Status: Phase 3 complete — proceeding to Phase 4 (remaining plugins + sync)
-Last activity: 2026-03-12 — Completed 03-03-PLAN.md (docker, cloudflare, vercel metadata verification)
+Phase: 4 of 4 in progress (Remaining Plugins & Sync)
+Plan: 1 of 2 in Phase 4 complete
+Status: Phase 4 in progress — 04-01 done (todoist, linear, uiux), 04-02 remaining
+Last activity: 2026-03-16 — Completed 04-01-PLAN.md (todoist, linear, uiux metadata verification)
 
-Progress: [██████████] 100%
+Progress: [█████████░] 89%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 13m
-- Total execution time: 88m
+- Total plans completed: 8
+- Average duration: 12m
+- Total execution time: 98m
 
 **By Phase:**
 
@@ -46,9 +46,10 @@ Progress: [██████████] 100%
 | 01-community-orchestration-plugins | 1 | 7m | 7m |
 | 02-official-mcp-monorepo-plugins | 3 | 47m | 16m |
 | 03-platform-official-plugins | 3 | 34m | 11m |
+| 04-remaining-plugins-sync | 1 | 10m | 10m |
 
 **Recent Trend:**
-- Last 5 plans: 02-02 (18m), 02-03 (15m), 03-01 (6m), 03-02 (10m), 03-03 (18m)
+- Last 5 plans: 02-03 (15m), 03-01 (6m), 03-02 (10m), 03-03 (18m), 04-01 (10m)
 - Trend: stable
 
 *Updated after each plan completion*
@@ -100,6 +101,11 @@ Progress: [██████████] 100%
 - [03-03]: docker features 전면 교체 — 실제 기능은 컨테이너 기반 MCP 서버 관리/프로파일/OAuth+시크릿/동적 툴 디스커버리/모니터링; 단순 컨테이너 빌드는 README 범위 아님
 - [03-03]: cloudflare → remote OAuth multi-server (15+) — @cloudflare/mcp-server-cloudflare v0.2.0은 레거시 로컬 서버; 현재는 bindings/observability/radar 등 원격 서버 모음; requiredSecrets []
 - [03-03]: vercel install → remote HTTP MCP (https://mcp.vercel.com) — @vercel/mcp npm 존재하지 않음; OAuth 인증; githubRepo null 유지 확인; difficulty intermediate
+- [04-01]: todoist install → @abhiz123/todoist-mcp-server (scoped npm) — unscoped todoist-mcp-server(v1.0.7)는 다른 패키지; TODOIST_API_TOKEN env 필수
+- [04-01]: linear → DEPRECATED (jerhadf/linear-mcp-server) — README에서 공식 원격 MCP(mcp.linear.app/sse) 권장; maintenanceStatus "stale"
+- [04-01]: linear requiredSecrets → LINEAR_API_KEY — README env 섹션에서 정확한 env var명 확인
+- [04-01]: uiux → MCP 서버 아님 — GitHub "ui-ux-pro-max" 87개 repo는 PromptX/Codex 프롬프트 스킬; npm 패키지 없음; verificationStatus "unverified" 유지
+- [04-01]: uiux url → nextlevelbuilder/ui-ux-pro-max-skill — 실제 프로젝트 참조 (v2.0, 161 추론 규칙, uipro-cli npm)
 
 ### Pending Todos
 
@@ -107,10 +113,10 @@ None yet.
 
 ### Blockers/Concerns
 
-- uiux 플러그인의 githubRepo가 null이고 officialStatus가 "unknown" — Phase 4에서 실제 repo 유무 확인 필요
+- [RESOLVED] uiux 플러그인의 githubRepo가 null이고 officialStatus가 "unknown" — 04-01에서 확인 완료: MCP 서버가 아닌 프롬프트 스킬. verificationStatus "unverified" 유지.
 
 ## Session Continuity
 
-Last session: 2026-03-12
-Stopped at: Completed 03-03-PLAN.md. Phase 3 complete (3/3 plans) — docker, cloudflare, vercel verified.
+Last session: 2026-03-16T11:12:18.557Z
+Stopped at: Completed 04-01-PLAN.md
 Resume file: None
