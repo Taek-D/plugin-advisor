@@ -1,0 +1,167 @@
+import type { Plugin } from "./types";
+
+export type ParseResult = {
+  matched: string[];
+  unmatched: string[];
+};
+
+const ALIAS_MAP: Record<string, string> = {
+  brave: "brave-search",
+  "github-mcp": "github",
+};
+
+/**
+ * Normalize a raw token from MCP list output.
+ * Strips scoped prefixes, (user)/(project) suffixes, mcp- prefixes,
+ * -mcp suffixes, unicode symbols, and lowercases the result.
+ */
+export function normalizeToken(raw: string): string {
+  let token = raw.trim().toLowerCase();
+
+  // Strip (user): or (project): suffix BEFORE removing special chars
+  token = token.replace(/\s*\((?:user|project)\):?\s*$/g, "").trim();
+
+  // Strip unicode symbols (checkmarks, x-marks, etc.)
+  token = token.replace(/[^\w\s@/-]/g, "").trim();
+
+  // Strip @modelcontextprotocol/server- prefix
+  token = token.replace(/^@modelcontextprotocol\/server-/, "");
+
+  // Strip any @scope/ prefix
+  token = token.replace(/^@[^/]+\//, "");
+
+  // Strip mcp- prefix
+  token = token.replace(/^mcp-/, "");
+
+  // Strip -mcp suffix
+  token = token.replace(/-mcp$/, "");
+
+  // Remove any remaining non-alphanumeric chars except hyphen
+  token = token.replace(/[^a-z0-9-]/g, "").trim();
+
+  return token;
+}
+
+/**
+ * Resolve a normalized token to a plugin ID.
+ * Tries matching against id, normalized name, and normalized tag.
+ * Falls back to alias map if no direct match.
+ */
+export function resolvePluginId(
+  token: string,
+  plugins: Plugin[]
+): string | null {
+  const normalized = normalizeToken(token);
+
+  for (const plugin of plugins) {
+    if (plugin.id === normalized) return plugin.id;
+    if (normalizeToken(plugin.name) === normalized) return plugin.id;
+    if (normalizeToken(plugin.tag) === normalized) return plugin.id;
+  }
+
+  // Check alias map
+  const aliasId = ALIAS_MAP[normalized];
+  if (aliasId) {
+    const found = plugins.find((p) => p.id === aliasId);
+    if (found) return found.id;
+  }
+
+  return null;
+}
+
+/**
+ * Parse raw `claude mcp list` output into matched plugin IDs and unmatched tokens.
+ * Handles two known format variants:
+ *   - "name (user): connected"
+ *   - "checkmark name Connected"
+ */
+export function parseMcpList(raw: string, pluginIds: string[]): ParseResult {
+  if (!raw || !raw.trim()) {
+    return { matched: [], unmatched: [] };
+  }
+
+  // Build a minimal Plugin[] from pluginIds for resolvePluginId
+  const pseudoPlugins: Plugin[] = pluginIds.map((id) => ({
+    id,
+    name: id,
+    tag: id,
+    color: "",
+    desc: "",
+    longDesc: "",
+    url: "",
+    githubRepo: null,
+    category: "workflow" as const,
+    install: [],
+    features: [],
+    conflicts: [],
+    keywords: [],
+    officialStatus: "community" as const,
+    verificationStatus: "unverified" as const,
+    difficulty: "beginner" as const,
+    prerequisites: [],
+    requiredSecrets: [],
+    platformSupport: [],
+    installMode: "safe-copy" as const,
+    maintenanceStatus: "active" as const,
+    bestFor: [],
+    avoidFor: [],
+  }));
+
+  const lines = raw.split("\n");
+  const matchedSet = new Set<string>();
+  const unmatchedList: string[] = [];
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    // Skip header-like lines
+    if (/^(MCP|Name|Status|---)/i.test(trimmed)) continue;
+
+    // Strip terminal control chars
+    const cleaned = trimmed.replace(/\x1B\[[0-9;]*m/g, "");
+
+    // Extract first meaningful token from the line
+    // Remove unicode symbols at start (checkmarks, x-marks)
+    const withoutSymbols = cleaned.replace(/^[^\w@]+/, "");
+
+    // Extract first word-like token (may include @ for scoped packages)
+    const tokenMatch = withoutSymbols.match(/^([@\w][\w./@-]*)/);
+    if (!tokenMatch) continue;
+
+    const rawToken = tokenMatch[1];
+    const normalized = normalizeToken(rawToken);
+    if (!normalized) continue;
+
+    const resolved = resolvePluginId(rawToken, pseudoPlugins);
+    if (resolved) {
+      matchedSet.add(resolved);
+    } else {
+      unmatchedList.push(normalized);
+    }
+  }
+
+  return {
+    matched: Array.from(matchedSet),
+    unmatched: unmatchedList,
+  };
+}
+
+/**
+ * Filter plugins by substring match on name, id, or tag.
+ * Case-insensitive. Returns max 8 results.
+ * Used as autocomplete data source.
+ */
+export function filterPlugins(query: string, plugins: Plugin[]): Plugin[] {
+  if (query.length < 1) return [];
+
+  const q = query.toLowerCase();
+  return plugins
+    .filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        p.id.toLowerCase().includes(q) ||
+        p.tag.toLowerCase().includes(q)
+    )
+    .slice(0, 8);
+}
