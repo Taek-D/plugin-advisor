@@ -189,5 +189,6 @@ export const ko: Translations = {
     sampleBtn: "샘플 데이터로 시작",
     removePlugin: "제거",
     chipNoDesc: "설명 없음",
+    parseBtn: "인식하기",
   },
 };

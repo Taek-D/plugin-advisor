@@ -190,5 +190,6 @@ export const en: Translations = {
     sampleBtn: "Start with sample data",
     removePlugin: "Remove",
     chipNoDesc: "No description",
+    parseBtn: "Parse",
   },
 };

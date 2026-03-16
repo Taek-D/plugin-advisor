@@ -189,5 +189,6 @@ export type Translations = {
     sampleBtn: string;
     removePlugin: string;
     chipNoDesc: string;
+    parseBtn: string;
   };
 };
