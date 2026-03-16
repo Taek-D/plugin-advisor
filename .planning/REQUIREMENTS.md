@@ -47,8 +47,8 @@ Deferred to future release.
 | VERIFY-04 | Phase 1, 2, 3, 4 | Complete |
 | VERIFY-05 | Phase 1, 2, 3, 4 | Complete |
 | VERIFY-06 | Phase 1, 2, 3, 4 | Complete |
-| UPDATE-01 | Phase 4 | Pending |
-| UPDATE-02 | Phase 4 | Pending |
+| UPDATE-01 | Phase 4 | Complete |
+| UPDATE-02 | Phase 4 | Complete |
 
 **Coverage:**
 - v1.0 requirements: 8 total
