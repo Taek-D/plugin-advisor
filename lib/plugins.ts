@@ -304,6 +304,8 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     bestFor: ["파일 자동화", "샌드박스 파일 작업", "로컬 파일 처리"],
     avoidFor: ["입문자 기본 세팅"],
   },
+  // uiux: Not an MCP server — it's a PromptX/Codex prompt skill (nextlevelbuilder/ui-ux-pro-max-skill).
+  // No MCP repo exists. npm "ui-ux-pro-max" not found. Verified 2026-03-16.
   uiux: {
     officialStatus: "unknown",
     verificationStatus: "unverified",
@@ -354,12 +356,22 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     avoidFor: ["첫 세팅 직후 바로 쓰는 흐름"],
   },
   linear: {
+    // jerhadf/linear-mcp-server: DEPRECATED — official remote MCP at mcp.linear.app/sse recommended.
+    // Repo exists (345 stars, pushed 2025-05-01), npm package "linear-mcp-server" works. Verified 2026-03-16.
+    verificationStatus: "verified",
     installMode: "external-setup",
-    requiredSecrets: ["Linear API access"],
+    requiredSecrets: ["LINEAR_API_KEY"],
+    maintenanceStatus: "stale",
+    bestFor: ["이슈 관리", "팀 프로젝트 추적"],
+    avoidFor: ["신규 도입 (공식 원격 MCP 권장)"],
   },
   todoist: {
+    // abhiz123/todoist-mcp-server: 381 stars, pushed 2025-04-20, npm @abhiz123/todoist-mcp-server. Verified 2026-03-16.
+    verificationStatus: "verified",
     installMode: "external-setup",
-    requiredSecrets: ["Todoist API token"],
+    requiredSecrets: ["TODOIST_API_TOKEN"],
+    bestFor: ["할 일 관리", "개발 중 태스크 추적"],
+    avoidFor: ["팀 프로젝트 관리 (Linear 등 권장)"],
   },
   memory: {
     // In modelcontextprotocol/servers main branch; package @modelcontextprotocol/server-memory v0.6.3 confirmed
@@ -668,18 +680,18 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     color: "#E44332",
     category: "workflow",
     githubRepo: "abhiz123/todoist-mcp-server",
-    desc: "Todoist 연동으로 개발 태스크를 실시간 관리. 할 일 추적의 정석.",
+    desc: "Todoist 연동으로 자연어 태스크 관리. 생성, 검색, 수정, 완료, 삭제까지.",
     longDesc:
-      "Todoist MCP는 인기 있는 할 일 관리 앱 Todoist를 Claude Code와 연동해주는 서버예요. 개발 중 발견한 TODO 항목을 바로 Todoist에 추가하고, 프로젝트별로 분류하고, 마감일과 우선순위를 설정할 수 있어요. 코딩하면서 태스크 관리를 동시에 하고 싶을 때 편리해요.",
+      "Todoist MCP는 인기 있는 할 일 관리 앱 Todoist를 Claude Code와 연동해주는 서버예요. 자연어로 태스크를 생성하고, 이름 검색으로 기존 태스크를 찾고, 우선순위/마감일/설명을 수정하고, 완료 또는 삭제할 수 있어요. 5개 도구(create, get, update, complete, delete)를 제공하며, 날짜/우선순위/프로젝트별 필터링도 지원해요. TODOIST_API_TOKEN 환경변수가 필요해요.",
     url: "https://github.com/abhiz123/todoist-mcp-server",
     install: [
-      "claude mcp add todoist -- npx -y todoist-mcp-server",
+      "claude mcp add todoist --env TODOIST_API_TOKEN=your_token -- npx -y @abhiz123/todoist-mcp-server",
     ],
     features: [
-      "태스크 자동 생성",
-      "프로젝트별 분류",
-      "우선순위 관리",
-      "마감일 설정",
+      "자연어 태스크 생성 (제목, 설명, 마감일, 우선순위)",
+      "태스크 검색 및 필터링 (날짜, 우선순위, 프로젝트)",
+      "기존 태스크 수정 (이름 검색 → 속성 업데이트)",
+      "태스크 완료/삭제",
     ],
     conflicts: [],
     keywords: [
@@ -694,19 +706,20 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     tag: "LIN",
     color: "#5E6AD2",
     category: "workflow",
+    // jerhadf/linear-mcp-server is DEPRECATED — official Linear remote MCP: https://mcp.linear.app/sse
     githubRepo: "jerhadf/linear-mcp-server",
-    desc: "Linear 이슈 관리 연동. 이슈 생성, 상태 변경, 스프린트 관리 자동화.",
+    desc: "Linear 이슈 관리 연동. 이슈 생성, 검색, 수정, 코멘트까지 5개 도구.",
     longDesc:
-      "Linear MCP는 Linear 프로젝트 관리 도구를 Claude Code에서 직접 사용할 수 있게 해주는 서버예요. 코딩 중 이슈를 생성하고, 상태를 업데이트하고, 스프린트를 관리할 수 있어요. 팀 프로젝트에서 개발과 프로젝트 관리를 하나의 흐름으로 연결해서 컨텍스트 전환을 줄여줘요.",
+      "Linear MCP는 Linear 프로젝트 관리 도구를 Claude Code에서 직접 사용할 수 있게 해주는 서버예요. 5개 도구(create_issue, update_issue, search_issues, get_user_issues, add_comment)를 제공하고, 이슈/팀/사용자 리소스도 조회할 수 있어요. LINEAR_API_KEY 환경변수가 필요해요. 참고: 이 npm 패키지(jerhadf)는 deprecated 되었으며, 공식 Linear 원격 MCP(mcp.linear.app/sse)가 권장돼요.",
     url: "https://github.com/jerhadf/linear-mcp-server",
     install: [
-      "claude mcp add linear -- npx -y linear-mcp-server",
+      "claude mcp add linear --env LINEAR_API_KEY=your_key -- npx -y linear-mcp-server",
     ],
     features: [
-      "이슈 생성/관리",
-      "스프린트 관리",
-      "상태 자동 업데이트",
-      "팀 워크플로 연동",
+      "이슈 생성/수정 (제목, 설명, 우선순위, 상태)",
+      "이슈 검색 및 필터링 (팀, 상태, 라벨, 담당자)",
+      "사용자 할당 이슈 조회",
+      "이슈 코멘트 추가 (마크다운 지원)",
     ],
     conflicts: [],
     keywords: [
@@ -1294,6 +1307,9 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
   // ─────────────────────────────────────────────
   // UI/UX
   // ─────────────────────────────────────────────
+  // uiux: No public MCP server repo found. 'yourusername/ui-ux-pro-max' was a placeholder URL.
+  // GitHub search (2026-03-16): 87 repos matching "ui-ux-pro-max" are PromptX/Codex prompt skills
+  // (e.g., nextlevelbuilder/ui-ux-pro-max-skill), NOT MCP servers. npm "ui-ux-pro-max" does not exist.
   uiux: {
     id: "uiux",
     name: "UI/UX Pro Max",
@@ -1303,17 +1319,17 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
     githubRepo: null,
     desc: "디자인 시스템, 컴포넌트, 접근성. 프론트엔드 퀄리티를 끌어올림.",
     longDesc:
-      "UI/UX Pro Max는 프론트엔드 개발에 특화된 플러그인이에요. 디자인 시스템 설계, 컴포넌트 구조화, 접근성(a11y) 검토까지 지원해요. React, Vue, Svelte 등 주요 프레임워크와 Tailwind, shadcn/ui 같은 스타일 시스템에 대한 깊은 이해를 제공해요. UI 퀄리티와 사용자 경험을 빠르게 끌어올려야 할 때 필수예요.",
-    url: "https://github.com/yourusername/ui-ux-pro-max",
+      "UI/UX Pro Max는 프론트엔드 개발에 특화된 AI 스킬이에요. 디자인 시스템 설계, 컴포넌트 구조화, 접근성(a11y) 검토까지 지원해요. React, Vue, Svelte 등 주요 프레임워크와 Tailwind, shadcn/ui 같은 스타일 시스템에 대한 깊은 이해를 제공해요. 참고: MCP 서버가 아닌 프롬프트 기반 스킬이며, 공식 MCP 저장소가 존재하지 않아요.",
+    url: "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
     install: [
-      "/plugin marketplace add https://github.com/yourusername/ui-ux-pro-max",
-      "/plugin install ui-ux-pro-max",
+      "# MCP 서버가 아닌 프롬프트 스킬 — 아래 CLI로 설치",
+      "npx uipro-cli init",
     ],
     features: [
-      "디자인 시스템",
-      "접근성 검토",
-      "컴포넌트 패턴",
-      "Tailwind/shadcn 지원",
+      "디자인 시스템 생성 (161개 추론 규칙)",
+      "67가지 UI 스타일 지원",
+      "접근성(a11y) 검토",
+      "컴포넌트 패턴 및 Tailwind/shadcn 지원",
     ],
     conflicts: [],
     keywords: [

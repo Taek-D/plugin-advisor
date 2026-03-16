@@ -41,12 +41,12 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     longDesc: "Sequential Thinking MCP is an official MCP server that breaks complex problems into sequential thinking steps. It supports dynamic thought flows including revision of previous steps, branching into alternative reasoning paths, and adjusting the total thought count as understanding deepens. Even when the full problem scope isn't clear upfront, it can adapt step by step. Especially strong for architecture design, complex bug tracking, and planning tasks that require deep thinking and mid-course corrections.",
   },
   todoist: {
-    desc: "Todoist integration for real-time task management. The standard for todo tracking.",
-    longDesc: "Todoist MCP integrates the popular todo app Todoist with Claude Code. Add TODO items discovered during development directly to Todoist, categorize by project, and set deadlines and priorities. Convenient for managing tasks simultaneously while coding.",
+    desc: "Todoist integration for natural language task management. Create, search, update, complete, and delete.",
+    longDesc: "Todoist MCP integrates the popular todo app Todoist with Claude Code. It provides 5 tools: create tasks (with title, description, due date, priority), search/filter tasks (by date, priority, project), update tasks (find by name then modify attributes), complete tasks, and delete tasks — all via natural language. Requires a TODOIST_API_TOKEN environment variable.",
   },
   linear: {
-    desc: "Linear issue management integration. Automates issue creation, status changes, sprint management.",
-    longDesc: "Linear MCP lets you use Linear project management directly from Claude Code. Create issues, update statuses, and manage sprints while coding. Reduces context switching by connecting development and project management into one flow for team projects.",
+    desc: "Linear issue management integration. 5 tools for creating, searching, updating issues and adding comments.",
+    longDesc: "Linear MCP lets you use Linear project management directly from Claude Code. It provides 5 tools: create_issue, update_issue, search_issues, get_user_issues, and add_comment, plus MCP resources for viewing issues, teams, and users. Requires a LINEAR_API_KEY environment variable. Note: this npm package (jerhadf) is deprecated — the official Linear remote MCP (mcp.linear.app/sse) is recommended for new setups.",
   },
   repomix: {
     desc: "Packs entire codebase into AI-friendly file. Context management for large projects.",
@@ -130,7 +130,7 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
   },
   uiux: {
     desc: "Design systems, components, accessibility. Elevates frontend quality.",
-    longDesc: "UI/UX Pro Max is a plugin specialized for frontend development. Supports design system design, component structuring, and accessibility (a11y) review. Provides deep understanding of major frameworks like React, Vue, Svelte and style systems like Tailwind, shadcn/ui. Essential when you need to quickly elevate UI quality and user experience.",
+    longDesc: "UI/UX Pro Max is a prompt-based AI skill specialized for frontend development. It provides design system generation (161 reasoning rules), 67 UI styles, component structuring, and accessibility (a11y) review. Supports major frameworks like React, Vue, Svelte and style systems like Tailwind, shadcn/ui. Note: this is a PromptX/Codex skill, not an MCP server — no official MCP repository exists.",
   },
   docker: {
     desc: "Docker MCP Gateway. Manage containerized MCP servers by profile and connect them to Claude Code.",
@@ -157,8 +157,8 @@ export const reasonsEn: Record<string, string> = {
   gsd: "A roadmap and spec-driven workflow is important here. GSD helps stabilize long-running builds with structured planning, execution, and verification.",
   fireauto: "This looks like a launch-oriented workflow with SEO, security, research, or UI polish. fireauto bundles those practical commands into one plugin set.",
   "sequential-thinking": "Complex reasoning or design work detected. Sequential Thinking breaks problems into revisable steps with branching support — improving architecture quality and reducing costly reasoning mistakes.",
-  todoist: "Project includes task management. Todoist integration enables real-time dev task tracking.",
-  linear: "Team project management needed. Linear issue tracking connects development and project management.",
+  todoist: "Project includes task management. Todoist MCP provides natural language task creation, search, update, complete, and delete via TODOIST_API_TOKEN.",
+  linear: "Team project management needed. Linear MCP provides 5 issue management tools (create, update, search, get, comment) via LINEAR_API_KEY. Note: npm package is deprecated — official remote MCP at mcp.linear.app/sse is recommended.",
   repomix: "Large codebase or legacy analysis needed. Packs entire code into AI-friendly format for better context understanding.",
   context7: "Uses many external libraries/APIs. Injects latest official docs in real-time to reduce hallucination errors.",
   memory: "Long-term project where cross-session context is important. Persistent memory eliminates repeated explanations.",
@@ -179,7 +179,7 @@ export const reasonsEn: Record<string, string> = {
   git: "Git version control is core. Programmatically manipulate local repositories.",
   supabase: "BaaS-based full-stack development. Quickly build DB, auth, storage with Supabase.",
   figma: "Design-to-code conversion needed. Figma's official remote MCP (mcp.figma.com) provides design context, variable tokens, and layer metadata — requires Dev/Full seat on a paid Figma plan.",
-  uiux: "Frontend UI development is core. Elevates component quality and design consistency.",
+  uiux: "Frontend UI development is core. UI/UX Pro Max elevates component quality and design consistency via 161 reasoning rules and 67 UI styles. Note: prompt-based skill, not an MCP server.",
   docker: "Docker-based MCP server management needed. Docker MCP Gateway runs MCP servers as isolated containers via Docker Desktop's MCP Toolkit, with profile-based multi-server management for Claude Code.",
   vercel: "Vercel project management or deployment automation needed. Vercel's official remote MCP (mcp.vercel.com) connects via OAuth — no API key required.",
   cloudflare: "Edge computing or Cloudflare infrastructure management needed. Cloudflare's 15+ remote MCP servers cover Workers, KV/R2/D1, observability, Radar, and more — all via OAuth.",
