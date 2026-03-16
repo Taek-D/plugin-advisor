@@ -1,7 +1,7 @@
 # Phase 6: Scoring Engine - Context
 
 **Gathered:** 2026-03-17
-**Status:** In progress (2/4 areas discussed — 대체 추천 기준, 커버리지 판정 남음)
+**Status:** Ready for planning
 
 <domain>
 ## Phase Boundary
@@ -26,14 +26,22 @@
 - 설치 명령어는 데이터에 포함하지 않음 — Phase 7 UI에서 PLUGINS[id].install 참조
 
 ### 대체 추천 기준
-- (미정 — 다음 세션에서 논의)
+- 발동 조건: deprecated, unverified, partial(verificationStatus) 플러그인이 조합에 포함된 경우
+- 대안 탐색: 같은 category의 verified 플러그인 중 선택
+- 개수: 문제 플러그인당 최선의 대안 1개만 제시
+- 데이터 구조: { original: pluginId, reason: 'deprecated'|'unverified'|'partial', replacement: pluginId }
+- 대안이 없는 경우 (같은 카테고리에 verified가 없음): replacement를 null로 두되 문제는 안내
 
 ### 커버리지 판정
-- (미정 — 다음 세션에서 논의)
+- 단순 유무 방식: 카테고리에 플러그인이 1개라도 있으면 커버됨
+- 10개 카테고리 모두 동등한 가중치
+- 선형 감점: 미커버 카테고리 1개당 동일한 점수 감점
+- 빈 입력 (0개 플러그인): 점수를 계산하지 않고 "플러그인을 추가해주세요" 안내 메시지 반환
 
 ### Claude's Discretion
-- 점수 공식의 세부 가중치 수치 (커버리지/충돌/중복 간 정확한 점수 배분)
+- 점수 공식의 세부 가중치 수치 (커버리지/충돌/중복 간 정확한 점수 배분, 선형 감점의 구체적 수치)
 - 보완 추천 결과 데이터 구조 설계
+- 대체 추천에서 "최선의 대안" 선택 우선순위 (getTrustScore 재활용 등)
 - 함수 시그니처 및 모듈 분리 방식
 
 </decisions>
@@ -79,4 +87,4 @@ None — discussion stayed within phase scope
 ---
 
 *Phase: 06-scoring-engine*
-*Context gathered: 2026-03-17 (진행 중 — 2/4 영역 완료)*
+*Context gathered: 2026-03-17*
