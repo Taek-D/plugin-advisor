@@ -7,6 +7,7 @@ export type Translations = {
     advisor: string;
     plugins: string;
     pluginCount: string;
+    optimizer: string;
   };
   // Main page
   main: {
@@ -168,5 +169,25 @@ export type Translations = {
       permissionError: string;
       permissionErrorAnswer: string;
     };
+  };
+  // Optimizer
+  optimizer: {
+    pageTitle: string;
+    pageSubtitle: string;
+    tabPaste: string;
+    tabType: string;
+    pasteLabel: string;
+    pastePlaceholder: string;
+    typeLabel: string;
+    typePlaceholder: string;
+    analyzeBtn: string;
+    analyzeBtnDisabled: string;
+    aiComingSoon: string;
+    recognizedPlugins: string;
+    unrecognizedPlugins: string;
+    emptyState: string;
+    sampleBtn: string;
+    removePlugin: string;
+    chipNoDesc: string;
   };
 };
