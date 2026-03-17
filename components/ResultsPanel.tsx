@@ -1,8 +1,12 @@
 "use client";
 
+import { useState, useRef, useCallback } from "react";
 import { useI18n } from "@/lib/i18n";
 import ScoreGauge from "./ScoreGauge";
 import ConflictSection from "./ConflictSection";
+import CoverageGrid from "./CoverageGrid";
+import ComplementSection from "./ComplementSection";
+import ReplacementSection from "./ReplacementSection";
 import type { ScoringResult } from "@/lib/scoring";
 
 type ResultsPanelProps = {
@@ -11,6 +15,12 @@ type ResultsPanelProps = {
 
 export default function ResultsPanel({ result }: ResultsPanelProps) {
   const { t } = useI18n();
+  const [complementsOpen, setComplementsOpen] = useState(false);
+  const complementsRef = useRef<HTMLDivElement>(null);
+
+  const handleOpenComplements = useCallback(() => {
+    setComplementsOpen(true);
+  }, []);
 
   if (result.empty) {
     return (
@@ -34,9 +44,21 @@ export default function ResultsPanel({ result }: ResultsPanelProps) {
         conflicts={result.conflicts}
         redundancies={result.redundancies}
       />
-      {/* CoverageGrid — Plan 02 */}
-      {/* ComplementSection — Plan 02 */}
-      {/* ReplacementSection — Plan 02 */}
+      <CoverageGrid
+        coverage={result.coverage}
+        complementsRef={complementsRef}
+        onOpenComplements={handleOpenComplements}
+      />
+      <div ref={complementsRef}>
+        <ComplementSection
+          complements={result.complements}
+          open={complementsOpen}
+          onToggle={() => setComplementsOpen((v) => !v)}
+        />
+      </div>
+      {result.replacements.length > 0 && (
+        <ReplacementSection replacements={result.replacements} />
+      )}
     </div>
   );
 }
