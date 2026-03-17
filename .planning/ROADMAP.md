@@ -52,7 +52,7 @@ Plans:
   5. deprecated 또는 unverified 플러그인이 포함된 경우 더 나은 대안 플러그인이 제시된다
 **Plans:** 1/1 plans complete
 Plans:
-- [ ] 06-01-PLAN.md — TDD scoring engine: conflict/redundancy detection, 0-100 deduction score, coverage analysis, complement and replacement suggestions
+- [x] 06-01-PLAN.md — TDD scoring engine: conflict/redundancy detection, 0-100 deduction score, coverage analysis, complement and replacement suggestions
 
 ### Phase 7: Results UI Assembly
 **Goal**: 분석 결과가 사용자가 한눈에 이해할 수 있는 구조로 화면에 표시되고, 전체 /optimizer 기능이 배포 가능한 상태가 된다
@@ -64,7 +64,7 @@ Plans:
   3. 빈 조합(플러그인 0개) 입력 시 에러가 아닌 안내 메시지가 표시된다
 **Plans:** 2 plans
 Plans:
-- [ ] 07-01-PLAN.md — Shared utilities, i18n, analyze wiring, ScoreGauge, ConflictSection
+- [x] 07-01-PLAN.md — Shared utilities, i18n, analyze wiring, ScoreGauge, ConflictSection
 - [ ] 07-02-PLAN.md — CoverageGrid, collapsible complement/replacement sections, visual verification
 
 ## Progress
@@ -77,7 +77,7 @@ Plans:
 | 4. Remaining Plugins & Sync | v1.0 | 2/2 | Complete | 2026-03-16 |
 | 5. Input & Page Scaffold | v1.1 | 2/2 | Complete | 2026-03-16 |
 | 6. Scoring Engine | v1.1 | 1/1 | Complete | 2026-03-16 |
-| 7. Results UI Assembly | v1.1 | 0/2 | Not started | - |
+| 7. Results UI Assembly | v1.1 | 1/2 | In Progress | - |
 
 ---
 *Full v1.0 details: `.planning/milestones/v1.0-ROADMAP.md`*
