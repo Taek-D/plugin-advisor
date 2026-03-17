@@ -178,6 +178,7 @@ export const en: Translations = {
     tabPaste: "Paste",
     tabType: "Type",
     pasteLabel: "claude mcp list output",
+    pasteHint: "Run claude mcp list in your terminal, then copy and paste the output here",
     pastePlaceholder: "Paste your claude mcp list output here...",
     typeLabel: "Search plugins",
     typePlaceholder: "Type a plugin name...",

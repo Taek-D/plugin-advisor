@@ -8,6 +8,7 @@ import CoverageGrid from "./CoverageGrid";
 import ComplementSection from "./ComplementSection";
 import ReplacementSection from "./ReplacementSection";
 import type { ScoringResult } from "@/lib/scoring";
+import type { PluginCategory } from "@/lib/types";
 
 type ResultsPanelProps = {
   result: ScoringResult;
@@ -16,10 +17,12 @@ type ResultsPanelProps = {
 export default function ResultsPanel({ result }: ResultsPanelProps) {
   const { t } = useI18n();
   const [complementsOpen, setComplementsOpen] = useState(false);
+  const [filterCategory, setFilterCategory] = useState<PluginCategory | null>(null);
   const complementsRef = useRef<HTMLDivElement>(null);
 
-  const handleOpenComplements = useCallback(() => {
+  const handleOpenComplements = useCallback((category?: PluginCategory) => {
     setComplementsOpen(true);
+    setFilterCategory(category ?? null);
   }, []);
 
   if (result.empty) {
@@ -53,7 +56,12 @@ export default function ResultsPanel({ result }: ResultsPanelProps) {
         <ComplementSection
           complements={result.complements}
           open={complementsOpen}
-          onToggle={() => setComplementsOpen((v) => !v)}
+          filterCategory={filterCategory}
+          onToggle={() => {
+            setComplementsOpen((v) => !v);
+            if (complementsOpen) setFilterCategory(null);
+          }}
+          onClearFilter={() => setFilterCategory(null)}
         />
       </div>
       {result.replacements.length > 0 && (

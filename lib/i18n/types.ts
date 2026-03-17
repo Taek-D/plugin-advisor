@@ -177,6 +177,7 @@ export type Translations = {
     tabPaste: string;
     tabType: string;
     pasteLabel: string;
+    pasteHint: string;
     pastePlaceholder: string;
     typeLabel: string;
     typePlaceholder: string;

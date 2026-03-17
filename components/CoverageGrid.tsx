@@ -22,7 +22,7 @@ const ALL_CATEGORIES: PluginCategory[] = [
 type CoverageGridProps = {
   coverage: CoverageResult;
   complementsRef: React.RefObject<HTMLDivElement | null>;
-  onOpenComplements: () => void;
+  onOpenComplements: (category?: PluginCategory) => void;
 };
 
 export default function CoverageGrid({
@@ -47,8 +47,8 @@ export default function CoverageGrid({
     .replace("{covered}", String(coveredCount))
     .replace("{total}", String(total));
 
-  function handleUncoveredClick() {
-    onOpenComplements();
+  function handleUncoveredClick(category: PluginCategory) {
+    onOpenComplements(category);
     complementsRef.current?.scrollIntoView({
       behavior: "smooth",
       block: "start",
@@ -83,7 +83,7 @@ export default function CoverageGrid({
           return (
             <div
               key={category}
-              onClick={!isCovered ? handleUncoveredClick : undefined}
+              onClick={!isCovered ? () => handleUncoveredClick(category) : undefined}
               className={[
                 "flex flex-col items-center gap-1 rounded-xl p-2 text-center transition-opacity",
                 isCovered

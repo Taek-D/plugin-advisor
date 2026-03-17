@@ -28,6 +28,9 @@ export default function McpPasteInput({ onParsed }: McpPasteInputProps) {
       <label className="text-sm font-medium text-foreground">
         {t.optimizer.pasteLabel}
       </label>
+      <p className="text-xs text-muted-foreground">
+        {t.optimizer.pasteHint}
+      </p>
       <Textarea
         value={text}
         onChange={(e) => setText(e.target.value)}

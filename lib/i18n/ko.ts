@@ -177,6 +177,7 @@ export const ko: Translations = {
     tabPaste: "붙여넣기",
     tabType: "직접 입력",
     pasteLabel: "claude mcp list 결과",
+    pasteHint: "터미널에서 claude mcp list 명령어를 실행한 후 결과를 복사해서 붙여넣으세요",
     pastePlaceholder: "claude mcp list 결과를 붙여넣으세요...",
     typeLabel: "플러그인 검색",
     typePlaceholder: "플러그인 이름을 입력하세요...",
