@@ -1,38 +1,13 @@
 "use client";
 
-import {
-  Layers,
-  GitBranch,
-  Code,
-  FlaskConical,
-  BookOpen,
-  Database,
-  Shield,
-  Plug,
-  Palette,
-  Server,
-  X,
-} from "lucide-react";
+import { X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import type { Plugin, PluginCategory } from "@/lib/types";
-import type { LucideIcon } from "lucide-react";
+import { getCategoryIcon } from "@/lib/optimizer-utils";
+import type { Plugin } from "@/lib/types";
 
 type SelectedPluginChipsProps = {
   plugins: Plugin[];
   onRemove: (pluginId: string) => void;
-};
-
-const CATEGORY_ICONS: Record<PluginCategory, LucideIcon> = {
-  orchestration: Layers,
-  workflow: GitBranch,
-  "code-quality": Code,
-  testing: FlaskConical,
-  documentation: BookOpen,
-  data: Database,
-  security: Shield,
-  integration: Plug,
-  "ui-ux": Palette,
-  devops: Server,
 };
 
 export default function SelectedPluginChips({
@@ -44,7 +19,7 @@ export default function SelectedPluginChips({
   return (
     <div className="flex flex-wrap gap-2">
       {plugins.map((plugin) => {
-        const Icon = CATEGORY_ICONS[plugin.category] || Plug;
+        const Icon = getCategoryIcon(plugin.category);
         const desc = plugin.desc || t.optimizer.chipNoDesc;
 
         return (
