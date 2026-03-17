@@ -3,7 +3,7 @@
 ## Milestones
 
 - ✅ **v1.0 Plugin Metadata Verification** — Phases 1-4 (shipped 2026-03-16)
-- [ ] **v1.1 Plugin Optimizer** — Phases 5-7 (active)
+- ✅ **v1.1 Plugin Optimizer** — Phases 5-7 (shipped 2026-03-17)
 
 ## Phases
 
@@ -21,7 +21,7 @@
 
 - [x] **Phase 5: Input & Page Scaffold** — /optimizer 페이지 생성, 붙여넣기/자동완성 입력, 다국어 지원, Coming Soon AI 모드
 - [x] **Phase 6: Scoring Engine** — 규칙 기반 조합 점수, 충돌 감지, 커버리지 분석, 보완/대체 추천 로직 (completed 2026-03-16)
-- [ ] **Phase 7: Results UI Assembly** — 결과 화면 조립, progressive disclosure, 네비게이션 링크, 배포
+- [x] **Phase 7: Results UI Assembly** — 결과 화면 조립, progressive disclosure, 네비게이션 링크, 배포 (completed 2026-03-17)
 
 ## Phase Details
 
@@ -65,7 +65,7 @@ Plans:
 **Plans:** 2 plans
 Plans:
 - [x] 07-01-PLAN.md — Shared utilities, i18n, analyze wiring, ScoreGauge, ConflictSection
-- [ ] 07-02-PLAN.md — CoverageGrid, collapsible complement/replacement sections, visual verification
+- [x] 07-02-PLAN.md — CoverageGrid, collapsible complement/replacement sections, visual verification
 
 ## Progress
 
@@ -77,7 +77,7 @@ Plans:
 | 4. Remaining Plugins & Sync | v1.0 | 2/2 | Complete | 2026-03-16 |
 | 5. Input & Page Scaffold | v1.1 | 2/2 | Complete | 2026-03-16 |
 | 6. Scoring Engine | v1.1 | 1/1 | Complete | 2026-03-16 |
-| 7. Results UI Assembly | v1.1 | 1/2 | In Progress | - |
+| 7. Results UI Assembly | v1.1 | 2/2 | Complete | 2026-03-17 |
 
 ---
 *Full v1.0 details: `.planning/milestones/v1.0-ROADMAP.md`*
