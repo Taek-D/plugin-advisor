@@ -62,7 +62,10 @@ Plans:
   1. 분석 결과 화면에서 점수와 충돌 경고가 먼저 표시되고, 보완/대체 추천은 접힌 상태로 시작하여 사용자가 펼칠 수 있다
   2. 모바일과 데스크톱 양쪽에서 결과 화면이 겹침이나 잘림 없이 정상 표시된다
   3. 빈 조합(플러그인 0개) 입력 시 에러가 아닌 안내 메시지가 표시된다
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 07-01-PLAN.md — Shared utilities, i18n, analyze wiring, ScoreGauge, ConflictSection
+- [ ] 07-02-PLAN.md — CoverageGrid, collapsible complement/replacement sections, visual verification
 
 ## Progress
 
@@ -73,8 +76,8 @@ Plans:
 | 3. Platform & Official Plugins | v1.0 | 3/3 | Complete | 2026-03-12 |
 | 4. Remaining Plugins & Sync | v1.0 | 2/2 | Complete | 2026-03-16 |
 | 5. Input & Page Scaffold | v1.1 | 2/2 | Complete | 2026-03-16 |
-| 6. Scoring Engine | 1/1 | Complete   | 2026-03-16 | - |
-| 7. Results UI Assembly | v1.1 | 0/TBD | Not started | - |
+| 6. Scoring Engine | v1.1 | 1/1 | Complete | 2026-03-16 |
+| 7. Results UI Assembly | v1.1 | 0/2 | Not started | - |
 
 ---
 *Full v1.0 details: `.planning/milestones/v1.0-ROADMAP.md`*
