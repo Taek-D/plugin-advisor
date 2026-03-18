@@ -31,7 +31,7 @@
 
 **Milestone Goal:** MCP 서버와 Plugin을 type 필드로 구분하고, Plugin DB를 구축하며, /plugins 탭 분리와 /optimizer 통합 분석을 완성한다.
 
-- [ ] **Phase 8: Type System Foundation** - Plugin 타입에 type 필드 추가 및 파서 수정
+- [x] **Phase 8: Type System Foundation** - Plugin 타입에 type 필드 추가 및 파서 수정 (complete 2026-03-18)
 - [ ] **Phase 9: Plugin DB Population** - Plugin 타입 10-15개 DB 구축 및 번역
 - [ ] **Phase 10: Scoring Extension** - typeScope 파라미터로 타입별 보완 추천 분리
 - [ ] **Phase 11: Catalog Tab UI** - /plugins 페이지 MCP/Plugin 탭 분리 및 URL 상태 유지
@@ -51,7 +51,7 @@
 **Plans**: 1 plan
 
 Plans:
-- [ ] 08-01-PLAN.md — ItemType 타입 추가, Plugin type 필드 필수화, DEFAULT_PLUGIN_FIELDS 기본값, parseMcpList 팩토리 수정
+- [x] 08-01-PLAN.md — ItemType 타입 추가, Plugin type 필드 필수화, DEFAULT_PLUGIN_FIELDS 기본값, parseMcpList 팩토리 수정
 
 ### Phase 9: Plugin DB Population
 **Goal**: 주요 Plugin 10-15개가 검증된 메타데이터와 한/영 번역을 갖추어 DB에 등록된다
@@ -122,7 +122,7 @@ Plans:
 | 5. Input & Page Scaffold | v1.1 | 2/2 | Complete | 2026-03-16 |
 | 6. Scoring Engine | v1.1 | 1/1 | Complete | 2026-03-16 |
 | 7. Results UI Assembly | v1.1 | 2/2 | Complete | 2026-03-17 |
-| 8. Type System Foundation | v1.2 | 0/1 | Not started | - |
+| 8. Type System Foundation | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 9. Plugin DB Population | v1.2 | 0/2 | Not started | - |
 | 10. Scoring Extension | v1.2 | 0/1 | Not started | - |
 | 11. Catalog Tab UI | v1.2 | 0/1 | Not started | - |

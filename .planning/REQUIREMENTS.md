@@ -9,8 +9,8 @@ Requirements for milestone v1.2 — MCP + Plugin 통합.
 
 ### 타입 시스템 (Type System)
 
-- [ ] **TYPE-01**: Plugin 타입에 type 필드('mcp' | 'plugin')가 추가되고, 기존 42개 항목은 자동으로 'mcp'로 분류된다
-- [ ] **TYPE-02**: parseMcpList의 pseudo-plugin factory가 실제 Plugin 타입과 일치하도록 수정된다
+- [x] **TYPE-01**: Plugin 타입에 type 필드('mcp' | 'plugin')가 추가되고, 기존 42개 항목은 자동으로 'mcp'로 분류된다
+- [x] **TYPE-02**: parseMcpList의 pseudo-plugin factory가 실제 Plugin 타입과 일치하도록 수정된다
 
 ### 데이터 (Plugin DB)
 
@@ -59,8 +59,8 @@ Deferred to future release.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TYPE-01 | Phase 8 | Pending |
-| TYPE-02 | Phase 8 | Pending |
+| TYPE-01 | Phase 8 | Complete (2026-03-18) |
+| TYPE-02 | Phase 8 | Complete (2026-03-18) |
 | DATA-01 | Phase 9 | Pending |
 | DATA-02 | Phase 9 | Pending |
 | DATA-03 | Phase 9 | Pending |
