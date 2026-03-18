@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: MCP + Plugin 통합
-status: completed
-stopped_at: Phase 10 context gathered
-last_updated: "2026-03-18T09:03:43.759Z"
+status: in_progress
+stopped_at: "Completed 10-scoring-extension/10-01-PLAN.md"
+last_updated: "2026-03-18T09:24:02Z"
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 2
-  completed_plans: 2
-  percent: 33
+  total_plans: 3
+  completed_plans: 3
+  percent: 50
 ---
 
 # Project State
@@ -20,16 +20,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-18)
 
 **Core value:** 사용자의 프로젝트에 맞는 검증된 Claude Code 플러그인 조합을 정확하게 추천하는 것.
-**Current focus:** v1.2 Phase 9 — Plugin DB Population (complete)
+**Current focus:** v1.2 Phase 10 — Scoring Extension (plan 1/1 complete)
 
 ## Current Position
 
 ```
-Phase:    9 of 12 (Plugin DB Population)
+Phase:    10 of 12 (Scoring Extension)
 Plan:     1/1 complete
-Status:   Phase complete — ready for Phase 10
+Status:   Phase 10 plan 01 complete — ready for Phase 11
 
-Progress: [██████░░░░░░░░░░░░░░] 33%  (2/6 plans)
+Progress: [██████████░░░░░░░░░░] 50%  (3/6 plans)
 ```
 
 ## Performance Metrics
@@ -66,6 +66,8 @@ Key decisions in PROJECT.md Key Decisions table. Relevant to v1.2:
 - admin/plugins/route.ts Plugin literal hardcoded to type: 'mcp' — admin-created entries are MCP tools (08-01)
 - Type reclassification done exclusively in PLUGIN_FIELD_OVERRIDES, never in CORE_PLUGINS (PluginSeed omits type field by design) (09-01)
 - 13 Plugin entries selected: omc, superpowers, agency-agents, bkit-starter, bkit, ralph, fireauto, repomix, context7, security, sentry, figma, playwright — satisfies DATA-01 range (09-01)
+- typeScope defaults to 'both' — all existing callers unaffected; filtering at candidate level in buildComplements/buildReplacements (10-01)
+- OptimizerApp derives typeScope from Set(types).size === 1 — pure type-distribution detection, no scoring logic (10-01)
 
 ### Pending Todos
 
@@ -84,9 +86,10 @@ None.
 |-------|-------|----------|
 | 8. Type System Foundation | 1 | ~12 min |
 | 9. Plugin DB Population | 1 | ~12 min |
+| 10. Scoring Extension | 1 | ~4 min |
 
 ## Session Continuity
 
-Last session: 2026-03-18T09:03:43.751Z
-Stopped at: Phase 10 context gathered
-Resume with: /gsd:plan-phase 10
+Last session: 2026-03-18T09:24:02Z
+Stopped at: Completed 10-scoring-extension/10-01-PLAN.md
+Resume with: /gsd:plan-phase 11

@@ -20,9 +20,9 @@ Requirements for milestone v1.2 — MCP + Plugin 통합.
 
 ### 점수화 (Scoring)
 
-- [ ] **SCORE-01**: scorePlugins에 typeScope 파라미터가 추가되어 MCP/Plugin별 보완 추천이 분리된다
-- [ ] **SCORE-02**: 보완 추천에서 MCP 분석 시 Plugin 타입이 추천되지 않고, Plugin 분석 시 MCP 타입이 추천되지 않는다
-- [ ] **SCORE-03**: 커버리지 분석이 typeScope 내에서만 계산된다
+- [x] **SCORE-01**: scorePlugins에 typeScope 파라미터가 추가되어 MCP/Plugin별 보완 추천이 분리된다
+- [x] **SCORE-02**: 보완 추천에서 MCP 분석 시 Plugin 타입이 추천되지 않고, Plugin 분석 시 MCP 타입이 추천되지 않는다
+- [x] **SCORE-03**: 커버리지 분석이 typeScope 내에서만 계산된다
 
 ### UI (카탈로그 + 옵티마이저)
 
@@ -64,9 +64,9 @@ Deferred to future release.
 | DATA-01 | Phase 9 | Complete |
 | DATA-02 | Phase 9 | Complete |
 | DATA-03 | Phase 9 | Complete |
-| SCORE-01 | Phase 10 | Pending |
-| SCORE-02 | Phase 10 | Pending |
-| SCORE-03 | Phase 10 | Pending |
+| SCORE-01 | Phase 10 | Complete |
+| SCORE-02 | Phase 10 | Complete |
+| SCORE-03 | Phase 10 | Complete |
 | UI-01 | Phase 11 | Pending |
 | UI-02 | Phase 11 | Pending |
 | UI-03 | Phase 12 | Pending |

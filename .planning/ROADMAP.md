@@ -33,7 +33,7 @@
 
 - [x] **Phase 8: Type System Foundation** - Plugin 타입에 type 필드 추가 및 파서 수정 (complete 2026-03-18)
 - [x] **Phase 9: Plugin DB Population** - Plugin 타입 13개 DB 재분류 및 번역 검증 (complete 2026-03-18)
-- [ ] **Phase 10: Scoring Extension** - typeScope 파라미터로 타입별 보완 추천 분리
+- [x] **Phase 10: Scoring Extension** - typeScope 파라미터로 타입별 보완 추천 분리 (completed 2026-03-18)
 - [ ] **Phase 11: Catalog Tab UI** - /plugins 페이지 MCP/Plugin 탭 분리 및 URL 상태 유지
 - [ ] **Phase 12: Optimizer UI + i18n** - 옵티마이저 힌트 업데이트, 타입 뱃지, i18n 완성
 
@@ -123,7 +123,7 @@ Plans:
 | 7. Results UI Assembly | v1.1 | 2/2 | Complete | 2026-03-17 |
 | 8. Type System Foundation | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 9. Plugin DB Population | v1.2 | 1/1 | Complete | 2026-03-18 |
-| 10. Scoring Extension | v1.2 | 0/1 | Not started | - |
+| 10. Scoring Extension | 1/1 | Complete   | 2026-03-18 | - |
 | 11. Catalog Tab UI | v1.2 | 0/1 | Not started | - |
 | 12. Optimizer UI + i18n | v1.2 | 0/1 | Not started | - |
 
