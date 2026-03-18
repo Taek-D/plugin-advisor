@@ -101,6 +101,7 @@ export const en: Translations = {
     searchPlaceholder: "Search plugins...",
     allCategories: "All",
     noResults: "No results found.",
+    allTabLabel: "All",
   },
   landing: {
     heroTitle: "Find the Perfect Claude Code Plugins",

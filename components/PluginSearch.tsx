@@ -1,15 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { PluginCategory } from "@/lib/types";
+import type { PluginCategory, ItemType } from "@/lib/types";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+type ActiveType = ItemType | "all";
 
 type Props = {
   onSearch: (query: string) => void;
   onCategory: (category: PluginCategory | "all") => void;
   activeCategory: PluginCategory | "all";
+  activeType: ActiveType;
+  onTypeChange: (type: ActiveType) => void;
+  typeCounts: { total: number; mcp: number; plugin: number };
 };
 
 const CATEGORY_KEYS: (PluginCategory | "all")[] = [
@@ -30,6 +36,9 @@ export default function PluginSearch({
   onSearch,
   onCategory,
   activeCategory,
+  activeType,
+  onTypeChange,
+  typeCounts,
 }: Props) {
   const { t } = useI18n();
   const [query, setQuery] = useState("");
@@ -48,6 +57,26 @@ export default function PluginSearch({
         placeholder={t.pluginsPage.searchPlaceholder}
         className="mb-4 h-auto px-3 py-3 font-mono text-xs"
       />
+      <TabsList className="mb-5">
+        <TabsTrigger
+          active={activeType === "all"}
+          onClick={() => onTypeChange("all")}
+        >
+          {t.pluginsPage.allTabLabel} ({typeCounts.total})
+        </TabsTrigger>
+        <TabsTrigger
+          active={activeType === "mcp"}
+          onClick={() => onTypeChange("mcp")}
+        >
+          MCP ({typeCounts.mcp})
+        </TabsTrigger>
+        <TabsTrigger
+          active={activeType === "plugin"}
+          onClick={() => onTypeChange("plugin")}
+        >
+          Plugin ({typeCounts.plugin})
+        </TabsTrigger>
+      </TabsList>
       <div className="mb-6 flex gap-1.5 overflow-x-auto pb-2">
         {CATEGORY_KEYS.map((key) => (
           <button

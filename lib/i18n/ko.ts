@@ -100,6 +100,7 @@ export const ko: Translations = {
     searchPlaceholder: "플러그인 검색...",
     allCategories: "전체",
     noResults: "검색 결과가 없어요.",
+    allTabLabel: "전체",
   },
   landing: {
     heroTitle: "최고의 Claude Code 플러그인 조합을 찾아보세요",

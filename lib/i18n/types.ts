@@ -106,6 +106,7 @@ export type Translations = {
     searchPlaceholder: string;
     allCategories: string;
     noResults: string;
+    allTabLabel: string;
   };
   // Landing Page
   landing: {
