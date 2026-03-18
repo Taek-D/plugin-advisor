@@ -66,20 +66,17 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     verificationStatus: "verified",
     difficulty: "beginner",
     bestFor: ["라이브러리 사용", "공식 문서 확인"],
-    type: "plugin" as const,
   },
   repomix: {
     verificationStatus: "verified",
     difficulty: "beginner",
     bestFor: ["대형 코드베이스 이해", "온보딩"],
-    type: "plugin" as const,
   },
   playwright: {
     officialStatus: "official",
     verificationStatus: "verified",
     difficulty: "beginner",
     bestFor: ["웹앱 QA", "브라우저 테스트", "크로스 브라우저 E2E"],
-    type: "plugin" as const,
   },
   puppeteer: {
     // puppeteer was moved from modelcontextprotocol/servers to servers-archived repo.
@@ -96,7 +93,6 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     verificationStatus: "verified",
     difficulty: "beginner",
     bestFor: ["인증/결제 앱", "보안 점검"],
-    type: "plugin" as const,
   },
   firecrawl: {
     officialStatus: "official",
@@ -247,7 +243,6 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     requiredSecrets: ["SENTRY_ACCESS_TOKEN"],
     bestFor: ["프로덕션 에러 디버깅", "이슈 추적", "성능 모니터링"],
     avoidFor: ["Sentry 계정 없는 환경"],
-    type: "plugin" as const,
   },
   notion: {
     officialStatus: "official",
@@ -273,7 +268,6 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     prerequisites: ["Figma Dev or Full seat (Professional/Organization/Enterprise plan)", "Figma OAuth authentication via mcp.figma.com"],
     bestFor: ["디자인 → 코드 변환", "디자인 시스템 구현", "컴포넌트 코드 생성"],
     avoidFor: ["Figma 무료 플랜 (월 6회 제한)", "Figma 계정 없는 환경"],
-    type: "plugin" as const,
   },
   cloudflare: {
     // cloudflare/mcp-server-cloudflare: collection of remote MCP servers with OAuth (no API token needed).
@@ -337,6 +331,7 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     verificationStatus: "verified",
     difficulty: "intermediate",
     bestFor: ["PRD 분해", "태스크 관리"],
+    type: "plugin" as const,
   },
   gsd: {
     verificationStatus: "verified",
@@ -344,6 +339,7 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     installMode: "safe-copy",
     bestFor: ["스펙 기반 개발", "로드맵 중심 실행", "장기 프로젝트"],
     avoidFor: ["가벼운 단발성 실험"],
+    type: "plugin" as const,
   },
   fireauto: {
     verificationStatus: "verified",
