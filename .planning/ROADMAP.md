@@ -91,10 +91,10 @@ Plans:
   2. 카테고리 필터와 타입 탭이 AND 조건으로 동작하여 복합 필터링이 가능하다
   3. ?type=plugin URL 파라미터로 직접 접근 시 Plugin 탭이 선택된 상태로 열린다
   4. /plugins/[id] 페이지에서 뒤로가기 시 이전에 선택한 탭이 보존된다
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 11-01: PluginGrid.tsx에 activeType 상태, TabsList 행, URL query param 동기화 추가
+- [ ] 11-01-PLAN.md — PluginGrid activeType 상태 + URL sync, PluginSearch TabsList 렌더링, i18n allTabLabel, Suspense boundary
 
 ### Phase 12: Optimizer UI + i18n
 **Goal**: /optimizer가 claude plugin list 포맷을 안내하고, 자동완성에 타입 뱃지가 표시되며, 모든 신규 UI 텍스트가 한/영 지원된다
