@@ -83,6 +83,47 @@
 
 ---
 
+## Milestone: v1.2 — MCP + Plugin 통합
+
+**Shipped:** 2026-03-18
+**Phases:** 5 | **Plans:** 5 | **Sessions:** ~2
+
+### What Was Built
+- ItemType = "mcp" | "plugin" 타입 시스템 — 42개 기존 항목 무수정 자동 분류
+- 9개 Plugin 항목 DB 재분류 (PLUGIN_FIELD_OVERRIDES 패턴)
+- scorePlugins typeScope 파라미터 — MCP/Plugin별 보완/대체 추천 분리
+- /plugins 페이지 All/MCP/Plugin 탭 분리 (URL ?type= 상태 유지)
+- /optimizer 힌트/샘플 MCP+Plugin 통합, 자동완성/칩 타입 뱃지
+
+### What Worked
+- DEFAULT_PLUGIN_FIELDS 스프레드 패턴으로 42개 전체를 코드 수정 없이 마이그레이션 — phase 8이 12분에 완료
+- 5개 phase가 모두 하루만에 완료 (총 ~32분) — v1.0/v1.1 대비 plan당 시간 대폭 단축
+- typeScope 기본값 'both'로 하위 호환 100% 유지 — 기존 125개 테스트 무수정 통과
+- Phase 8→9→10→11→12 의존성 순서가 선형적으로 깔끔 — 각 phase가 이전 산출물을 직접 소비
+
+### What Was Inefficient
+- Phase 9 SUMMARY가 13개 plugin 항목을 주장했으나 실제 코드는 9개 — 문서와 코드 불일치가 감사 단계에서야 발견됨
+- VERIFICATION.md도 SUMMARY의 잘못된 숫자를 그대로 검증 통과시킴 — verifier가 PLUGIN_FIELD_OVERRIDES를 직접 카운트하지 않음
+- Nyquist VALIDATION.md가 5개 phase 모두 draft/미서명 상태 — 실행 속도가 빨라 validation sign-off를 건너뜀
+
+### Patterns Established
+- PLUGIN_FIELD_OVERRIDES에서만 type 재분류 (CORE_PLUGINS/PluginSeed에 type 필드 없음)
+- typeScope 파라미터 패턴: 기본값 'both', 단일 타입이면 해당 타입으로 자동 감지
+- URL searchParams + useEffect 동기화 패턴 (Next.js App Router Suspense 필수)
+- 타입 뱃지 색상: MCP = 파란(blue-500), Plugin = 보라(purple-500)
+
+### Key Lessons
+1. 문서화된 숫자(13개)와 실제 코드(9개)의 불일치가 감사까지 발견되지 않음 — verifier가 SUMMARY를 신뢰하지 말고 코드를 직접 카운트해야 함
+2. plan당 실행 시간이 ~6분으로 급감 — 이전 마일스톤에서 확립된 패턴(PLUGIN_FIELD_OVERRIDES, TDD, i18n)을 재활용한 덕분
+3. Nyquist validation은 빠른 phase에서는 오버헤드 대비 가치가 낮음 — 복잡한 phase에서만 적용하는 것이 효율적
+
+### Cost Observations
+- Model mix: 0% opus, 100% sonnet, 0% haiku (balanced profile)
+- Total execution: ~32m across 5 plans
+- Notable: plan당 평균 6.4분 — v1.1의 11.6분 대비 45% 단축. 패턴 재활용 효과.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -91,9 +132,11 @@
 |-----------|----------|--------|-------|--------------|------------|
 | v1.0 | ~5 | 4 | 9 | 11.4m | 첫 마일스톤 — GSD 워크플로우 확립 |
 | v1.1 | ~3 | 3 | 5 | 11.6m | TDD 도입, 순수 함수 패턴 확립 |
+| v1.2 | ~2 | 5 | 5 | 6.4m | 패턴 재활용 효과 — 45% 속도 향상 |
 
 ### Top Lessons (Verified Across Milestones)
 
 1. summary-extract one_liner null 문제 반복 — SUMMARY.md 포맷 표준화 필요 (v1.0, v1.1 모두 발생)
 2. sonnet 모델만으로 모든 구현/검증 가능 — opus는 계획/아키텍처 단계에서만 필요할 수 있음
 3. phase별 의존성 그래프 순서가 실행 효율에 직결 — 로직 → UI 순서가 가장 안정적
+4. verifier가 SUMMARY 문서를 그대로 신뢰하면 코드 불일치를 놓침 — 숫자 주장은 코드에서 직접 검증 필요 (v1.2에서 발견)

@@ -1,5 +1,24 @@
 # Milestones
 
+## v1.2 MCP + Plugin 통합 (Shipped: 2026-03-18)
+
+**Phases:** 8-12 | **Plans:** 5 | **Timeline:** 1 day (2026-03-18)
+**Files:** 44 changed (+4,580 / -84)
+
+**Key accomplishments:**
+- `ItemType = "mcp" | "plugin"` 타입 시스템 추가 — 42개 기존 항목 자동 분류, 무수정 마이그레이션
+- 9개 Plugin 항목 DB 재분류 (omc, superpowers, bkit-starter, bkit, taskmaster, gsd, fireauto, agency-agents, ralph)
+- scorePlugins에 typeScope 파라미터 추가 — MCP/Plugin별 보완 추천 분리 (하위 호환 유지)
+- /plugins 페이지 All/MCP/Plugin 탭 분리 — URL 상태 유지, 브라우저 뒤로가기 보존
+- /optimizer 붙여넣기 힌트 + 샘플 데이터 MCP+Plugin 통합 안내, 타입 뱃지 추가
+
+### Known Gaps
+- **DATA-01:** Plugin DB 최소 10개 요구에 9개 등록 (1개 부족). 기능적으로는 문제 없음.
+
+**Archive:** `.planning/milestones/v1.2-ROADMAP.md`, `.planning/milestones/v1.2-REQUIREMENTS.md`
+
+---
+
 ## v1.1 Plugin Optimizer (Shipped: 2026-03-18)
 
 **Phases:** 5-7 | **Plans:** 5 | **Timeline:** 2 days (2026-03-16 → 2026-03-17)
