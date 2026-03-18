@@ -4,7 +4,7 @@ milestone: v1.2
 milestone_name: MCP + Plugin 통합
 status: completed
 stopped_at: Phase 12 plan 01 complete
-last_updated: "2026-03-18T13:02:09.361Z"
+last_updated: "2026-03-18T13:07:56.487Z"
 progress:
   total_phases: 5
   completed_phases: 5

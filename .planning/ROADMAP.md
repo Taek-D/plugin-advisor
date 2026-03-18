@@ -125,7 +125,7 @@ Plans:
 | 9. Plugin DB Population | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 10. Scoring Extension | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 11. Catalog Tab UI | v1.2 | Complete    | 2026-03-18 | 2026-03-18 |
-| 12. Optimizer UI + i18n | 1/1 | Complete   | 2026-03-18 | - |
+| 12. Optimizer UI + i18n | 1/1 | Complete    | 2026-03-18 | - |
 
 ---
 *Full v1.0 details: `.planning/milestones/v1.0-ROADMAP.md`*
