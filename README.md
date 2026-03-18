@@ -1,8 +1,8 @@
 # Plugin Advisor
 
-Claude Code 첫 세팅을 덜 헤매게 도와주는 플러그인 추천 웹서비스.
+Claude Code 플러그인 추천 + 조합 분석 웹서비스.
 
-PRD, README, GitHub URL 등을 입력하면 키워드 분석 또는 AI 분석을 통해 적합한 플러그인 조합을 추천하고, 설치 스크립트를 생성합니다.
+PRD, README, GitHub URL 등을 입력하면 키워드 분석 또는 AI 분석을 통해 적합한 플러그인 조합을 추천하고, 설치 스크립트를 생성합니다. 이미 설치된 플러그인 조합을 분석하여 점수화, 충돌 경고, 보완/대체 추천도 제공합니다.
 
 ## 배포 URL
 
@@ -31,6 +31,17 @@ https://plugin-advisor.vercel.app
 - **충돌 감지**: 선택된 플러그인 간 충돌을 실시간으로 감지하여 경고
 - **사전 체크리스트**: 설치 전 확인해야 할 사항 표시
 - **비추천 플러그인 안내**: 초보자에게 위험할 수 있는 플러그인을 별도로 안내
+
+### 플러그인 조합 분석 (`/optimizer`)
+
+- **MCP list 붙여넣기**: `claude mcp list` 결과를 붙여넣으면 설치된 플러그인을 자동 인식 (2가지 포맷 지원, alias 정규화)
+- **직접 타이핑**: 42개 DB 기반 자동완성으로 플러그인 검색 및 추가 (ARIA combobox, 키보드 네비게이션)
+- **조합 점수**: 100점 감점 모델 — 충돌(-20), 중복(-7), 미커버 카테고리(-7) 감점
+- **충돌/중복 경고**: 충돌하는 플러그인 쌍과 기능이 겹치는 그룹 감지
+- **커버리지 분석**: 10개 카테고리 중 현재 조합이 커버하는 영역을 시각화
+- **보완 추천**: 빠진 카테고리의 플러그인을 자동 제안 (이미 설치된 것 제외)
+- **대체 추천**: deprecated/unverified 플러그인의 더 나은 대안 제시
+- **Progressive disclosure**: 점수와 충돌 경고는 바로 표시, 보완/대체 추천은 접기/펼치기
 
 ### 플러그인 목록 (`/plugins`)
 
@@ -134,6 +145,7 @@ pnpm build
 app/
 ├── page.tsx                    # 랜딩 페이지
 ├── advisor/page.tsx            # 플러그인 추천 (메인 기능)
+├── optimizer/page.tsx          # 플러그인 조합 분석
 ├── plugins/page.tsx            # 플러그인 목록
 ├── plugins/[id]/page.tsx       # 플러그인 상세
 ├── guides/page.tsx             # 스타터 가이드 목록
@@ -150,8 +162,8 @@ app/
     ├── plugin-suggestions/     # 플러그인 제안 API
     └── admin/                  # 관리자 API (로그인, 플러그인, 제안)
 
-components/                     # React 컴포넌트
-lib/                            # 핵심 로직 (플러그인 DB, 추천 엔진, 인증 등)
+components/                     # React 컴포넌트 (OptimizerApp, ResultsPanel, ScoreGauge 등)
+lib/                            # 핵심 로직 (플러그인 DB, 추천 엔진, 조합 점수, 인증 등)
 supabase/migrations/            # Supabase 마이그레이션 SQL
 ```
 
