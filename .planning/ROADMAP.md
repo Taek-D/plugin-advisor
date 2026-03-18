@@ -32,7 +32,7 @@
 **Milestone Goal:** MCP 서버와 Plugin을 type 필드로 구분하고, Plugin DB를 구축하며, /plugins 탭 분리와 /optimizer 통합 분석을 완성한다.
 
 - [x] **Phase 8: Type System Foundation** - Plugin 타입에 type 필드 추가 및 파서 수정 (complete 2026-03-18)
-- [ ] **Phase 9: Plugin DB Population** - Plugin 타입 10-15개 DB 구축 및 번역
+- [ ] **Phase 9: Plugin DB Population** - Plugin 타입 13개 DB 재분류 및 번역 검증
 - [ ] **Phase 10: Scoring Extension** - typeScope 파라미터로 타입별 보완 추천 분리
 - [ ] **Phase 11: Catalog Tab UI** - /plugins 페이지 MCP/Plugin 탭 분리 및 URL 상태 유지
 - [ ] **Phase 12: Optimizer UI + i18n** - 옵티마이저 힌트 업데이트, 타입 뱃지, i18n 완성
@@ -56,17 +56,16 @@ Plans:
 ### Phase 9: Plugin DB Population
 **Goal**: 주요 Plugin 10-15개가 검증된 메타데이터와 한/영 번역을 갖추어 DB에 등록된다
 **Depends on**: Phase 8
-**Requirements**: DATA-01, DATA-02, DATA-03
+**Requirements**: DATA-01, DATA-02, DATA-03, I18N-02
 **Success Criteria** (what must be TRUE):
   1. 10-15개 Plugin 항목이 type: 'plugin'으로 PLUGINS DB에 등록되어 있다
   2. 각 Plugin의 install 명령어, category, keywords, features가 실제 CLI 사용법과 일치한다
   3. 각 Plugin의 한국어 desc/longDesc와 영문 번역이 모두 등록되어 번역 누락이 없다
   4. pnpm typecheck와 pnpm build가 신규 항목 추가 후 오류 없이 통과한다
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 09-01: omc, fireauto, gsd, bkit, agency-agents 등 Plugin 10-15개 조사 및 분류
-- [ ] 09-02: Plugin 항목 lib/plugins.ts 등록 + lib/i18n/plugins-en.ts 번역 동기화
+- [ ] 09-01-PLAN.md — 기존 13개 항목 type: 'plugin' 재분류 (PLUGIN_FIELD_OVERRIDES override) + 테스트 업데이트
 
 ### Phase 10: Scoring Extension
 **Goal**: /optimizer에서 MCP 분석 시 Plugin 보완 추천이 나타나지 않고, Plugin 분석 시 MCP 보완 추천이 나타나지 않는다
@@ -123,7 +122,7 @@ Plans:
 | 6. Scoring Engine | v1.1 | 1/1 | Complete | 2026-03-16 |
 | 7. Results UI Assembly | v1.1 | 2/2 | Complete | 2026-03-17 |
 | 8. Type System Foundation | v1.2 | 1/1 | Complete | 2026-03-18 |
-| 9. Plugin DB Population | v1.2 | 0/2 | Not started | - |
+| 9. Plugin DB Population | v1.2 | 0/1 | Not started | - |
 | 10. Scoring Extension | v1.2 | 0/1 | Not started | - |
 | 11. Catalog Tab UI | v1.2 | 0/1 | Not started | - |
 | 12. Optimizer UI + i18n | v1.2 | 0/1 | Not started | - |
