@@ -32,7 +32,7 @@
 **Milestone Goal:** MCP 서버와 Plugin을 type 필드로 구분하고, Plugin DB를 구축하며, /plugins 탭 분리와 /optimizer 통합 분석을 완성한다.
 
 - [x] **Phase 8: Type System Foundation** - Plugin 타입에 type 필드 추가 및 파서 수정 (complete 2026-03-18)
-- [ ] **Phase 9: Plugin DB Population** - Plugin 타입 13개 DB 재분류 및 번역 검증
+- [x] **Phase 9: Plugin DB Population** - Plugin 타입 13개 DB 재분류 및 번역 검증 (complete 2026-03-18)
 - [ ] **Phase 10: Scoring Extension** - typeScope 파라미터로 타입별 보완 추천 분리
 - [ ] **Phase 11: Catalog Tab UI** - /plugins 페이지 MCP/Plugin 탭 분리 및 URL 상태 유지
 - [ ] **Phase 12: Optimizer UI + i18n** - 옵티마이저 힌트 업데이트, 타입 뱃지, i18n 완성
@@ -65,7 +65,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 09-01-PLAN.md — 기존 13개 항목 type: 'plugin' 재분류 (PLUGIN_FIELD_OVERRIDES override) + 테스트 업데이트
+- [x] 09-01-PLAN.md — 기존 13개 항목 type: 'plugin' 재분류 (PLUGIN_FIELD_OVERRIDES override) + 테스트 업데이트
 
 ### Phase 10: Scoring Extension
 **Goal**: /optimizer에서 MCP 분석 시 Plugin 보완 추천이 나타나지 않고, Plugin 분석 시 MCP 보완 추천이 나타나지 않는다
@@ -122,7 +122,7 @@ Plans:
 | 6. Scoring Engine | v1.1 | 1/1 | Complete | 2026-03-16 |
 | 7. Results UI Assembly | v1.1 | 2/2 | Complete | 2026-03-17 |
 | 8. Type System Foundation | v1.2 | 1/1 | Complete | 2026-03-18 |
-| 9. Plugin DB Population | v1.2 | 0/1 | Not started | - |
+| 9. Plugin DB Population | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 10. Scoring Extension | v1.2 | 0/1 | Not started | - |
 | 11. Catalog Tab UI | v1.2 | 0/1 | Not started | - |
 | 12. Optimizer UI + i18n | v1.2 | 0/1 | Not started | - |
