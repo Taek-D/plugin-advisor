@@ -114,6 +114,7 @@ export function parseMcpList(raw: string, pluginIds: string[]): ParseResult {
     maintenanceStatus: "active" as const,
     bestFor: [],
     avoidFor: [],
+    type: "mcp" as const,
   }));
 
   const lines = raw.split("\n");

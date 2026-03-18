@@ -125,6 +125,7 @@ function parsePluginBody(body: unknown): { ok: true; data: Plugin } | { ok: fals
     maintenanceStatus: "active",
     bestFor: [],
     avoidFor: [],
+    type: "mcp",
   };
 
   return { ok: true, data: plugin };

@@ -32,6 +32,7 @@ const mockPlugins: Plugin[] = [
     maintenanceStatus: "active",
     bestFor: [],
     avoidFor: [],
+    type: "mcp",
   },
   {
     id: "brave-search",
@@ -57,6 +58,7 @@ const mockPlugins: Plugin[] = [
     maintenanceStatus: "active",
     bestFor: [],
     avoidFor: [],
+    type: "mcp",
   },
   {
     id: "github",
@@ -82,6 +84,7 @@ const mockPlugins: Plugin[] = [
     maintenanceStatus: "active",
     bestFor: [],
     avoidFor: [],
+    type: "mcp",
   },
   {
     id: "playwright",
@@ -107,6 +110,7 @@ const mockPlugins: Plugin[] = [
     maintenanceStatus: "active",
     bestFor: [],
     avoidFor: [],
+    type: "mcp",
   },
 ];
 
