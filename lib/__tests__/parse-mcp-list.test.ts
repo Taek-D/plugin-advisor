@@ -134,6 +134,18 @@ describe("normalizeToken", () => {
   it("strips unicode symbols like checkmarks", () => {
     expect(normalizeToken("\u2713 github")).toBe("github");
   });
+
+  it("strips @source suffix from plugin list format", () => {
+    expect(normalizeToken("superpowers@claude-plugins-official")).toBe(
+      "superpowers"
+    );
+  });
+
+  it("preserves @scope/ prefix for scoped packages", () => {
+    expect(normalizeToken("@modelcontextprotocol/server-github")).toBe(
+      "github"
+    );
+  });
 });
 
 describe("resolvePluginId", () => {

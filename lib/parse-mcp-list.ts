@@ -27,6 +27,12 @@ export function normalizeToken(raw: string): string {
   // Strip unicode symbols (checkmarks, x-marks, etc.)
   token = token.replace(/[^\w\s@/-]/g, "").trim();
 
+  // Strip @source suffix from plugin list format (name@marketplace)
+  // Only if @ is not at the start (scoped packages like @scope/pkg start with @)
+  if (!token.startsWith("@") && token.includes("@")) {
+    token = token.replace(/@.*$/, "");
+  }
+
   // Strip @modelcontextprotocol/server- prefix
   token = token.replace(/^@modelcontextprotocol\/server-/, "");
 
