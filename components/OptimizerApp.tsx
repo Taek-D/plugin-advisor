@@ -3,7 +3,6 @@
 import { useState, useCallback } from "react";
 import { Sparkles, Loader2 } from "lucide-react";
 import { PLUGINS } from "@/lib/plugins";
-import { parseMcpList } from "@/lib/parse-mcp-list";
 import { scorePlugins } from "@/lib/scoring";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -58,9 +57,11 @@ export default function OptimizerApp() {
   }, []);
 
   const handleSampleData = useCallback(() => {
-    const sampleOutput = "context7 (user):\nplaywright (user):\ngithub (user):";
-    const parsed = parseMcpList(sampleOutput, Object.keys(PLUGINS));
-    handlePasteResult(parsed);
+    const sampleResult: ParseResult = {
+      matched: ["context7", "playwright", "github", "superpowers", "omc"],
+      unmatched: [],
+    };
+    handlePasteResult(sampleResult);
   }, [handlePasteResult]);
 
   const handleAnalyze = useCallback(() => {
