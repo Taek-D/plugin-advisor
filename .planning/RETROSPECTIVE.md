@@ -42,14 +42,58 @@
 
 ---
 
+## Milestone: v1.1 — Plugin Optimizer
+
+**Shipped:** 2026-03-17
+**Phases:** 3 | **Plans:** 5 | **Sessions:** ~3
+
+### What Was Built
+- /optimizer 페이지: `claude mcp list` 파싱 + 자동완성 입력
+- TDD 기반 조합 점수 엔진 (100점 감점 모델, 42개 테스트)
+- 10개 카테고리 커버리지 분석 + 보완/대체 추천 로직
+- Progressive disclosure 결과 UI (SVG 게이지, 접기/펼치기 섹션)
+- 한/영 다국어 지원 (38개 i18n 키)
+
+### What Worked
+- 3-phase 의존성 순서 (파서 → 엔진 → UI)가 매우 효과적 — 각 phase가 이전 phase 산출물을 깔끔하게 소비
+- TDD(RED→GREEN) 접근이 scoring engine 품질 보장 — 42개 테스트로 리팩토링 시 안전망 제공
+- 순수 클라이언트사이드 설계로 API route 추가 없이 완성 — 배포/테스트 단순화
+- getCategoryIcon 등 공유 유틸리티 추출이 코드 중복 방지에 효과적
+
+### What Was Inefficient
+- 06-01-SUMMARY.md의 requirements_completed frontmatter 누락 → 감사 시 수동 확인 필요
+- summary-extract의 one_liner 필드가 여전히 null — SUMMARY.md 포맷 문제 미해결 (v1.0에서도 동일)
+- OptimizerInputPlugin 타입을 계획 단계에서 설계했으나 실제로 불필요 — 더 단순한 설계가 가능했음
+
+### Patterns Established
+- CSS max-height 접기/펼치기 패턴 (외부 라이브러리 없이)
+- 100점 감점 모델: 100 - conflicts*20 - redundancies*7 - uncovered*7
+- ScrollIntoView + 상태 연동 패턴 (부모 상태 소유 + ref 전달)
+- ALIAS_MAP을 별도 상수로 관리 (스키마 변경 없이 alias 추가)
+
+### Key Lessons
+1. 순수 함수 → 컴포넌트 순서가 복잡한 UI 기능을 관리 가능하게 만듦 — 로직과 표현의 완전 분리
+2. 42개 규모의 DB에서는 Fuse.js 같은 fuzzy search보다 substring 매칭이 충분 — 의존성 최소화 원칙
+3. Progressive disclosure (접기/펼치기)가 정보 과부하 방지에 필수 — 모든 결과를 한번에 보여주면 압도적
+
+### Cost Observations
+- Model mix: 0% opus, 100% sonnet, 0% haiku (balanced profile)
+- Total execution: ~58m across 5 plans
+- Notable: v1.0 대비 plan당 평균 시간 유사 (11.6m vs 11.4m), TDD plan이 가장 빠름 (6m)
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
 
-| Milestone | Sessions | Phases | Key Change |
-|-----------|----------|--------|------------|
-| v1.0 | ~5 | 4 | 첫 마일스톤 — GSD 워크플로우 확립 |
+| Milestone | Sessions | Phases | Plans | Avg min/plan | Key Change |
+|-----------|----------|--------|-------|--------------|------------|
+| v1.0 | ~5 | 4 | 9 | 11.4m | 첫 마일스톤 — GSD 워크플로우 확립 |
+| v1.1 | ~3 | 3 | 5 | 11.6m | TDD 도입, 순수 함수 패턴 확립 |
 
 ### Top Lessons (Verified Across Milestones)
 
-1. (v1.0에서 시작 — 후속 마일스톤에서 검증 예정)
+1. summary-extract one_liner null 문제 반복 — SUMMARY.md 포맷 표준화 필요 (v1.0, v1.1 모두 발생)
+2. sonnet 모델만으로 모든 구현/검증 가능 — opus는 계획/아키텍처 단계에서만 필요할 수 있음
+3. phase별 의존성 그래프 순서가 실행 효율에 직결 — 로직 → UI 순서가 가장 안정적

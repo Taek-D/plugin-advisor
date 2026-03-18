@@ -15,6 +15,12 @@ key_files:
     - lib/scoring.ts
     - lib/__tests__/scoring.test.ts
   modified: []
+requirements_completed:
+  - ANLYS-01
+  - ANLYS-02
+  - ANLYS-03
+  - RECOM-01
+  - RECOM-02
 key_decisions:
   - "100-point deduction model: 100 - conflicts*20 - redundancies*7 - uncovered*7, clamped [0,100]"
   - "buildReplacements fires for unverified OR partial OR stale (stale maps to deprecated reason)"
