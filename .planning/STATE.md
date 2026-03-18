@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: MCP + Plugin 통합
-status: completed
-stopped_at: Phase 11 context gathered
-last_updated: "2026-03-18T10:12:43.086Z"
+status: in_progress
+stopped_at: Completed 11-01-PLAN.md
+last_updated: "2026-03-18T10:33:46Z"
 progress:
   total_phases: 5
-  completed_phases: 3
-  total_plans: 3
-  completed_plans: 3
-  percent: 50
+  completed_phases: 4
+  total_plans: 6
+  completed_plans: 4
+  percent: 67
 ---
 
 # Project State
@@ -20,16 +20,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-18)
 
 **Core value:** 사용자의 프로젝트에 맞는 검증된 Claude Code 플러그인 조합을 정확하게 추천하는 것.
-**Current focus:** v1.2 Phase 10 — Scoring Extension (plan 1/1 complete)
+**Current focus:** v1.2 Phase 11 — Catalog Tab UI (plan 1/1 complete)
 
 ## Current Position
 
 ```
-Phase:    10 of 12 (Scoring Extension)
+Phase:    11 of 12 (Catalog Tab UI)
 Plan:     1/1 complete
-Status:   Phase 10 plan 01 complete — ready for Phase 11
+Status:   Phase 11 plan 01 complete — ready for Phase 12
 
-Progress: [██████████░░░░░░░░░░] 50%  (3/6 plans)
+Progress: [█████████████░░░░░░░] 67%  (4/6 plans)
 ```
 
 ## Performance Metrics
@@ -68,6 +68,10 @@ Key decisions in PROJECT.md Key Decisions table. Relevant to v1.2:
 - 13 Plugin entries selected: omc, superpowers, agency-agents, bkit-starter, bkit, ralph, fireauto, repomix, context7, security, sentry, figma, playwright — satisfies DATA-01 range (09-01)
 - typeScope defaults to 'both' — all existing callers unaffected; filtering at candidate level in buildComplements/buildReplacements (10-01)
 - OptimizerApp derives typeScope from Set(types).size === 1 — pure type-distribution detection, no scoring logic (10-01)
+- MCP/Plugin tab labels are proper nouns not i18n-translated; only "All" goes through allTabLabel key (11-01)
+- Category is NOT reset on type tab switch — AND-composed filters, locked design decision (11-01)
+- Suspense boundary required in page.tsx for useSearchParams in Next.js App Router (11-01)
+- useEffect([searchParams]) syncs activeType for browser back/forward; useState initializer only runs once (11-01)
 
 ### Pending Todos
 
@@ -87,9 +91,10 @@ None.
 | 8. Type System Foundation | 1 | ~12 min |
 | 9. Plugin DB Population | 1 | ~12 min |
 | 10. Scoring Extension | 1 | ~4 min |
+| 11. Catalog Tab UI | 1 | ~3.5 min |
 
 ## Session Continuity
 
-Last session: 2026-03-18T10:12:43.081Z
-Stopped at: Phase 11 context gathered
-Resume with: /gsd:plan-phase 11
+Last session: 2026-03-18T10:33:46Z
+Stopped at: Completed 11-01-PLAN.md
+Resume with: /gsd:execute-phase 12

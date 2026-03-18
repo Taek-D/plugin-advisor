@@ -26,8 +26,8 @@ Requirements for milestone v1.2 — MCP + Plugin 통합.
 
 ### UI (카탈로그 + 옵티마이저)
 
-- [ ] **UI-01**: /plugins 페이지에서 MCP | Plugin 탭으로 분리되어 표시된다
-- [ ] **UI-02**: 탭 선택 상태가 URL query param으로 유지되어 뒤로가기 시 보존된다
+- [x] **UI-01**: /plugins 페이지에서 MCP | Plugin 탭으로 분리되어 표시된다
+- [x] **UI-02**: 탭 선택 상태가 URL query param으로 유지되어 뒤로가기 시 보존된다
 - [ ] **UI-03**: /optimizer paste hint와 sample data가 `claude mcp list` + `claude plugin list` 둘 다 안내한다
 - [ ] **UI-04**: 자동완성 드롭다운에서 MCP/Plugin 타입 뱃지가 표시된다
 
@@ -67,8 +67,8 @@ Deferred to future release.
 | SCORE-01 | Phase 10 | Complete |
 | SCORE-02 | Phase 10 | Complete |
 | SCORE-03 | Phase 10 | Complete |
-| UI-01 | Phase 11 | Pending |
-| UI-02 | Phase 11 | Pending |
+| UI-01 | Phase 11 | Complete (2026-03-18) |
+| UI-02 | Phase 11 | Complete (2026-03-18) |
 | UI-03 | Phase 12 | Pending |
 | UI-04 | Phase 12 | Pending |
 | I18N-01 | Phase 12 | Pending |
