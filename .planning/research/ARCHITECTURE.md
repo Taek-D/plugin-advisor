@@ -1,8 +1,8 @@
 # Architecture Research
 
-**Domain:** Plugin combination optimizer — additive feature milestone on existing Next.js 14 App Router app
-**Researched:** 2026-03-16
-**Confidence:** HIGH (based on direct codebase analysis)
+**Domain:** MCP + Plugin type system integration into existing Plugin Advisor
+**Researched:** 2026-03-18
+**Confidence:** HIGH — based on direct source reading of all integration surfaces
 
 ---
 
@@ -11,329 +11,325 @@
 ### System Overview
 
 ```
-┌────────────────────────────────────────────────────────────────────┐
-│                         Pages (App Router)                          │
-│  ┌──────────────┐  ┌─────────────────────┐  ┌───────────────────┐  │
-│  │  /advisor    │  │  /optimizer  (NEW)  │  │  /plugins  /admin │  │
-│  │  (existing)  │  │                     │  │  (existing)       │  │
-│  └──────┬───────┘  └──────────┬──────────┘  └───────────────────┘  │
-├─────────┼────────────────────-┼────────────────────────────────────┤
-│         │    Client Components│& Hooks                              │
-│  ┌──────┴──────────┐  ┌───────┴──────────────────────────────────┐  │
-│  │ PluginAdvisorApp│  │ OptimizerApp (NEW)                       │  │
-│  │ useAnalysis     │  │ useOptimizer (NEW)                       │  │
-│  └──────┬──────────┘  └───────┬──────────────────────────────────┘  │
-├─────────┼─────────────────────┼────────────────────────────────────┤
-│         │     lib/ (pure functions — no I/O)                        │
-│  ┌──────┴────┐  ┌─────────────┴───────────┐  ┌──────────────────┐  │
-│  │recommend  │  │ optimize (NEW)           │  │ conflicts        │  │
-│  │           │  │ parseMcpList (NEW)       │  │ (extended)       │  │
-│  └───────────┘  └─────────────────────────┘  └──────────────────┘  │
-│  ┌────────────┐  ┌──────────────┐  ┌──────────────────────────────┐ │
-│  │ plugins    │  │ setup        │  │ types (extended)             │ │
-│  │ (static DB)│  │              │  │                              │ │
-│  └────────────┘  └──────────────┘  └──────────────────────────────┘ │
-├───────────────────────────────────────────────────────────────────- ┤
-│                    Data Layer                                        │
-│  ┌──────────────────────────────┐  ┌──────────────────────────────┐ │
-│  │ PLUGINS (static, lib/plugins)│  │ Supabase (suggestions/admin) │ │
-│  └──────────────────────────────┘  └──────────────────────────────┘ │
-└────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Pages (Next.js App Router)                    │
+│  ┌──────────────┐  ┌────────────────────┐  ┌──────────────────────┐ │
+│  │  /plugins    │  │  /optimizer        │  │  /advisor            │ │
+│  │  (Server SC) │  │  (Client SC)       │  │  (Client SC)         │ │
+│  └──────┬───────┘  └─────────┬──────────┘  └──────────────────────┘ │
+│         │                    │                                        │
+├─────────┴────────────────────┴────────────────────────────────────---┤
+│                     UI Components (Client)                            │
+│  ┌─────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │
+│  │ PluginGrid  │  │ OptimizerApp │  │PluginTypeIn- │  │ResultsP- │  │
+│  │ +typeFilter │  │ (no change)  │  │put +typeBadge│  │anel (no  │  │
+│  │ tab NEW     │  │              │  │ MINOR        │  │ change)  │  │
+│  └─────────────┘  └──────────────┘  └──────────────┘  └──────────┘  │
+├─────────────────────────────────────────────────────────────────────┤
+│                         lib/ (Pure Logic)                             │
+│  ┌───────────┐  ┌────────────┐  ┌──────────────┐  ┌──────────────┐  │
+│  │ types.ts  │  │ plugins.ts │  │  scoring.ts  │  │ conflicts.ts │  │
+│  │ +ItemType │  │ +type field│  │  NO CHANGE   │  │  NO CHANGE   │  │
+│  │ +type on  │  │ +10-15 new │  │  (ID-based)  │  │  (ID-based)  │  │
+│  │  Plugin   │  │  entries   │  │              │  │              │  │
+│  └───────────┘  └────────────┘  └──────────────┘  └──────────────┘  │
+│  ┌──────────────────────┐  ┌──────────────────────────────────────┐  │
+│  │ parse-mcp-list.ts    │  │ i18n/ (types.ts + ko.ts + en.ts)     │  │
+│  │ VERIFY existing      │  │ ADD: pluginsPage tab keys            │  │
+│  │ plugin list branch   │  │ ADD: type label keys                 │  │
+│  └──────────────────────┘  └──────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Component Responsibilities
 
-| Component | Responsibility | New vs Existing |
-|-----------|---------------|-----------------|
-| `app/optimizer/page.tsx` | Route shell, server component wrapper | NEW |
-| `components/OptimizerApp.tsx` | Client orchestrator — input, analysis, results state | NEW |
-| `hooks/useOptimizer.ts` | Step state machine (input → analyzing → result) + toggle | NEW |
-| `lib/optimize.ts` | Combo scoring, complement logic, alternative suggestions | NEW |
-| `lib/parseMcpList.ts` | Parse `claude mcp list` text output into plugin ID list | NEW |
-| `components/McpListInput.tsx` | Textarea for paste + autocomplete for manual add | NEW |
-| `components/ComboScoreCard.tsx` | Visual score display (conflict penalty, synergy, coverage) | NEW |
-| `components/ComplementPanel.tsx` | "Add this" suggestions with reason text | NEW |
-| `components/AlternativePanel.tsx` | "Replace X with Y" suggestions with reason | NEW |
-| `lib/conflicts.ts` | `getConflicts`, `getRedundancies` — already exists | EXISTING (reuse as-is) |
-| `lib/plugins.ts` + `lib/types.ts` | Plugin DB and type definitions | EXISTING (extend types only) |
-| `components/ConflictWarning.tsx` | Conflict display card | EXISTING (reuse as-is) |
-| `lib/analytics.ts` | Event tracking — add new event names | EXISTING (extend event union) |
+| Component | Responsibility | Change in v1.2 |
+|-----------|----------------|----------------|
+| `lib/types.ts` | All shared TypeScript types | ADD `ItemType = 'mcp' \| 'plugin'`; ADD `type: ItemType` field to `Plugin` |
+| `lib/plugins.ts` | Static DB: `PLUGINS` record + `DEFAULT_PLUGIN_FIELDS` + `PLUGIN_FIELD_OVERRIDES` | ADD `type` to `DEFAULT_PLUGIN_FIELDS` (default `'mcp'`); ADD 10-15 new Plugin entries with `type: 'plugin'` |
+| `lib/scoring.ts` | `scorePlugins(ids)` — deduction model, coverage, complements, replacements | NO CHANGE — operates on IDs only; type-agnostic by design |
+| `lib/conflicts.ts` | `getConflicts()`, `getRedundancies()` — hardcoded ID pairs | NO CHANGE — ID-based; works for both types |
+| `lib/parse-mcp-list.ts` | `parseMcpList()`, `filterPlugins()`, `resolvePluginId()` | VERIFY existing `isPluginList` branch handles new Plugin IDs; ADD to `ALIAS_MAP` only if needed |
+| `components/PluginGrid.tsx` | Filterable grid of all plugins — category + search | ADD `typeFilter` state + tab pill row + filter predicate |
+| `components/PluginSearch.tsx` | Search input + category filter pills | NO CHANGE — category filter remains; type tab lives in PluginGrid |
+| `components/PluginTypeInput.tsx` | Autocomplete for optimizer manual input | MINOR: add type badge in dropdown items |
+| `components/OptimizerApp.tsx` | Orchestrates optimizer input + analysis | NO CHANGE — already consumes unified `PLUGINS` + `parseMcpList` |
+| `app/plugins/page.tsx` | Server component shell for /plugins | NO CHANGE — PluginGrid owns its own tab state |
+| `lib/i18n/types.ts` | Translation shape contract | ADD keys: `pluginsPage.tabAll`, `tabMcp`, `tabPlugin` |
+| `lib/i18n/ko.ts` + `en.ts` | Translation values | ADD values for new keys |
 
 ---
 
 ## Recommended Project Structure
 
 ```
-app/
-├── optimizer/
-│   └── page.tsx                  # Route shell (server component)
-components/
-├── OptimizerApp.tsx              # Client orchestrator (mirrors PluginAdvisorApp.tsx)
-├── McpListInput.tsx              # Paste textarea + autocomplete input
-├── ComboScoreCard.tsx            # Score breakdown display
-├── ComplementPanel.tsx           # "Add these" recommendations
-├── AlternativePanel.tsx          # "Replace X with Y" recommendations
-├── ConflictWarning.tsx           # REUSE — already handles ConflictWarning[]
-hooks/
-├── useAnalysis.ts                # EXISTING — no changes needed
-└── useOptimizer.ts               # NEW — step state + plugin list management
 lib/
-├── optimize.ts                   # NEW — pure scoring/analysis functions
-├── parseMcpList.ts               # NEW — text parser for `claude mcp list`
-├── conflicts.ts                  # EXISTING — reuse getConflicts/getRedundancies
-├── plugins.ts                    # EXISTING — no changes
-├── types.ts                      # EXTEND — add OptimizerResult type
-└── analytics.ts                  # EXTEND — add optimizer event names
+├── types.ts              # MODIFY: add ItemType + type field on Plugin
+├── plugins.ts            # MODIFY: add type to DEFAULT_PLUGIN_FIELDS + new Plugin entries
+├── scoring.ts            # NO CHANGE
+├── conflicts.ts          # NO CHANGE
+├── parse-mcp-list.ts     # VERIFY + minor ALIAS_MAP additions if needed
+└── i18n/
+    ├── types.ts          # MODIFY: add pluginsPage tab keys
+    ├── ko.ts             # MODIFY: add Korean values
+    └── en.ts             # MODIFY: add English values
+
+components/
+├── PluginGrid.tsx        # MODIFY: add typeFilter state + tab pills + filter
+├── PluginSearch.tsx      # NO CHANGE
+├── PluginTypeInput.tsx   # MINOR MODIFY: type badge in autocomplete dropdown
+├── OptimizerApp.tsx      # NO CHANGE
+├── SelectedPluginChips.tsx  # OPTIONAL: type badge on chip (safe to defer)
+└── ResultsPanel.tsx      # NO CHANGE
+
+app/plugins/page.tsx      # NO CHANGE
 ```
 
 ### Structure Rationale
 
-- **`app/optimizer/` as a new route:** The optimizer has a distinct purpose from `/advisor` (analyze existing combo vs. get first recommendation). Separate page is the right call per the PROJECT.md decision log.
-- **`OptimizerApp.tsx` mirrors `PluginAdvisorApp.tsx`:** The same step-based pattern (input → analyzing → result) fits the optimizer flow. Copy the pattern, do not merge the two components — their state shapes will diverge.
-- **`lib/optimize.ts` as pure functions:** All scoring logic stays in `lib/` with no React imports, same as `lib/recommend.ts`. This makes it directly unit-testable with Vitest.
-- **`lib/parseMcpList.ts` is a separate file:** The parser has a single responsibility and is testable in isolation. Do not inline it into the component.
+- **`lib/types.ts` is the single source of truth for the `type` field.** Every downstream file (`plugins.ts`, `PluginGrid`, `PluginTypeInput`) derives from it.
+- **`lib/plugins.ts` default is `'mcp'`.** All 42 existing entries represent MCP servers. A default in `DEFAULT_PLUGIN_FIELDS` means zero line-by-line edits to existing entries.
+- **`app/plugins/page.tsx` stays a thin server shell.** Tab state is ephemeral client UI — it belongs in `PluginGrid`, same as the existing `category` and `search` state.
+- **`scoring.ts` and `conflicts.ts` unchanged.** The deduction model is category-coverage-based, not type-based. This boundary is correct and should not be crossed.
 
 ---
 
 ## Architectural Patterns
 
-### Pattern 1: Pure lib functions — no React, no I/O
+### Pattern 1: Additive Field with Default — Zero Breaking Change
 
-**What:** All scoring and analysis logic lives in `lib/` as pure TypeScript functions. Components call them; they do not call components.
+**What:** Add `type: ItemType` as a required field to `Plugin`. Set `type: 'mcp'` in `DEFAULT_PLUGIN_FIELDS`. All 42 existing entries receive the default without touching any individual entry. New Plugin entries explicitly declare `type: 'plugin'`.
 
-**When to use:** All of `optimize.ts` and `parseMcpList.ts` must follow this pattern.
+**When to use:** Extending a record type where all existing records share the same new value.
 
-**Trade-offs:** Slightly more wiring in hooks, but every function is trivially unit-testable and reusable from both client and any future API route.
-
-**Example:**
-```typescript
-// lib/optimize.ts
-export function scoreCombo(pluginIds: string[]): OptimizerResult {
-  const conflicts = getConflicts(pluginIds);       // reuse existing
-  const redundancies = getRedundancies(pluginIds); // reuse existing
-  const conflictPenalty = conflicts.length * -15;
-  const coverageScore = computeCoverageScore(pluginIds);
-  const synergyScore = computeSynergyScore(pluginIds);
-  const total = Math.max(0, Math.min(100, 50 + coverageScore + synergyScore + conflictPenalty));
-  return { total, conflictPenalty, coverageScore, synergyScore, conflicts, redundancies, complements, alternatives };
-}
-```
-
-### Pattern 2: Step-based state in a custom hook
-
-**What:** The optimizer page UI has three states — `input`, `analyzing`, `result`. All state lives in `useOptimizer`, not in the component. The component only renders based on step.
-
-**When to use:** Mirrors `useAnalysis.ts` exactly. Use the same pattern.
-
-**Trade-offs:** Hook is slightly more complex than local state, but it enables history restoration and keeps the component clean.
+**Trade-offs:** Required field ensures new entries cannot be added without declaring type (TypeScript enforcement). Default means zero migration cost for existing data. The `PluginSeed` / `PluginOperationalFields` split in `plugins.ts` means `type` should be added to `PluginOperationalFields` so it participates in the override/default system.
 
 **Example:**
 ```typescript
-// hooks/useOptimizer.ts
-type Step = "input" | "analyzing" | "result";
+// lib/types.ts
+export type ItemType = 'mcp' | 'plugin';
 
-export function useOptimizer() {
-  const [step, setStep] = useState<Step>("input");
-  const [pluginIds, setPluginIds] = useState<string[]>([]);
-  const [result, setResult] = useState<OptimizerResult | null>(null);
-
-  const handleAnalyze = useCallback((ids: string[]) => {
-    setStep("analyzing");
-    // setTimeout 500ms for UX (matches useAnalysis pattern)
-    setTimeout(() => {
-      setResult(scoreCombo(ids));
-      setStep("result");
-    }, 500);
-  }, []);
-
-  return { step, pluginIds, setPluginIds, result, handleAnalyze, reset };
-}
-```
-
-### Pattern 3: `claude mcp list` text parsing
-
-**What:** `claude mcp list` outputs a table or list format. The parser extracts plugin names and fuzzy-matches them to known plugin IDs in `PLUGINS`.
-
-**When to use:** `parseMcpList.ts` — called from `useOptimizer` when the user submits paste input.
-
-**Trade-offs:** Fuzzy matching needed because MCP names (e.g. `context7`, `@upstash/context7-mcp`) may differ from internal plugin IDs. Keep the matcher simple — exact match first, then substring fallback, then return unrecognized list for manual review.
-
-**Example:**
-```typescript
-// lib/parseMcpList.ts
-export type ParseResult = {
-  recognized: string[];   // plugin IDs found in PLUGINS
-  unrecognized: string[]; // names that didn't match any plugin
+export type Plugin = {
+  // ... all existing fields unchanged ...
+  type: ItemType;   // ADD — required
 };
 
-export function parseMcpList(raw: string): ParseResult {
-  // Split on newlines, strip table formatting, extract server names
-  // Match against Object.keys(PLUGINS) and known aliases
-}
+// lib/plugins.ts — add to PluginOperationalFields and DEFAULT_PLUGIN_FIELDS
+const DEFAULT_PLUGIN_FIELDS: PluginOperationalFields = {
+  // ... all existing defaults unchanged ...
+  type: 'mcp',   // ADD — all existing entries inherit this
+};
 ```
+
+### Pattern 2: Composable Filters in PluginGrid
+
+**What:** Add a `typeFilter` state (`'all' | 'mcp' | 'plugin'`) to `PluginGrid.tsx` alongside the existing `category` and `search` state. All three filters compose with AND logic in the single `filtered` array. No new sub-component needed — a tab pill row sits above the existing `PluginSearch`.
+
+**When to use:** When filter dimensions are independent (type does not affect category; category does not affect type).
+
+**Trade-offs:** All filter state in one component. Simple. Passing `typeFilter` to `PluginSearch` is an option but adds prop complexity for no gain — PluginGrid already owns `category` state directly.
+
+**Example:**
+```typescript
+// components/PluginGrid.tsx
+const [typeFilter, setTypeFilter] = useState<ItemType | 'all'>('all');
+
+const filtered = allPlugins.filter((p) => {
+  if (typeFilter !== 'all' && p.type !== typeFilter) return false;
+  if (category !== 'all' && p.category !== category) return false;
+  if (!search.trim()) return true;
+  const q = search.toLowerCase();
+  return (
+    p.name.toLowerCase().includes(q) ||
+    p.desc.toLowerCase().includes(q) ||
+    p.keywords.some((kw) => kw.toLowerCase().includes(q))
+  );
+});
+```
+
+### Pattern 3: Unified Scoring — Type-Agnostic ID Model
+
+**What:** `scorePlugins(ids: string[])` operates on IDs only. MCP and Plugin entries coexist in the same `PLUGINS` record under unique IDs. The scoring engine, conflict detection, and redundancy detection work correctly for mixed combos without any changes.
+
+**When to use:** When the existing abstraction is already correct — do not add type-branching inside scoring functions.
+
+**Trade-offs:** Zero migration cost. `buildCoverage` counts `category` coverage regardless of item type — intentionally correct (a Plugin covering `workflow` is valid coverage). `buildComplements` will now naturally suggest Plugin-type entries when a category is uncovered, which is the desired behavior. `buildReplacements` is also type-agnostic, which is correct.
+
+**No code change required in `scoring.ts` or `conflicts.ts`.**
 
 ---
 
 ## Data Flow
 
-### Optimizer Request Flow
+### /plugins Page — Type Tab Filter Flow
 
 ```
-User pastes `claude mcp list` output (or types plugin names)
+User clicks "Plugin" tab in PluginGrid
     ↓
-McpListInput → calls parseMcpList(raw) → { recognized, unrecognized }
+setTypeFilter('plugin')
     ↓
-useOptimizer.handleAnalyze(recognized)
+filtered = allPlugins.filter(p =>
+  p.type === 'plugin'          // typeFilter predicate
+  && categoryMatch             // existing predicate
+  && searchMatch               // existing predicate
+)
     ↓
-setStep("analyzing") + setTimeout 500ms (UX delay, matches /advisor)
-    ↓
-scoreCombo(pluginIds)
-    → getConflicts(pluginIds)      [reuse lib/conflicts.ts]
-    → getRedundancies(pluginIds)   [reuse lib/conflicts.ts]
-    → computeCoverageScore(pluginIds)
-    → computeSynergyScore(pluginIds)
-    → buildComplements(pluginIds)  [gap analysis vs PLUGINS]
-    → buildAlternatives(pluginIds) [quality substitution rules]
-    ↓
-setResult(OptimizerResult) + setStep("result")
-    ↓
-OptimizerApp renders:
-    ComboScoreCard   ← result.total, breakdown
-    ConflictWarning  ← result.conflicts  [REUSE existing component]
-    ComplementPanel  ← result.complements
-    AlternativePanel ← result.alternatives
+PluginGridCard renders filtered results (no change to card itself)
 ```
 
-### State Management
+### /optimizer — Mixed MCP + Plugin Combo Flow
 
 ```
-useOptimizer (hook state)
-    ↓ (drives rendering)
-OptimizerApp ← step, result, pluginIds
-    ↓ (user actions)
-McpListInput.onSubmit → handleAnalyze(ids)
-PluginChip.onRemove  → removePlugin(id)
+User pastes `claude mcp list` OR `claude plugin list` output
+    ↓
+parseMcpList(raw, Object.keys(PLUGINS))
+    matched:   ['context7', 'omc', 'fireauto']   ← MCP and Plugin IDs mixed
+    unmatched: ['some-unknown-server']
+    ↓
+OptimizerApp: setSelectedPlugins(matched.map(id => PLUGINS[id]))
+    ↓
+User clicks "분석"
+    ↓
+scorePlugins(selectedIds)
+    getConflicts(ids)           ID-based, type-agnostic, no change
+    getRedundancies(ids)        ID-based, type-agnostic, no change
+    buildCoverage(ids)          category-based, type-agnostic, no change
+    buildComplements(...)       recommends best-ranked per uncovered category
+                                now includes Plugin-type candidates automatically
+    buildReplacements(...)      verificationStatus/maintenanceStatus based, no change
+    ↓
+ResultsPanel renders ScoringResult — no change
 ```
 
-### Key Data Flows
+### New Plugin Entry Registration Flow
 
-1. **Conflict detection:** `scoreCombo` calls `getConflicts(pluginIds)` from existing `lib/conflicts.ts`. The `ConflictWarning` component accepts the returned `ConflictWarning[]` — no changes to either module needed.
-
-2. **Complement recommendations:** `buildComplements` iterates `PLUGINS`, checks which categories are not covered by the input set, and returns the highest-trust uninstalled plugin per missing category. Uses `plugin.bestFor`, `plugin.category`, `plugin.verificationStatus` already on the `Plugin` type.
-
-3. **Alternative recommendations:** `buildAlternatives` uses `CONFLICT_PAIRS` and `REDUNDANCY_GROUPS` from `lib/conflicts.ts` plus quality heuristics (`verificationStatus`, `maintenanceStatus`) to suggest swapping lower-quality plugins for better equivalents.
+```
+New Plugin entry added to lib/plugins.ts:
+  { id: 'fireauto', type: 'plugin', category: 'workflow', ... }
+    ↓
+Automatically available across entire system:
+  Object.values(PLUGINS)  →  PluginGrid catalog + typeFilter
+  Object.keys(PLUGINS)    →  parseMcpList candidate resolution
+  PLUGINS[id]             →  scorePlugins lookups, conflict checks
+  filterPlugins()         →  PluginTypeInput autocomplete
+  resolvePluginId()       →  paste input matching
+```
 
 ---
 
-## Integration Points
+## Integration Points — New vs Modified Files
 
-### New types needed in `lib/types.ts`
+### Files That Must Change
 
-```typescript
-export type OptimizerResult = {
-  total: number;                    // 0-100 combo score
-  conflictPenalty: number;          // negative, e.g. -15 per conflict
-  coverageScore: number;            // +points for category breadth
-  synergyScore: number;             // +points for known good combos
-  conflicts: ConflictWarning[];     // reuse existing type
-  redundancies: RedundancyGroup[];  // reuse existing type from conflicts.ts
-  complements: Array<{ pluginId: string; reason: string; reasonEn: string }>;
-  alternatives: Array<{ fromId: string; toId: string; reason: string; reasonEn: string }>;
-  unrecognizedNames: string[];      // names from paste that didn't match
-};
-```
+| File | Change Type | What Changes |
+|------|-------------|--------------|
+| `lib/types.ts` | ADD | `ItemType` type alias; `type: ItemType` field on `Plugin` |
+| `lib/plugins.ts` | ADD | `type` in `PluginOperationalFields` pick list; `type: 'mcp'` in `DEFAULT_PLUGIN_FIELDS`; 10-15 new Plugin entries with `type: 'plugin'` |
+| `lib/i18n/types.ts` | ADD keys | `pluginsPage.tabAll`, `pluginsPage.tabMcp`, `pluginsPage.tabPlugin` |
+| `lib/i18n/ko.ts` | ADD values | Korean text for new tab keys |
+| `lib/i18n/en.ts` | ADD values | English text for new tab keys |
+| `components/PluginGrid.tsx` | MODIFY | `typeFilter` state; tab pill row UI; filter predicate extension |
 
-### Existing modules — reuse without modification
+### Files With Minor Touches
 
-| Module | What the optimizer uses |
-|--------|------------------------|
-| `lib/conflicts.ts` | `getConflicts()`, `getRedundancies()`, `CONFLICT_PAIRS`, `REDUNDANCY_GROUPS` |
-| `lib/plugins.ts` | `PLUGINS` record — read-only |
-| `lib/types.ts` | `Plugin`, `ConflictWarning` — extend only (add `OptimizerResult`) |
-| `components/ConflictWarning.tsx` | Render conflict cards — pass `result.conflicts` directly |
-| `lib/analytics.ts` | Add `optimizer_analyze_start`, `optimizer_analyze_complete`, `optimizer_mcp_paste` to `EventName` union |
+| File | Change Type | What Changes |
+|------|-------------|--------------|
+| `lib/parse-mcp-list.ts` | VERIFY only | `isPluginList` branch already handles `❯ name@source` format. Confirm new Plugin IDs resolve correctly. Add entries to `ALIAS_MAP` only if normalization fails for specific names. No logic rewrite. |
+| `components/PluginTypeInput.tsx` | MINOR MODIFY | Add type badge (`MCP` / `Plugin`) next to plugin name in dropdown items |
+| `components/SelectedPluginChips.tsx` | OPTIONAL | Type badge on chip in optimizer. Safe to defer to a later task. |
 
-### Existing modules — do NOT touch
+### Files That Do Not Change
 
-| Module | Reason |
-|--------|--------|
-| `lib/recommend.ts` | Separate concern — advisor scoring. No shared state. |
-| `hooks/useAnalysis.ts` | Advisor-specific. Optimizer gets its own `useOptimizer`. |
-| `components/PluginAdvisorApp.tsx` | No cross-feature coupling needed. |
-| `lib/plugins.ts` (data) | Static DB — read only. No writes from optimizer. |
-
-### Internal Boundaries
-
-| Boundary | Communication | Notes |
-|----------|---------------|-------|
-| `OptimizerApp` ↔ `useOptimizer` | Hook return values + callbacks | Same pattern as PluginAdvisorApp/useAnalysis |
-| `useOptimizer` ↔ `lib/optimize.ts` | Direct function call (no API route — all client-side) | Scoring is pure/synchronous; no network needed |
-| `lib/optimize.ts` ↔ `lib/conflicts.ts` | Direct import | optimize.ts depends on conflicts.ts, not vice versa |
-| `lib/parseMcpList.ts` ↔ `lib/plugins.ts` | Direct import of `PLUGINS` for ID matching | Parser is a pure read of the static DB |
+| File | Reason |
+|------|--------|
+| `lib/scoring.ts` | Type-agnostic ID model is already correct for mixed combos |
+| `lib/conflicts.ts` | ID-based; `CONFLICT_PAIRS` and `REDUNDANCY_GROUPS` remain valid |
+| `components/OptimizerApp.tsx` | Already uses unified `PLUGINS` + `parseMcpList`; no new behavior required |
+| `components/PluginSearch.tsx` | Category filter unchanged; type tab lives in PluginGrid, not here |
+| `app/plugins/page.tsx` | Thin server shell; tab state belongs in PluginGrid client component |
+| `components/ResultsPanel.tsx` | `ScoringResult` shape unchanged |
+| `components/PluginGridCard.tsx` | Card rendering unchanged; type badge is optional and lives in Grid context if needed |
 
 ---
 
-## Build Order
+## Build Order (Dependency Graph)
 
-The dependency graph dictates this sequence:
+The critical path flows `lib/types.ts` → `lib/plugins.ts` → UI components. Work in this sequence to avoid TypeScript errors at each step.
 
-1. **`lib/types.ts` extension** — Add `OptimizerResult`. No other changes. Unblocks everything downstream.
+```
+Step 1 — lib/types.ts
+  ADD: ItemType = 'mcp' | 'plugin'
+  ADD: type field to Plugin
+  Verification: pnpm typecheck passes (all 42 existing entries
+                will error until Step 2)
 
-2. **`lib/parseMcpList.ts`** — Pure function, no deps except `lib/plugins.ts` (already exists). Write tests first.
+Step 2 — lib/plugins.ts
+  ADD: type to PluginOperationalFields pick + DEFAULT_PLUGIN_FIELDS
+  ADD: 10-15 new Plugin entries with type: 'plugin'
+  Verification: pnpm typecheck passes, pnpm test passes (no scoring
+                changes so all 104 tests remain green)
 
-3. **`lib/optimize.ts`** — Pure functions. Depends on `lib/conflicts.ts` (exists), `lib/plugins.ts` (exists), new types (step 1). Write tests first.
+Step 3 — lib/i18n/types.ts + ko.ts + en.ts
+  ADD: tab translation keys
+  Verification: pnpm typecheck passes
 
-4. **`hooks/useOptimizer.ts`** — Depends on `lib/optimize.ts` (step 3) and `lib/parseMcpList.ts` (step 2).
+Step 4 — components/PluginGrid.tsx
+  ADD: typeFilter state + tab pill UI + filter predicate
+  Verification: /plugins page shows MCP/Plugin/All tabs and
+                filters correctly; Plugin entries appear under Plugin tab
 
-5. **`components/McpListInput.tsx`** — UI only. Depends on `lib/plugins.ts` for autocomplete list.
+Step 5 — lib/parse-mcp-list.ts (verify/adjust)
+  VERIFY: paste `claude plugin list` output with new Plugin IDs
+  ADD to ALIAS_MAP: only entries that fail resolvePluginId
+  Verification: pnpm test (parser tests pass); manual paste test
+                in optimizer shows Plugin IDs matched
 
-6. **`components/ComboScoreCard.tsx`** — Depends on `OptimizerResult` type (step 1).
+Step 6 — components/PluginTypeInput.tsx
+  ADD: type badge in dropdown suggestion items
+  Verification: optimizer type-input autocomplete shows MCP/Plugin
+                badge next to each suggestion
 
-7. **`components/ComplementPanel.tsx`** and **`components/AlternativePanel.tsx`** — Depend on `OptimizerResult` type (step 1).
-
-8. **`components/OptimizerApp.tsx`** — Assembles steps 4-7. Reuses `ConflictWarning` from existing components.
-
-9. **`app/optimizer/page.tsx`** — Route shell wrapping `OptimizerApp`. Last step.
-
-10. **Nav link update** — Add `/optimizer` to `components/Nav.tsx`.
-
-11. **`lib/analytics.ts` extension** — Add new event names. Can be done at any point.
+Step 7 — components/SelectedPluginChips.tsx (optional)
+  ADD: type badge on selected chip
+  Verification: optimizer selected chips show type indicator
+  Note: safe to defer; zero functional impact
+```
 
 ---
 
 ## Anti-Patterns
 
-### Anti-Pattern 1: Merging optimizer state into `useAnalysis`
+### Anti-Pattern 1: Separate PLUGINS Records per Type
 
-**What people do:** Add `optimizerResult` and `pluginIds` state into the existing `useAnalysis` hook to avoid creating a new hook.
+**What people do:** Create `MCP_PLUGINS` and `EXT_PLUGINS` as separate records, then merge them at export.
 
-**Why it's wrong:** `useAnalysis` owns the text input → recommendation flow. The optimizer flow is input list → score. They have different step machines, different inputs, different outputs. Merging them creates a god hook with contradictory state.
+**Why it's wrong:** Every call site uses `PLUGINS[id]`, `Object.keys(PLUGINS)`, `Object.values(PLUGINS)`. A split record doubles every lookup and requires merge logic at every consumer. The `type` field is exactly the right mechanism to distinguish at the data level.
 
-**Do this instead:** Create `useOptimizer` as a separate hook. It takes 10 minutes and keeps both hooks understandable.
+**Do this instead:** Single `PLUGINS` record. Distinguish by `p.type` in filter predicates.
 
-### Anti-Pattern 2: Calling `recommend()` inside the optimizer
+### Anti-Pattern 2: Type Branching Inside Scoring Functions
 
-**What people do:** Run `recommend()` on each plugin name to "validate" or "score" them individually.
+**What people do:** Add `if (plugin.type === 'plugin') { ... }` branches inside `scorePlugins`, `buildCoverage`, or `buildComplements`.
 
-**Why it's wrong:** `recommend()` is designed for free-text input → ranked suggestions. It is not a per-plugin scorer. Using it in the optimizer produces nonsensical results because it returns preset-weighted recommendations, not combo quality.
+**Why it's wrong:** The scoring model is category-coverage-based. Whether an item is an MCP server or a Plugin, covering the `workflow` category is equally valid. Type-aware branching makes scoring asymmetric without a product rationale.
 
-**Do this instead:** Use `getConflicts()`, `getRedundancies()` from `lib/conflicts.ts` and the new `scoreCombo()` in `lib/optimize.ts`.
+**Do this instead:** Keep scoring type-agnostic. If a future decision requires weighting Plugin-type coverage differently, add a named penalty constant — do not branch on `type` inside existing scoring functions.
 
-### Anti-Pattern 3: Creating an API route for combo scoring
+### Anti-Pattern 3: Tab State in Server Component
 
-**What people do:** Add `/api/optimize` because the advisor uses `/api/analyze`.
+**What people do:** Lift the MCP/Plugin tab into `app/plugins/page.tsx` as a URL search param.
 
-**Why it's wrong:** The optimizer (v1.1) is rules-based and synchronous. All the data it needs is already in `PLUGINS` which is a client-available static import. An API route adds latency, a network hop, and Vercel function cold-start risk with zero benefit.
+**Why it's wrong:** This adds URL routing complexity for ephemeral UI state. The existing `PluginGrid` already owns `category` and `search` as plain `useState` — the type tab is the same kind of filter state.
 
-**Do this instead:** Call `scoreCombo()` directly in `useOptimizer`. If AI analysis is added later (v1.2+), add the API route at that point.
+**Do this instead:** Add `typeFilter` state to `PluginGrid.tsx` alongside existing state. Keep `app/plugins/page.tsx` as a stateless server shell.
 
-### Anti-Pattern 4: Fuzzy-matching all unrecognized plugin names silently
+### Anti-Pattern 4: Rewriting the Parser for Plugin Format
 
-**What people do:** Silently drop names from `claude mcp list` that don't match known plugin IDs.
+**What people do:** Build a separate code path in `parse-mcp-list.ts` for `claude plugin list` output because it looks different from `claude mcp list`.
 
-**Why it's wrong:** Users expect to see what was recognized and what wasn't. Silent drops erode trust in the tool.
+**Why it's wrong:** The `isPluginList` branch already exists and handles the `❯ name@source` format. New Plugin IDs resolve through the same `resolvePluginId` function. The parser already handles both formats.
 
-**Do this instead:** `parseMcpList` returns `{ recognized, unrecognized }`. Render `unrecognized` names in the UI as a callout: "These were not matched to known plugins."
+**Do this instead:** Verify the existing `isPluginList` branch works with new Plugin IDs. Add to `ALIAS_MAP` only for entries that need specific name normalization. Do not rewrite the parser.
 
 ---
 
@@ -341,18 +337,25 @@ The dependency graph dictates this sequence:
 
 | Scale | Architecture Adjustments |
 |-------|--------------------------|
-| Current (static DB, client-side scoring) | No changes — all logic runs in the browser, no server load |
-| When adding AI analysis mode (v1.2+) | Add `/api/optimize` route at that point. Pass recognized IDs + context, receive enriched reasons. Pattern already established by `/api/analyze`. |
-| When adding user-saved combos | Add Supabase table (pattern already established by plugin-suggestions). No architecture change needed. |
+| 42 MCPs + 15 Plugins (~57 items) | Static `PLUGINS` record is appropriate — O(1) lookup, zero API cost, ~600-line file |
+| 100+ items | Static record still fine; consider splitting `plugins.ts` into `mcp-plugins.ts` + `plugin-plugins.ts` merged at the export boundary |
+| 500+ items | Move DB to Supabase with static JSON build cache; existing Supabase infra already supports this pattern |
+
+### Scaling Priorities
+
+1. **First bottleneck:** Bundle size of `lib/plugins.ts`. At 57 entries the file remains manageable. If it approaches 800+ lines, split by type into separate files with a unified re-export.
+2. **Second bottleneck:** `filterPlugins` is O(n) linear scan — fine up to ~200 items before needing an indexed structure.
 
 ---
 
 ## Sources
 
-- Direct codebase analysis: `lib/recommend.ts`, `lib/conflicts.ts`, `lib/plugins.ts`, `lib/types.ts`, `lib/setup.ts`, `hooks/useAnalysis.ts`, `components/PluginAdvisorApp.tsx`, `components/ConflictWarning.tsx`
-- Project decisions: `.planning/PROJECT.md` (v1.1 milestone, key decisions table)
-- Confidence: HIGH — all findings are based on reading the actual source files, not inference
+- Direct source reading: `lib/types.ts`, `lib/plugins.ts`, `lib/scoring.ts`, `lib/conflicts.ts`, `lib/parse-mcp-list.ts`
+- Direct source reading: `components/OptimizerApp.tsx`, `components/PluginGrid.tsx`, `components/PluginSearch.tsx`, `components/PluginTypeInput.tsx`
+- Direct source reading: `app/plugins/page.tsx`, `lib/i18n/types.ts`
+- Project context: `.planning/PROJECT.md` — v1.2 milestone requirements and key decisions
+- Confidence: HIGH — all integration surfaces read from source; no documentation inference
 
 ---
-*Architecture research for: Plugin Optimizer — v1.1 milestone integration*
-*Researched: 2026-03-16*
+*Architecture research for: MCP + Plugin type system integration (v1.2)*
+*Researched: 2026-03-18*

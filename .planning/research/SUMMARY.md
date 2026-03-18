@@ -1,193 +1,183 @@
 # Project Research Summary
 
-**Project:** Plugin Advisor — v1.1 Plugin Optimizer
-**Domain:** Plugin combination analyzer / optimizer (Claude Code MCP plugin set)
-**Researched:** 2026-03-16
+**Project:** Plugin Advisor v1.2 — MCP + Plugin Type System
+**Domain:** Additive type system extension to existing Claude Code plugin advisor
+**Researched:** 2026-03-18
 **Confidence:** HIGH
 
 ## Executive Summary
 
-The v1.1 milestone adds a `/optimizer` page to an already-shipped Next.js 14 app. The optimizer is an additive feature — it does not replace the existing `/advisor` flow but gives users who already have plugins installed a way to analyze their current set for conflicts, coverage gaps, and upgrade opportunities. Research confirms this is a rules-based, fully client-side feature: all the data it needs (42-plugin DB, conflict pairs, redundancy groups, preset packs) already lives in the codebase's `lib/` layer. No new API routes, no backend changes, no external data dependencies are required for v1.1.
+This milestone is a tightly scoped, additive change to an already-working product. The research found zero new runtime dependencies are required. The existing stack (Next.js 14, TypeScript, Tailwind CSS, shadcn/ui, Vitest) handles every requirement. The core task is: add a `type: 'mcp' | 'plugin'` discriminant to the `Plugin` type, classify 10-15 existing entries as `type: 'plugin'`, add a tab filter on the `/plugins` page, and extend the optimizer's scoring to be type-scope-aware. All four research files converge on the same dependency graph: types must be correct before DB changes, DB before scoring, scoring before UI.
 
-The recommended implementation approach is to mirror the existing `/advisor` pattern precisely: a new `app/optimizer/page.tsx` route, a `useOptimizer` hook that owns step-based state (`input → analyzing → result`), and pure functions in `lib/optimize.ts` and `lib/parseMcpList.ts` that are directly unit-testable with Vitest. The six new files + two type extensions needed are small, well-bounded, and have clear ownership. The highest-risk step is the `claude mcp list` text parser — the output format is undocumented and varies across Claude Code versions, so it requires defensive parsing and explicit unit tests.
+The recommended approach is to treat this as a five-step migration with a strict layering rule: `lib/types.ts` is the single source of truth for the `type` field, and every downstream file derives from it. The most important architectural decision is to add `type: 'mcp'` as a default in `DEFAULT_PLUGIN_FIELDS` rather than making the field optional. This one choice eliminates the highest-severity pitfall (all 42 existing entries silently becoming `undefined` at runtime) at zero migration cost. The scoring engine requires a `typeScope` parameter so MCP-only optimizer submissions do not receive Plugin-type complement suggestions — the two install mechanisms are incompatible and mixing them produces actively misleading output.
 
-The two risks to manage are (1) the MCP list parser silently dropping unrecognized plugins and eroding user trust, and (2) score normalization being deferred until the raw integer scores are already in production and hard to change. Both are addressable in the first implementation sprint if the team treats them as build criteria rather than polish items.
+The principal risks are type-system contamination pitfalls, not architectural uncertainty. There is no novel engineering here. Every pattern (discriminated union with default, composable filter state, type-scoped scoring) is standard TypeScript/React. The risk is mechanical mistakes during the type migration, not design decisions. Running `pnpm typecheck` after each step — not just `pnpm dev` — is the single most effective mitigation across all eight pitfalls identified.
+
+---
 
 ## Key Findings
 
 ### Recommended Stack
 
-The existing stack is the correct stack. No new dependencies are needed for v1.1. The codebase already runs Next.js 14 (App Router), TypeScript, Tailwind CSS, shadcn/ui, Vitest, and Supabase. The optimizer uses zero Supabase (all static data), zero new API routes (all client-side scoring), and no additional npm packages beyond what is already installed.
+No new dependencies. This milestone reuses everything already in the bundle. The key technical choices have already been made by the existing codebase — this research confirms they are correct for the extension.
 
-The one optional addition worth considering: **Fuse.js** (already listed as a candidate in the features research) for fuzzy plugin-name matching in the autocomplete input. It is a small library and the project already does keyword fuzzy matching, so it would not be a novel dependency. Without it, the fallback is a simple substring + normalization approach in `parseMcpList.ts`.
+**Core technologies:**
 
-**Core technologies (existing, no changes):**
-- Next.js 14 App Router: routing, server components for page shells — required, already deployed
-- TypeScript: all new files must be typed; `OptimizerResult` type is the key new addition
-- Tailwind CSS + shadcn/ui: `Command` component for autocomplete input; `Card` for score display — already in project
-- Vitest: unit tests for `parseMcpList.ts` and `lib/optimize.ts` — same test runner already configured
-- Vercel: deployment target, no changes needed
+- **TypeScript discriminated union (`'mcp' | 'plugin'`):** The right mechanism for a two-value type discriminant. No runtime library needed. Exhaustiveness checking via `never` catches missing branches at compile time.
+- **shadcn/ui `TabsList` + `TabsTrigger`:** Already imported in `OptimizerApp.tsx`. Copy exact same usage pattern into `PluginGrid.tsx` — zero new UI primitives required.
+- **`DEFAULT_PLUGIN_FIELDS` merge pattern (in `lib/plugins.ts`):** The existing seed/override architecture handles the `type` default cleanly. Adding `type: 'mcp'` to `DEFAULT_PLUGIN_FIELDS` propagates to all 42 existing entries without touching any individual entry.
+- **`scorePlugins` ID-based model (in `lib/scoring.ts`):** Already type-agnostic by design. Needs only a `typeScope` parameter addition — no structural rewrite.
 
 ### Expected Features
 
-Research confirmed the feature scope against comparable tools (claude-code-plugin-analyzer, MCP Server Selector TUI, WordPress plugin auditor) and against the existing codebase's infrastructure.
+**Must have (table stakes for v1.2):**
 
-**Must have (table stakes — P1 for v1.1):**
-- `claude mcp list` paste parser + fuzzy name resolution — without this, no analysis is possible
-- Direct-type input with shadcn/ui Command autocomplete — primary path for users who know their plugins
-- Recognized vs. unrecognized parse feedback — silent drops look like a broken tool
-- Conflict warning display (reuse `getConflicts()` + `getRedundancies()`) — already built, just wire up
-- Combination score with per-rule breakdown (0–100, not raw integers) — the core "is my set good?" answer
-- Complement suggestions: "add these" based on coverage gaps — core optimizer value
-- Replacement suggestions: "swap these" for unverified/stale plugins — core optimizer value
-- AI mode as Coming Soon (non-interactive, no onClick handler) — explicit PROJECT.md decision
+- `type: 'mcp' | 'plugin'` field on every `Plugin` entry, with all 42 existing entries correctly defaulted to `'mcp'`
+- 10-15 Plugin-type entries added to `PLUGINS` DB (omc, fireauto, gsd, bkit, agency-agents are the natural first wave — they use `/plugin marketplace add` or `git clone`, not `claude mcp add`)
+- MCP / Plugin / All tab UI on `/plugins` page with independent `activeType` state
+- Category filter and type tab composing correctly (AND logic) with reset on type switch when selected category yields zero results
+- `scorePlugins` extended with `typeScope` parameter so complement and replacement suggestions respect type context
+- Both `claude mcp list` and `claude plugin list` paste formats documented in optimizer UI hints and sample data
 
-**Should have (P2, add in v1.1.x after validation):**
-- Category coverage visualization (badge grid by workflow area)
-- Preset-match indicator (Jaccard similarity against existing preset packs)
-- Difficulty aggregate rating for the whole set
+**Should have (differentiators):**
 
-**Defer (v2+):**
-- Active AI combo analysis — requires Anthropic API integration; cost/latency tradeoff not yet evaluated
-- Persistent saved setups — requires user accounts or URL-serialized state
+- Type badge (MCP / Plugin) in `PluginTypeInput` autocomplete dropdown — low effort, visible quality signal
+- Tab state persisted in URL query param (`?type=plugin`) so Plugin tab survives `/plugins/[id]` navigation and is directly linkable
+- Score label updated to reflect submission type ("MCP 점수" / "Plugin 점수" / "MCP + Plugin 점수")
+- Category filter reset when switching type tabs to avoid zero-result confusion
+
+**Defer to v1.x or v2+:**
+
+- Type badge on `SelectedPluginChips` in optimizer — safe to defer, zero functional impact
+- AI combo analysis for Plugin-type entries
+- Persistent saved setups
 - Team-level combo sharing
-- settings.json / mcp.json file upload parsing (explicitly out of scope per PROJECT.md)
 
 ### Architecture Approach
 
-The optimizer slots cleanly into the existing app structure as a sibling to `/advisor`. The architecture is a four-layer stack: route shell (server component) → client orchestrator component + custom hook → pure lib functions → static PLUGINS data. All scoring runs synchronously in the browser — no API route is needed or appropriate for v1.1 since the entire 42-plugin DB is already a client-available static import.
+The architecture is a clean layered extension. `lib/types.ts` sits at the root — all other files derive the `type` field from it. `lib/plugins.ts` applies the default via `DEFAULT_PLUGIN_FIELDS`. `lib/scoring.ts` and `lib/conflicts.ts` are ID-based and require minimal changes (scoring needs `typeScope`; conflicts need none). `PluginGrid.tsx` adds one `useState` for `activeType` and one `TabsList` block. The `/plugins` server page shell remains untouched. The entire change surface is small: 6 files must change meaningfully, 2 need minor touches, 7+ stay completely unchanged.
 
-**Major components (new):**
-1. `app/optimizer/page.tsx` — Route shell, server component wrapper
-2. `components/OptimizerApp.tsx` — Client orchestrator (mirrors PluginAdvisorApp.tsx pattern)
-3. `hooks/useOptimizer.ts` — Step state machine (`input | analyzing | result`) + plugin list management
-4. `lib/parseMcpList.ts` — Pure parser: `claude mcp list` text → `{ recognized: string[], unrecognized: string[] }`
-5. `lib/optimize.ts` — Pure scoring functions: `scoreCombo()`, `buildComplements()`, `buildAlternatives()`
-6. `components/McpListInput.tsx` — Paste textarea + autocomplete
-7. `components/ComboScoreCard.tsx` — Score breakdown display
-8. `components/ComplementPanel.tsx` + `components/AlternativePanel.tsx` — Recommendation cards
+**Major components and their v1.2 changes:**
 
-**Existing modules reused without modification:**
-- `lib/conflicts.ts` — `getConflicts()`, `getRedundancies()` (authoritative conflict source)
-- `lib/plugins.ts` — static PLUGINS record (read-only)
-- `components/ConflictWarning.tsx` — accepts `ConflictWarning[]` directly
-- `lib/setup.ts` — install script generation for complement suggestions
+1. `lib/types.ts` — ADD `ItemType = 'mcp' | 'plugin'`; ADD required `type: ItemType` field to `Plugin`
+2. `lib/plugins.ts` — ADD `type: 'mcp'` to `DEFAULT_PLUGIN_FIELDS`; ADD 10-15 Plugin entries with `type: 'plugin'`
+3. `lib/scoring.ts` — ADD `typeScope` parameter to `scorePlugins`; filter candidates in `buildComplements` and `buildReplacements`
+4. `components/PluginGrid.tsx` — ADD `activeType` state + `TabsList` row + type predicate in filter chain
+5. `lib/i18n/types.ts` + `ko.ts` + `en.ts` — ADD `pluginsPage.tabAll/tabMcp/tabPlugin` keys (both locales in same commit)
+6. `lib/parse-mcp-list.ts` — VERIFY `isPluginList` branch resolves new Plugin IDs; ADD `ALIAS_MAP` entries only if needed
 
-**Existing modules extended minimally:**
-- `lib/types.ts` — add `OptimizerResult` type
-- `lib/analytics.ts` — add 3 new event names to the union
-
-**Build order dictated by dependency graph:**
-types.ts → parseMcpList.ts → optimize.ts → useOptimizer → UI components → page.tsx → nav link
+**Files that do not change:** `lib/conflicts.ts`, `components/OptimizerApp.tsx`, `components/PluginSearch.tsx`, `app/plugins/page.tsx`, `components/ResultsPanel.tsx`, `components/PluginGridCard.tsx`.
 
 ### Critical Pitfalls
 
-1. **`claude mcp list` parser fragility** — The output format is undocumented and varies (header lines, scope annotations like `context7 (user):`, status tails like `✓ Connected`). A naive line-split crashes or silently drops plugins. Avoid by: skipping non-matching lines, stripping scope annotations before lookup, returning an explicit `unrecognized` list. Write unit tests for 5+ edge cases before touching the UI.
+1. **`type` made optional instead of required** — All 42 existing entries silently get `undefined` at runtime; MCP tab shows zero entries. Prevention: add `type: 'mcp'` to `DEFAULT_PLUGIN_FIELDS` and make the field required from day one.
 
-2. **Plugin name mismatch (installed name vs DB ID)** — Users install servers with arbitrary names (`mcp-context7`, `context-7`, `my-github`). The DB uses flat IDs like `context7`. Avoid by: building a normalization step (lowercase, strip `mcp-` prefix, strip `-mcp` suffix, replace underscores with hyphens) and an `aliases` field on each plugin. Never silently drop an unrecognized name.
+2. **`parseMcpList` pseudo-plugin factory gets a blanket `type: 'mcp'` default across both list branches** — Plugin list tokens are mislabeled as MCPs in type-aware contexts. Prevention: delete the factory; pass real `Plugin[]` filtered by type to the parser call site.
 
-3. **Conflict data one-directionality** — `plugin.conflicts[]` on each plugin seed and `CONFLICT_PAIRS` in `lib/conflicts.ts` can drift. The optimizer must call `getConflicts()` exclusively — never walk `plugin.conflicts` directly. Add a test asserting symmetric coverage.
+3. **`buildComplements`/`buildReplacements` surface Plugin entries for MCP-only submissions** — Suggestions point at entries requiring incompatible install commands. Prevention: add `typeScope` parameter before any Plugin entries enter `PLUGINS`.
 
-4. **Score normalization deferred** — Raw integer scores (`-4`, `7`, `12`) are uninterpretable to users and produce counter-intuitive results (1 plugin can outscore 10 plugins with no conflicts). Define each sub-score on a 0–100 scale, produce a composite letter grade or percentage, and document the formula before shipping.
+4. **`PluginCategory` union widened with `'mcp'` and `'plugin'` values** — Contaminates `ALL_CATEGORIES` in scoring (10 becomes 12), fires false coverage penalties, requires new i18n `categories` keys. Prevention: add a completely separate `activeType` state to `PluginGrid`; keep `PluginCategory` closed.
 
-5. **Complement logic recommending already-installed plugins** — Reusing `recommend()` from `/advisor` without filtering produces this bug. The `buildComplements()` function must accept `installedIds: string[]` and filter both already-installed and conflicting plugins from the output.
+5. **i18n strings added to `ko.ts` but not `en.ts` in the same commit** — `pnpm build` fails in CI while `pnpm dev` appears fine. Prevention: always add both locale values in the same commit as the UI component that consumes them.
+
+---
 
 ## Implications for Roadmap
 
-Based on the dependency graph in ARCHITECTURE.md and the pitfall-to-phase mapping in PITFALLS.md, three implementation phases emerge naturally.
+The dependency graph is unambiguous. The build order is not a stylistic choice — TypeScript will produce compile errors at each step if the sequence is violated. Suggested phase structure:
 
-### Phase 1: Foundation — Types, Parser, Page Scaffold
+### Phase 1: Type System Foundation
+**Rationale:** Every downstream change depends on `Plugin.type` being a required, correctly-defaulted field. A mistake here causes cascade failures across all other phases. Must be completed and verified (`pnpm typecheck`, `pnpm test`) before anything else proceeds.
+**Delivers:** `ItemType` type alias; required `type` field on `Plugin`; `DEFAULT_PLUGIN_FIELDS` updated with `type: 'mcp'`; all 42 existing entries correctly typed at runtime; `parseMcpList` pseudo-factory deleted or fixed.
+**Avoids:** Pitfall 1 (optional field with undefined runtime), Pitfall 2 (parser factory mislabeling both list formats).
 
-**Rationale:** The `OptimizerResult` type and `parseMcpList.ts` are zero-dependency starting points that unblock all downstream work. The page scaffold must be established (with the Coming Soon AI button correctly non-interactive) before any feature work begins, to avoid the "pre-wired AI mode crashes the page" pitfall.
+### Phase 2: Plugin DB Population
+**Rationale:** With the type system in place, Plugin entries can be added safely. TypeScript enforces that every new entry declares `type`. This phase produces the data that drives tab filtering and scoring behavior in later phases.
+**Delivers:** 10-15 Plugin-type entries in `PLUGINS` (omc, fireauto, gsd, bkit, agency-agents plus new entries); classification rule applied consistently (`/plugin` / `git clone` install = `type: 'plugin'`).
+**Uses:** `PLUGIN_FIELD_OVERRIDES` pattern already in `lib/plugins.ts` — no structural change.
+**Avoids:** Starting scoring extension before the data that drives it exists.
 
-**Delivers:** A navigable `/optimizer` route with working input (both paste and autocomplete), correct parse feedback (recognized vs. unrecognized), and no functional scoring yet (loading state placeholder is acceptable).
+### Phase 3: Scoring Extension
+**Rationale:** Scoring must be extended before Plugin entries can produce correct optimizer output. Adding `typeScope` to `scorePlugins` before the UI exposes mixed results prevents the most damaging UX bug (Plugin complements appearing in MCP-only analysis).
+**Delivers:** `typeScope: 'mcp' | 'plugin' | 'both'` parameter on `scorePlugins`; filtered candidate pools in `buildComplements` and `buildReplacements`; dynamic `scorableCategories` computation that excludes Plugin-only categories from MCP-only penalties.
+**Avoids:** Pitfall 3 (Plugin complements for MCP-only input), Pitfall 7 (ALL_CATEGORIES penalty firing for Plugin-only categories on MCP-only submissions).
 
-**Addresses features:** `claude mcp list` paste input, direct-type autocomplete, recognized/unrecognized feedback, Coming Soon AI mode display.
+### Phase 4: Tab UI on /plugins
+**Rationale:** Tab UI is purely additive client-side state on top of an already-correct data layer. With Phases 1-2 done, `Object.values(PLUGINS)` already contains the right `type` values for filtering.
+**Delivers:** `activeType` state in `PluginGrid`; `TabsList` row (All / MCP / Plugin); composable filter predicate (AND logic with category); `?type=` URL query param for persistence across `/plugins/[id]` navigation; category filter reset on type switch.
+**Implements:** Composable Filters pattern (Pattern 2) from ARCHITECTURE.md.
+**Avoids:** Pitfall 4 (PluginCategory contamination), Pitfall 5 (tab state lost on navigation).
 
-**Avoids pitfalls:** Parser fragility (unit tests written here), premature AI mode wiring, localStorage leaking file paths.
+### Phase 5: Optimizer UI + Parser Verification
+**Rationale:** The optimizer paste UI needs updated hints and sample data to expose the `claude plugin list` format support that the parser already handles. Low risk, high discoverability impact.
+**Delivers:** Updated `pasteLabel` and `pastePlaceholder` i18n keys; `handleSampleData` with `❯ omc@marketplace` style example line; format hint below textarea showing both command formats; verified `ALIAS_MAP` entries for new Plugin IDs.
+**Avoids:** Pitfall 6 (optimizer plugin paste support undiscoverable to Plugin users).
 
-**Research flag:** Standard patterns — no additional research needed. Parser edge cases are fully documented in PITFALLS.md.
-
-### Phase 2: Scoring Engine
-
-**Rationale:** With the parser and types in place, all scoring logic can be built and tested as pure functions before any UI is connected. This phase delivers `lib/optimize.ts` and `hooks/useOptimizer.ts` — the core value of the feature.
-
-**Delivers:** A complete `scoreCombo()` function returning a normalized 0–100 score with per-rule breakdown, `buildComplements()` with installed-plugin exclusion, `buildAlternatives()` using verification status heuristics, and conflict/redundancy detection via existing `lib/conflicts.ts`.
-
-**Addresses features:** Combination score with breakdown, conflict warnings, complement suggestions, replacement suggestions.
-
-**Avoids pitfalls:** Score normalization (define 0–100 scales here, not post-launch), complement-recommends-installed bug, conflict one-directionality (use `getConflicts()` exclusively).
-
-**Research flag:** Standard patterns — scoring algorithm is well-understood; conflict reuse is direct. No additional research needed.
-
-### Phase 3: Results UI and Polish
-
-**Rationale:** With the scoring engine complete and tested, the UI components become thin rendering layers over verified data. This phase assembles `ComboScoreCard`, `ComplementPanel`, `AlternativePanel`, wires up `OptimizerApp`, adds the nav link, and applies UX polish (progressive disclosure, score delta display, capped complement suggestions).
-
-**Delivers:** A fully functional `/optimizer` page with all P1 features live. Analytics events added. Nav link added.
-
-**Addresses features:** Score display, conflict warnings (reuse `ConflictWarning`), complement and alternative recommendation cards, install script for complements.
-
-**Avoids pitfalls:** Alert fatigue (progressive disclosure: score + conflicts first, "Improve" CTA folds complement/alternative panels), complement list capped at 3 items.
-
-**Research flag:** Standard patterns — UI mirrors existing `/advisor` components. No additional research needed.
+### Phase 6: i18n Completion + Type Badges
+**Rationale:** i18n keys must accompany their UI consumers, not precede or follow them. This phase closes out all string additions from Phases 4-5 and adds the type badge to `PluginTypeInput`.
+**Delivers:** `pluginsPage.tabAll/tabMcp/tabPlugin` keys in both `ko.ts` and `en.ts`; type badge (MCP / Plugin) in autocomplete dropdown; `pnpm build` passes without i18n type errors.
+**Avoids:** Pitfall 8 (i18n build failure from missing locale keys in one locale).
 
 ### Phase Ordering Rationale
 
-- Types and parser come first because every other file depends on them.
-- Scoring engine comes before UI because pure functions are easier to test in isolation; catching normalization bugs before the UI ships avoids a redesign.
-- UI assembly comes last because it is the thinnest layer — pure rendering of already-verified data.
-- This order also naturally enforces the "no AI import until Phase N+1" constraint — the AI mode path does not exist in the codebase until it is explicitly added.
+- **Types before data before logic before UI** is the order TypeScript itself enforces via compile errors at each step.
+- **Scoring extension before UI exposure** is the product-safety order. Plugin entries in the DB with unscoped scoring produce misleading suggestions; users must never see this state.
+- **Tab UI before optimizer hints** because the `/plugins` page is the primary discovery surface for Plugin-type entries. Users need to see Plugin entries before they consider pasting `claude plugin list` output.
+- **i18n in the same phase as consumers** because string keys added without consuming components are dead code; keys missing from one locale block `pnpm build` in CI.
 
 ### Research Flags
 
-Phases needing deeper research during planning:
-- None identified. All three phases use established patterns with high-confidence sources.
+Phases with well-documented patterns (skip additional research):
+- **Phase 1:** TypeScript discriminated union with defaults — completely standard; zero research needed.
+- **Phase 4:** shadcn/ui Tabs + React `useState` composable filter — already in use in `OptimizerApp.tsx`; copy pattern directly.
+- **Phase 6:** i18n key addition — mechanical; no research needed.
 
-Phases with standard patterns (skip research-phase):
-- **Phase 1 (Foundation):** Next.js App Router page creation and shadcn/ui Command autocomplete are well-documented. Parser edge cases are pre-documented in PITFALLS.md.
-- **Phase 2 (Scoring Engine):** Pure TypeScript functions with Vitest. Pattern mirrors existing `lib/recommend.ts`.
-- **Phase 3 (Results UI):** Mirrors existing `components/PluginAdvisorApp.tsx` and `components/ConflictWarning.tsx`.
+Phases that may need a spot-check during implementation:
+- **Phase 2 (Plugin DB Population):** Classification of borderline entries (`superpowers`, `taskmaster`, `bkit-starter`) requires inspection of their install commands. The rule is clear but the data is not fully enumerated. Budget 30-60 minutes to inspect each candidate entry's `install` field.
+- **Phase 3 (Scoring Extension):** The dynamic `scorableCategories` computation is new logic with no existing test coverage. Needs a regression test asserting that MCP-only user score is unchanged after Plugin entries are added to the DB.
+- **Phase 5 (Parser Verification):** `resolvePluginId` behavior for new Plugin IDs depends on their actual registered names in the CLI. `ALIAS_MAP` additions are data-driven and can only be determined by testing against real `claude plugin list` output.
+
+---
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | Existing codebase — no new dependencies needed. Stack is locked by CLAUDE.md constraints. |
-| Features | HIGH | Confirmed against official Claude Code MCP docs, existing codebase infrastructure, and PROJECT.md explicit scope decisions. |
-| Architecture | HIGH | Based on direct codebase read of all relevant source files. Dependency graph is unambiguous. |
-| Pitfalls | HIGH | Parser edge cases verified via GitHub issue #8288. Conflict data model verified by reading `lib/conflicts.ts` directly. Score normalization pitfall is a known pattern in rules-based scoring systems. |
+| Stack | HIGH | All findings from direct codebase inspection. Zero external dependencies. No version uncertainty. |
+| Features | MEDIUM-HIGH | P1 features are well-defined. P2 features validated against analogous tools. Novel UX (Plugin-type scoring scope) has no direct precedent — the rule is sound but score label copy and category-reset behavior need UX validation during implementation. |
+| Architecture | HIGH | All integration surfaces read from source. Component boundaries and data flow are unambiguous. Build order is enforced by TypeScript's own compile-time errors. |
+| Pitfalls | HIGH | All 8 pitfalls derived from direct source inspection of the specific code constructs being touched. No inference from general patterns. |
 
-**Overall confidence: HIGH**
+**Overall confidence:** HIGH
 
 ### Gaps to Address
 
-- **Plugin alias table:** Research identified that users install MCP servers with arbitrary names, but the existing `plugins.ts` DB does not have an `aliases: string[]` field. The implementation team must decide: (a) add `aliases` to the Plugin type and populate for common variants, or (b) rely on normalization rules alone (strip prefixes/suffixes, lowercase). Option (a) is more robust but requires populating 42 entries. This decision should be made in Phase 1 before the parser is finalized.
+- **Plugin entry classification for borderline entries:** `superpowers`, `taskmaster`, `bkit-starter` install mechanism needs inspection to assign `type`. Resolve during Phase 2 by reading each entry's `install` field in `lib/plugins.ts`.
+- **`resolvePluginId` behavior for new Plugin IDs:** Unknown until tested against real `claude plugin list` output. Plan `ALIAS_MAP` additions as a corrective pass in Phase 5, not upfront guesswork.
+- **Score label copy for mixed-type submissions:** "MCP + Plugin 점수" display string is not researched. Decide during Phase 3 implementation with a working prototype visible.
+- **Category filter reset UX on type tab switch:** PITFALLS.md recommends resetting `activeCategory` to `'all'` when `activeType` changes. An alternative (preserve category, show zero-result empty state) may feel less disruptive. Decide during Phase 4 with a working prototype.
 
-- **Fuse.js vs. substring fallback:** The autocomplete input needs fuzzy matching. Whether to add Fuse.js (already in features research as a candidate) or use a simple substring approach affects the `McpListInput` implementation. Since the plugin set is only 42 items, substring matching is likely sufficient and avoids a new dependency. Confirm during Phase 1 implementation.
-
-- **STACK.md not produced:** The STACK researcher agent did not produce a file. Stack findings above are derived from CLAUDE.md (project instructions), PROJECT.md (constraints section), and the existing codebase. Confidence remains HIGH because the stack is already deployed and locked — there are no open technology decisions for v1.1.
+---
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- `lib/conflicts.ts`, `lib/plugins.ts`, `lib/types.ts`, `lib/recommend.ts`, `lib/setup.ts`, `hooks/useAnalysis.ts`, `components/PluginAdvisorApp.tsx` — direct codebase read
-- `.planning/PROJECT.md` — milestone scope, explicit out-of-scope decisions, key decisions table
-- `CLAUDE.md` (project) — locked tech stack and constraints
-- [Claude Code MCP documentation](https://code.claude.com/docs/en/mcp) — `claude mcp list` output format, space-to-underscore normalization, multiple instance support
+
+- Direct codebase inspection — `lib/types.ts`, `lib/plugins.ts`, `lib/scoring.ts`, `lib/conflicts.ts`, `lib/parse-mcp-list.ts`, `components/PluginGrid.tsx`, `components/OptimizerApp.tsx`, `components/PluginTypeInput.tsx`, `lib/i18n/types.ts`, `lib/i18n/ko.ts` — all architecture and pitfall findings
+- `.planning/PROJECT.md` — v1.2 milestone scope, explicit out-of-scope decisions, key decisions log
 
 ### Secondary (MEDIUM confidence)
-- [claude-code-plugin-analyzer (GitHub)](https://github.com/thrivikram52/claude-code-plugin-analyzer) — scoring methodology reference
-- [Claude Code MCP Server Selector (GitHub)](https://github.com/henkisdabro/Claude-Code-MCP-Server-Selector) — context-window optimization UX patterns
-- [claude-code GitHub Issue #8288](https://github.com/anthropics/claude-code/issues/8288) — `claude mcp list` output format variations and scope annotations
-- [MCP Server Naming Conventions — zazencodes.com](https://zazencodes.com/blog/mcp-server-naming-conventions) — common naming patterns
-- [Autocomplete UX patterns](https://smart-interface-design-patterns.com/articles/autocomplete-ux/) — input design reference
+
+- Claude Code MCP official docs — `claude mcp list` and `claude plugin list` output format confirmation
+- `claude-code-plugin-analyzer` (GitHub community tool) — scoring methodology reference used to validate rule-based scoring approach
+- Claude Code MCP Server Selector TUI (GitHub) — context-window optimization UX patterns
+- Autocomplete UX patterns (smart-interface-design-patterns.com) — input design reference
 
 ### Tertiary (LOW confidence)
-- [WordPress plugin conflict diagnosis](https://wisdmlabs.com/blog/how-to-diagnose-hidden-wordpress-plugin-conflicts/) — conflict detection UX patterns from analogous domain
-- [Alert Fatigue in User Interfaces — NN/g](https://www.nngroup.com/videos/alert-fatigue-user-interfaces/) — progressive disclosure rationale
-- [7 Critical Challenges of Recommendation Engines — Appier](https://www.appier.com/en/blog/7-critical-challenges-of-recommendation-engines) — complement recommendation pitfalls
+
+- WordPress plugin conflict diagnosis patterns — analogous domain; used to validate conflict detection UX table stakes assumptions only
 
 ---
-*Research completed: 2026-03-16*
+
+*Research completed: 2026-03-18*
 *Ready for roadmap: yes*
