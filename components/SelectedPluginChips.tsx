@@ -3,6 +3,7 @@
 import { X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { getCategoryIcon } from "@/lib/optimizer-utils";
+import { Badge } from "@/components/ui/badge";
 import type { Plugin } from "@/lib/types";
 
 type SelectedPluginChipsProps = {
@@ -31,6 +32,15 @@ export default function SelectedPluginChips({
             <span className="text-xs font-semibold text-foreground">
               {plugin.name}
             </span>
+            {plugin.type === "mcp" ? (
+              <Badge className="px-1 py-0 text-[10px] border-blue-500/30 bg-blue-500/10 text-blue-400">
+                MCP
+              </Badge>
+            ) : (
+              <Badge className="px-1 py-0 text-[10px] border-purple-500/30 bg-purple-500/10 text-purple-400">
+                Plugin
+              </Badge>
+            )}
             <span className="hidden max-w-[140px] truncate text-xs text-muted-foreground sm:inline">
               {desc}
             </span>
