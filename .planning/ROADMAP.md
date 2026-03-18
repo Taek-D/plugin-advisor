@@ -48,10 +48,10 @@
   2. pnpm typecheck가 타입 오류 없이 통과한다
   3. parseMcpList의 pseudo-plugin factory가 실제 Plugin 타입과 일치하도록 수정되어 mcp/plugin 목록을 올바르게 구분한다
   4. pnpm test (104개 기존 테스트)가 회귀 없이 통과한다
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 08-01: ItemType 타입 추가, Plugin 타입 type 필드 필수화, DEFAULT_PLUGIN_FIELDS 기본값 설정, parseMcpList 팩토리 수정
+- [ ] 08-01-PLAN.md — ItemType 타입 추가, Plugin type 필드 필수화, DEFAULT_PLUGIN_FIELDS 기본값, parseMcpList 팩토리 수정
 
 ### Phase 9: Plugin DB Population
 **Goal**: 주요 Plugin 10-15개가 검증된 메타데이터와 한/영 번역을 갖추어 DB에 등록된다
