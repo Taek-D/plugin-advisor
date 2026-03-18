@@ -124,7 +124,7 @@ Plans:
 | 8. Type System Foundation | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 9. Plugin DB Population | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 10. Scoring Extension | v1.2 | 1/1 | Complete | 2026-03-18 |
-| 11. Catalog Tab UI | v1.2 | 1/1 | Complete | 2026-03-18 |
+| 11. Catalog Tab UI | v1.2 | Complete    | 2026-03-18 | 2026-03-18 |
 | 12. Optimizer UI + i18n | v1.2 | 0/1 | Not started | - |
 
 ---
