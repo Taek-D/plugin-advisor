@@ -77,10 +77,10 @@ Plans:
   3. Plugin 목록만 붙여넣었을 때 보완 추천에 MCP 타입 항목이 나타나지 않는다
   4. 기존 MCP 전용 유저의 조합 점수가 Plugin DB 추가 전후로 동일하게 유지된다
   5. typeScope 관련 회귀 테스트가 추가되어 pnpm test가 통과한다
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 10-01: scorePlugins typeScope 파라미터 추가, buildComplements/buildReplacements 필터링, 회귀 테스트
+- [ ] 10-01-PLAN.md — scorePlugins typeScope 파라미터 추가, buildComplements/buildReplacements 필터링, OptimizerApp 호출자 업데이트, 회귀 테스트
 
 ### Phase 11: Catalog Tab UI
 **Goal**: /plugins 페이지에서 MCP와 Plugin을 탭으로 분리하여 볼 수 있고, 탭 상태가 URL에 유지된다
