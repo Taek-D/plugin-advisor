@@ -52,24 +52,24 @@ Deferred to future release.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MCP-01 | - | Pending |
-| MCP-02 | - | Pending |
-| MCP-03 | - | Pending |
-| MCP-04 | - | Pending |
-| MCP-05 | - | Pending |
-| MCP-06 | - | Pending |
-| PLG-01 | - | Pending |
-| PLG-02 | - | Pending |
-| PLG-03 | - | Pending |
-| VER-01 | - | Pending |
-| VER-02 | - | Pending |
-| VER-03 | - | Pending |
-| VER-04 | - | Pending |
+| MCP-01 | Phase 13 | Pending |
+| MCP-02 | Phase 13 | Pending |
+| MCP-03 | Phase 13 | Pending |
+| MCP-04 | Phase 13 | Pending |
+| MCP-05 | Phase 13 | Pending |
+| MCP-06 | Phase 13 | Pending |
+| PLG-01 | Phase 14 | Pending |
+| PLG-02 | Phase 14 | Pending |
+| PLG-03 | Phase 14 | Pending |
+| VER-01 | Phase 15 | Pending |
+| VER-02 | Phase 15 | Pending |
+| VER-03 | Phase 15 | Pending |
+| VER-04 | Phase 15 | Pending |
 
 **Coverage:**
 - v1.3 requirements: 13 total
-- Mapped to phases: 0
-- Unmapped: 13
+- Mapped to phases: 13
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-18*
