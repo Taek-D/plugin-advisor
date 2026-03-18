@@ -184,7 +184,6 @@ export const ko: Translations = {
     analyzeBtn: "분석하기",
     analyzeBtnDisabled: "플러그인을 1개 이상 추가하세요",
     aiComingSoon: "AI 분석 (Coming Soon)",
-    recognizedPlugins: "인식된 플러그인",
     unrecognizedPlugins: "인식되지 않은 플러그인",
     emptyState: "예: claude mcp list 결과를 붙여넣거나 플러그인을 검색하세요",
     sampleBtn: "샘플 데이터로 시작",
@@ -211,7 +210,6 @@ export const ko: Translations = {
     deductionConflict: "충돌",
     deductionRedundancy: "중복",
     deductionUncovered: "미커버",
-    replacementReason: "대체 이유",
     complementReason: "추천 이유",
   },
 };

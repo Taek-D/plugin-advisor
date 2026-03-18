@@ -170,7 +170,3 @@ export type AdminSuggestionPatch = {
   adminNotes?: string;
 };
 
-export type OptimizerInputPlugin = {
-  pluginId: string;
-  source: "paste" | "manual";
-};

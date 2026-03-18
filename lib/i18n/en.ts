@@ -185,7 +185,6 @@ export const en: Translations = {
     analyzeBtn: "Analyze",
     analyzeBtnDisabled: "Add at least one plugin",
     aiComingSoon: "AI Analysis (Coming Soon)",
-    recognizedPlugins: "Recognized plugins",
     unrecognizedPlugins: "Unrecognized plugins",
     emptyState: "Paste your claude mcp list output or search for plugins",
     sampleBtn: "Start with sample data",
@@ -212,7 +211,6 @@ export const en: Translations = {
     deductionConflict: "Conflicts",
     deductionRedundancy: "Redundancy",
     deductionUncovered: "Uncovered",
-    replacementReason: "Replacement reason",
     complementReason: "Suggestion reason",
   },
 };

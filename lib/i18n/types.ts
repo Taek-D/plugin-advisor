@@ -184,7 +184,6 @@ export type Translations = {
     analyzeBtn: string;
     analyzeBtnDisabled: string;
     aiComingSoon: string;
-    recognizedPlugins: string;
     unrecognizedPlugins: string;
     emptyState: string;
     sampleBtn: string;
@@ -211,7 +210,6 @@ export type Translations = {
     deductionConflict: string;
     deductionRedundancy: string;
     deductionUncovered: string;
-    replacementReason: string;
     complementReason: string;
   };
 };
