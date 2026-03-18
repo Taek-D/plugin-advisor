@@ -1,169 +1,216 @@
 # Pitfalls Research
 
-**Domain:** Adding Plugin type system + tab UI + scoring integration to existing MCP-only advisor
+**Domain:** Adding 10-15 new MCP server and Plugin entries to an existing 51-entry verified database
 **Researched:** 2026-03-18
-**Confidence:** HIGH — all pitfalls derived directly from codebase inspection, not training-data assumptions
+**Confidence:** HIGH — all pitfalls derived directly from codebase inspection + multi-milestone retrospective (v1.0, v1.1, v1.2 lessons)
 
 ---
 
 ## Critical Pitfalls
 
-### Pitfall 1: `type` Field Added to `Plugin` Without Updating `DEFAULT_PLUGIN_FIELDS` — All 42 Entries Silently Become `undefined`
+### Pitfall 1: Install Command Wrong on First Entry — Historically the Most-Broken Field
 
 **What goes wrong:**
-The seed pattern in `lib/plugins.ts` uses `DEFAULT_PLUGIN_FIELDS` (lines 22–33) merged with per-entry `PLUGIN_FIELD_OVERRIDES`. If `type: 'mcp' | 'plugin'` is added to the `Plugin` type in `lib/types.ts` but NOT added to `DEFAULT_PLUGIN_FIELDS`, TypeScript will still compile if `type` is declared optional (`type?`). At runtime all 42 existing entries have `type: undefined`. Every downstream conditional (`plugin.type === 'mcp'`) evaluates to `false` for all existing entries — breaking tab filtering, scoring type scope, and complement suggestions simultaneously. The entire catalog disappears from the MCP tab.
+The `install` array in `CORE_PLUGINS` is the field most frequently incorrect in every prior milestone. Common failure modes: (a) wrong package name (e.g., `@anthropic-ai/desktop-commander-mcp` vs actual package), (b) wrong install verb (`npx -y` vs `uvx` for Python servers), (c) remote HTTP MCP servers that require `claude mcp add --transport http <name> <url>` written as a `npx` command, (d) npm package listed in the install command that does not exist (e.g., `@vercel/mcp` and `@docker/mcp-server` were both non-existent).
 
 **Why it happens:**
-Making `type` optional looks like a safe way to avoid touching 42 entries. It satisfies TypeScript without mass edits. The error is invisible in `pnpm dev` (no full type check) and only surfaces as a runtime blank state.
+The install command is inferred from training data or guessed from the package name. Package names change, get scoped, or move to a different registry. Remote HTTP MCP servers have no npm package at all. Python servers use `uvx` not `npx`. Without reading the official README `Installation` section, the command is a guess.
 
 **How to avoid:**
-Make `type` required (not optional) from day one. Add `type: 'mcp' as const` to `DEFAULT_PLUGIN_FIELDS`. Zero individual entry changes are needed — the merge pattern applies the default to all 42 automatically. Only new Plugin-type entries need an explicit override `type: 'plugin'`. TypeScript will enforce this for all new entries and all test mocks.
+For every new entry, fetch the official README via the GitHub API (`/api/github` route or direct GitHub raw URL) and read the exact install command verbatim. Never infer from package name. Check: does a `claude mcp add` example appear in the README? Is `--transport http` used? Is `uvx` used instead of `npx`? Copy the exact command. Record the verification in a `PLUGIN_FIELD_OVERRIDES` comment (see existing pattern: `// perplexity: Package name changed from perplexity-mcp to @perplexity-ai/mcp-server`).
 
 **Warning signs:**
-- `type?` (optional) appears in the `Plugin` type definition in `lib/types.ts`
-- `lib/plugins.ts` builds without any change to `DEFAULT_PLUGIN_FIELDS`
-- The MCP tab on `/plugins` shows zero entries after the type field is added
+- Install command contains `@anthropic-ai/` prefix for a non-Anthropic server
+- Install command uses `npx -y` for a server whose README shows `uvx` (Python servers: `git`, `mcp-server-*`)
+- Install command contains an npm package name that returns 404 on npmjs.com
+- Server has a `.mcp.` subdomain URL in its README but the install command is written as `npx`
 
-**Phase to address:** Phase 1 (DB type migration) — `Plugin` type change and `DEFAULT_PLUGIN_FIELDS` update must be the same commit
+**Phase to address:** Entry research phase — verify install command before any other field is written
 
 ---
 
-### Pitfall 2: `parseMcpList` Pseudo-Plugin Factory Breaks on the New Required `type` Field
+### Pitfall 2: `requiredSecrets` Env Var Name Off by One Character — Breaks User Setup
 
 **What goes wrong:**
-`lib/parse-mcp-list.ts` lines 93–117 construct a `pseudoPlugins: Plugin[]` array by mapping raw IDs into minimal `Plugin` objects with hardcoded defaults. This factory exists only for token resolution and hard-codes only the fields needed for name matching. When `type` becomes required on `Plugin`, this factory produces a TypeScript error. The common fix — adding `type: 'mcp'` as a silent default — is actually correct for the MCP list path, but wrong for the `claude plugin list` path (the `isPluginList` branch, line 124). Giving both branches the same `type: 'mcp'` default means plugin list tokens are labeled as MCPs, corrupting any type-aware scoring or filtering.
+Users copy the install command, set the env var named in `requiredSecrets`, and the server fails to authenticate. The variable name in `requiredSecrets` is slightly wrong: `NOTION_API_KEY` instead of `NOTION_TOKEN`, `BRAVE_SEARCH_API_KEY` instead of `BRAVE_API_KEY`, `SENTRY_TOKEN` instead of `SENTRY_ACCESS_TOKEN`. The correct name is defined in the server's source code or README, not inferable from the service name.
 
 **Why it happens:**
-The pseudo-plugin factory is an implementation detail inside the parser. Developers suppress the type error with the same default value across both branches without checking which branch needs which default.
+Env var names are guessed from the service name pattern (e.g., "Tavily" → `TAVILY_API_KEY` looks right). But servers often use custom names decided by their authors. The error is undetectable without reading the server code or README.
 
 **How to avoid:**
-Split the resolution: `parseMcpList` should accept a typed plugin list `plugins: Plugin[]` (the real objects, not a pseudo-array). The caller in `OptimizerApp` already has access to `PLUGINS` — pass `Object.values(PLUGINS)` filtered by `type === 'mcp'` for MCP list parsing and filtered by `type === 'plugin'` for plugin list parsing. Delete the pseudo-plugin factory entirely. This also fixes the existing limitation that the pseudo-plugin factory cannot resolve against `plugin.name` or `plugin.tag` with full fidelity.
+Read the README `Configuration` or `Environment Variables` section for the exact name. Cross-check with the server's source code if the README is ambiguous. For OAuth-based servers (Vercel, Figma, Cloudflare, Stripe), set `requiredSecrets: []` — OAuth means no API key is configured via env var. Write the full env var name in the `requiredSecrets` array as a string exactly matching the README.
 
 **Warning signs:**
-- The pseudo-plugin factory in `parse-mcp-list.ts` is still present after the type field is added
-- Test mocks in `lib/__tests__/parse-mcp-list.test.ts` use `as Plugin` cast or `@ts-expect-error` after the type change
-- `claude plugin list` output resolves entries but they are labeled `type: 'mcp'` when inspected
+- `requiredSecrets` contains a generic pattern like `<SERVICE>_API_KEY` that was not verified against the README
+- OAuth-based server (has `prerequisites` mentioning "OAuth") also has a non-empty `requiredSecrets`
+- `requiredSecrets` string includes a description like `"Brave Search API key (BRAVE_API_KEY)"` — this mixes label and variable name; should be just `"BRAVE_API_KEY"` or the actual env var
 
-**Phase to address:** Phase 1 (DB type migration) — fix the factory the moment `type` becomes required
+**Phase to address:** Entry research phase — verify exact var names when fetching README
 
 ---
 
-### Pitfall 3: `buildComplements` and `buildReplacements` in `scoring.ts` Do Not Filter by Type — Plugin Entries Bleed Into MCP-Only Analysis
+### Pitfall 3: Server Has Migrated from npm/Local to Remote HTTP — Install Pattern Completely Different
 
 **What goes wrong:**
-`lib/scoring.ts` `buildComplements` (line 113) calls `Object.values(PLUGINS)` to find candidates for uncovered categories. `buildReplacements` (line 140) does the same to find verified alternatives. Neither function is type-aware. Once Plugin-type entries are added to `PLUGINS`, a user who submits only their `claude mcp list` output will receive Plugin-type entries as complement or replacement suggestions. These are not installable via `claude mcp add` — the install mechanism is completely different. The suggestions are not just unhelpful; they are actively misleading.
+A server that previously installed via `npx` now runs as a hosted remote server with an HTTP endpoint. Examples from v1.0: `exa`, `tavily`, `figma`, `vercel`, `cloudflare`, `stripe` all migrated to remote HTTP. If the entry is written with the old npm install pattern, users get an outdated local server instead of the current remote one, or the npm package no longer exists.
 
 **Why it happens:**
-The scoring functions were designed when all entries in `PLUGINS` were MCPs. There was no reason to filter by type. Adding new entries without updating the filter assumption silently poisons every scoring output.
+Training data reflects the npm era. Many popular MCP servers migrated to remote HTTP in late 2024 / early 2025. The migration is not always announced prominently — the README just changes.
 
 **How to avoid:**
-Before adding any Plugin-type entries to `PLUGINS`, add a `typeScope: 'mcp' | 'plugin' | 'both'` parameter to `scorePlugins` (default `'mcp'` for backward compatibility). Inside `buildComplements` and `buildReplacements`, filter `Object.values(PLUGINS)` by `plugin.type === typeScope` (or allow both when `typeScope === 'both'`). The caller — `OptimizerApp` — passes the scope based on what the user submitted.
+When researching any server: check the README for `--transport http`, `mcp.`, or OAuth mention as the first signal of a remote HTTP server. Check whether the npm package still exists and is actively maintained. If the server's primary install path is now remote HTTP, write the `install` array with `claude mcp add --transport http <name> <url>` and set `requiredSecrets: []` (OAuth) or the appropriate env var. Add a comment in `PLUGIN_FIELD_OVERRIDES` explaining the migration.
 
 **Warning signs:**
-- `scorePlugins` signature has no type-scope parameter after Plugin entries are added
-- Scoring tests pass but a `type === 'plugin'` entry appears in `complements` when only MCP IDs were passed
-- `ALL_CATEGORIES` penalty fires for categories only Plugin-type entries can cover, even for MCP-only users
+- Server README mentions `mcp.<domain>.com` or `<product>.mcp.<domain>` but install command is still `npx`
+- npm package version is stale (last publish > 12 months ago) but the GitHub repo is active
+- README has separate "Remote" and "Local" sections; entry only captures one
 
-**Phase to address:** Phase 2 (scoring extension) — must be done before any Plugin-type entries enter `PLUGINS`
+**Phase to address:** Entry research phase — migration detection before writing any entry
 
 ---
 
-### Pitfall 4: `PluginCategory` Type Contaminated by Using It to Represent the MCP/Plugin Tab Dimension
+### Pitfall 4: `CORE_PLUGINS` Entry Added Without Corresponding `PLUGIN_FIELD_OVERRIDES` — Merge Order Bug
 
 **What goes wrong:**
-`PluginGrid` already uses `PluginCategory | 'all'` as its filter state. The fastest way to add an MCP/Plugin tab is to add `'mcp'` and `'plugin'` as new values of `PluginCategory`. This appears to work for the UI, but `PluginCategory` is also used in `scoring.ts` `ALL_CATEGORIES` (line 41), `lib/types.ts` type declarations, and `lib/i18n/types.ts` `categories` key set. Widening the union with tab-like values causes `ALL_CATEGORIES` to include 12 items instead of 10, the uncovered-category penalty fires for the two new pseudo-categories, and the `categories` i18n Record requires new keys that have no display meaning.
+The merge order in `plugins.ts` line 1626-1634 is:
+```
+{ ...DEFAULT_PLUGIN_FIELDS, ...PLUGIN_FIELD_OVERRIDES[id], ...plugin }
+```
+`PluginSeed` (spread last) wins over everything. If a new entry is a Plugin (not MCP), `type: 'plugin'` must be in `PLUGIN_FIELD_OVERRIDES[id]` — it cannot be in the `PluginSeed` because `PluginSeed` is `Omit<Plugin, keyof PluginOperationalFields>` and `type` is an operational field. Placing `type: 'plugin'` in the `CORE_PLUGINS` entry produces a TypeScript error. Forgetting to add the OVERRIDES entry means the entry silently gets `type: 'mcp'` from `DEFAULT_PLUGIN_FIELDS`.
 
 **Why it happens:**
-Reusing the existing `category` state in `PluginGrid` is the path of least resistance — it avoids a new state variable and a new prop. The contamination is not obvious during local development because tests do not cover `ALL_CATEGORIES.length`.
+The two-file structure (`CORE_PLUGINS` for seed data, `PLUGIN_FIELD_OVERRIDES` for operational fields) is not obvious from reading the data. A new contributor adding a Plugin entry puts all fields in `CORE_PLUGINS` and gets a type error, then "fixes" it by adding `type?` to `PluginSeed` — which breaks the invariant.
 
 **How to avoid:**
-Add a completely separate `activeType: 'all' | 'mcp' | 'plugin'` state to `PluginGrid`, independent of `activeCategory`. Apply both filters in sequence: first by `plugin.type` (if `activeType !== 'all'`), then by `plugin.category` (if `activeCategory !== 'all'`). `PluginCategory` remains a closed 10-value union. `scoring.ts` is not touched.
+For every new Plugin-type entry: add `type: "plugin" as const` to `PLUGIN_FIELD_OVERRIDES[id]`. Also add all operational fields (`verificationStatus`, `difficulty`, `installMode`, `requiredSecrets`, etc.) to `PLUGIN_FIELD_OVERRIDES[id]`. `CORE_PLUGINS` entry contains only `PluginSeed` fields: `id`, `name`, `tag`, `color`, `category`, `githubRepo`, `desc`, `longDesc`, `url`, `install`, `features`, `conflicts`, `keywords`. For MCP entries, `PLUGIN_FIELD_OVERRIDES` is optional but recommended for any non-default operational fields.
 
 **Warning signs:**
-- `PluginCategory` type in `lib/types.ts` gains `'mcp'` or `'plugin'` as values
-- `ALL_CATEGORIES` array in `scoring.ts` is updated to exclude the new values
-- i18n `categories` Record requires new keys `'mcp'` or `'plugin'`
+- New Plugin entry in `CORE_PLUGINS` has `type` field directly on the object (TypeScript error)
+- `PLUGIN_FIELD_OVERRIDES` has no entry for the new plugin ID
+- New Plugin entry resolves to `type: 'mcp'` at runtime (verify with test or console)
 
-**Phase to address:** Phase 3 (tab UI)
+**Phase to address:** Entry authoring phase — enforce the two-file pattern for every new entry
 
 ---
 
-### Pitfall 5: Tab State in `PluginGrid` Lost on `/plugins/[id]` Navigation — Users Must Re-Select the Plugin Tab
+### Pitfall 5: `pluginDescEn` Translation Missing for New Entry — English Mode Shows Blank Description
 
 **What goes wrong:**
-`PluginGrid` holds all filter state in local `useState`. When a user selects the Plugin tab (a minority of the catalog), clicks through to `/plugins/[id]`, and presses back, `PluginGrid` remounts and resets to `activeType: 'all'`. Because Plugin-type entries are a small fraction of the total catalog, the user sees a wall of MCP entries and does not know their Plugin tab selection was lost. This is especially disruptive during the early period when only 10–15 Plugin entries exist — they are visually buried.
+`lib/i18n/plugins-en.ts` exports `pluginDescEn: Record<string, { desc: string; longDesc: string }>`. It is NOT a typed exhaustive record — missing keys do not cause a TypeScript error. When a user with English locale visits `/plugins` or `/plugins/[id]`, `plugin.desc` falls back silently to the Korean string (the fallback logic) or renders blank if the fallback is missing. The entry appears broken in English.
 
 **Why it happens:**
-Local `useState` for filter state is correct for components that never unmount. In Next.js App Router, navigation to a child route unmounts the parent page and its component tree. The issue is invisible during development because hot-reload preserves React state.
+The `pluginDescEn` record has no enforced relationship to `PLUGINS` — adding to `PLUGINS` does not require adding to `pluginDescEn`. The developer finishes the Korean entry, considers the work done, and ships without the English translation.
 
 **How to avoid:**
-Lift the active type state into the URL as a query parameter: `?type=plugin`. In `app/plugins/page.tsx`, read `searchParams.get('type')` and pass `initialType` as a prop to `PluginGrid`. On tab change, call `router.replace('/plugins?type=plugin', { scroll: false })`. This also makes the Plugin tab directly linkable from other pages (e.g., a landing CTA can link directly to `/plugins?type=plugin`).
+Add `pluginDescEn[id]` entry for every new plugin in the same commit as the `CORE_PLUGINS` entry. The test `lib/__tests__/plugins.test.ts` line 42-49 only asserts English translations for Plugin-type entries — extend this test to assert all PLUGINS IDs have a `pluginDescEn` entry. Run `pnpm test` before marking the entry complete.
 
 **Warning signs:**
-- `activeType` state is managed with `useState` in `PluginGrid` rather than derived from URL
-- `app/plugins/page.tsx` does not read `searchParams`
-- No `initialType` prop on `PluginGrid`
+- `pnpm test` passes but `pluginDescEn` count is less than `PLUGINS` count
+- New entry is in `CORE_PLUGINS` but no corresponding key exists in `plugins-en.ts`
+- English locale `/plugins/[id]` page shows Korean text or empty description
 
-**Phase to address:** Phase 3 (tab UI)
+**Phase to address:** Entry authoring phase — translation must be in the same commit as the data entry
 
 ---
 
-### Pitfall 6: Optimizer Paste Hint and Sample Data Not Updated for `claude plugin list` Format — Users Cannot Discover Plugin Paste Support
+### Pitfall 6: Count Claims in SUMMARY Documentation Differ from Actual Code — Verifier Trusts the Document
 
 **What goes wrong:**
-`OptimizerApp.tsx` `handleSampleData` (line 61) hardcodes a `claude mcp list`-style sample: `"context7 (user):\nplaywright (user):\ngithub (user):"`. The i18n keys `t.optimizer.pasteLabel` and `t.optimizer.pastePlaceholder` mention only MCPs. After adding `claude plugin list` support, users who have Plugins installed will not know they can paste that output into the same field. The `isPluginList` branch in `parseMcpList` (which detects `❯` prefix) already exists but is completely undiscoverable. Users see zero plugin matches and assume the optimizer does not support their Plugins.
+v1.2 retrospective explicitly documents this: "Phase 9 SUMMARY claimed 13 plugin entries but actual code had 9 — verified by the verifier without direct count." The pattern repeats: a developer adds N entries, writes "added N+2 entries" in the summary (miscounting or including entries from a different phase), and the verifier reads the summary without counting `PLUGIN_FIELD_OVERRIDES` keys or `CORE_PLUGINS` entries.
 
 **Why it happens:**
-The parser `isPluginList` branch was added in anticipation of v1.2 but the UX layer was not updated to match. The parser is ahead of the UI.
+Documentation is written from memory or from a diff summary. Counting is error-prone, especially when entries are added across multiple files or multiple sessions. Verifiers trust document claims instead of counting in source.
 
 **How to avoid:**
-Update `t.optimizer.pasteLabel` and `t.optimizer.pastePlaceholder` in both `lib/i18n/ko.ts` and `lib/i18n/en.ts` to explain that both `claude mcp list` and `claude plugin list` output are accepted. Update `handleSampleData` to include at least one `❯ omc@marketplace` style line. Add a small format hint below the textarea showing both command formats.
+The verifier MUST count directly from source code: `Object.keys(PLUGINS).length`, count entries in `PLUGIN_FIELD_OVERRIDES` with `type: 'plugin'`, count `pluginDescEn` keys. Never accept a count from a SUMMARY or phase document without code verification. The `plugins.test.ts` sanity test (`expect(Object.keys(PLUGINS).length).toBeGreaterThanOrEqual(42)`) should be updated to the new target count (e.g., 60) so it fails if entries are missing.
 
 **Warning signs:**
-- i18n paste label keys unchanged after Plugin support is added
-- `handleSampleData` string does not contain `❯`
-- No visible hint explaining two accepted formats in the optimizer UI
+- SUMMARY says "added X entries" but `git diff lib/plugins.ts | grep "^+" | grep "id:" | wc -l` gives a different number
+- Verifier sign-off references the SUMMARY count, not a code count
+- `plugins.test.ts` sanity threshold is not updated to reflect the new minimum
 
-**Phase to address:** Phase 4 (parser extension + optimizer UI update) — same phase as `claude plugin list` parser support
+**Phase to address:** Verification phase — verifier must count from source, not from documentation
 
 ---
 
-### Pitfall 7: `ALL_CATEGORIES` Coverage Penalty Fires for Plugin-Only Categories on MCP-Only Submissions
+### Pitfall 7: Deprecated or Archived Server Added as "Active" — Users Install Dead Software
 
 **What goes wrong:**
-`scoring.ts` penalises every category in `ALL_CATEGORIES` that is uncovered by the submitted plugin set. If new Plugin-type entries are added that cover categories no MCP currently covers (e.g., a new `automation` category or Plugin entries placed in existing categories where no MCP exists), an MCP-only user's score is penalised for not covering those categories — categories they can never cover via MCPs. The score becomes artificially low and the complement suggestions point at Plugin-type entries the user cannot install via `claude mcp add`.
+A server appears popular (high GitHub stars) but the repository has been archived, the maintainer abandoned it, or an official replacement exists. Adding it with `verificationStatus: 'verified'` and `maintenanceStatus: 'active'` causes users to install stale software. Examples from existing DB: `linear` (community npm deprecated, official remote MCP exists), `ralph` (repo returned 404), `brave-search` (moved from official monorepo to archived, npm still functional but origin changed), `puppeteer` (moved to `servers-archived`).
 
 **Why it happens:**
-`ALL_CATEGORIES` is a hardcoded list. The coverage model was designed when all entries shared one installation mechanism. The penalty math does not distinguish whether a category gap is fillable by the type of plugins the user has.
+Stars count does not reflect current maintenance status. A repo archived 6 months ago still shows its star count. The GitHub "Archived" banner is missed if the researcher only looks at the README.
 
 **How to avoid:**
-When `typeScope === 'mcp'` is passed to `scorePlugins`, compute `ALL_CATEGORIES` dynamically as only those categories that at least one MCP-type entry covers. Categories that are Plugin-only do not count as uncovered for MCP-only users. This is a one-line filter: `const scorableCategories = ALL_CATEGORIES.filter(cat => Object.values(PLUGINS).some(p => p.type === 'mcp' && p.category === cat))`.
+Before adding any entry: (1) Check if the GitHub repo has the "Archived" banner. (2) Check if the README has a deprecation notice or "use X instead" message. (3) Check npm package `lastPublish` date — if > 12 months, treat as stale pending deeper investigation. (4) Search for an official replacement from the service vendor (e.g., `mcp.<vendor>.com`). If deprecated, set `maintenanceStatus: 'stale'` and add official alternative info to `longDesc`. Add `avoidFor: ['신규 도입 (공식 X 권장)']`.
 
 **Warning signs:**
-- An MCP-only user's score drops after Plugin entries are added to a new category
-- Complement suggestions for MCP-only input include a `type === 'plugin'` entry
+- GitHub repo has "This repository has been archived" notice
+- README contains "Deprecated", "Use X instead", or a redirect notice
+- npm package `lastPublish` is more than 12 months ago
+- Official service vendor has released their own MCP server after this community version
 
-**Phase to address:** Phase 2 (scoring extension) — implement alongside type-scope parameter
+**Phase to address:** Entry research phase — check maintenance status before writing any other field
 
 ---
 
-### Pitfall 8: i18n `Translations` Type Enforces All Keys Required — New Tab Strings Added to One Locale Cause Build Failure
+### Pitfall 8: OAuth vs API Key Pattern Misidentified — Wrong `installMode` and `requiredSecrets`
 
 **What goes wrong:**
-`lib/i18n/types.ts` defines `Translations` with all fields required. When `pluginsPage.tabMcp` and `pluginsPage.tabPlugin` (or equivalent) are added to `ko.ts` but not `en.ts` in the same commit, `pnpm build` fails with a TypeScript error in the English locale file. This is the correct behavior — but if the developer relies on `pnpm dev` for feedback (which does not run full type checking), the error is invisible locally and only surfaces in CI.
+OAuth-based MCP servers (Vercel, Figma, Cloudflare, Stripe) require browser authentication, not an API key in the environment. If they are entered with `installMode: 'external-setup'` and `requiredSecrets: ['<SERVICE>_API_KEY']`, the install script generation outputs an `--env` flag that does not apply. Conversely, API-key-based servers entered with `requiredSecrets: []` leave users wondering why authentication fails.
 
 **Why it happens:**
-Developers add UI strings when building the Korean-first UI, intend to add English strings "later," and forget before committing. The Next.js dev server does not enforce TypeScript strictly.
+Both patterns look like "you need an account with this service," so they are conflated. The technical difference — env var injection vs browser OAuth flow — is only visible in the README `Authentication` section.
 
 **How to avoid:**
-Add both locale strings in the same commit as the UI component that consumes them. The `Translations` type should NOT be weakened to `Partial`. Run `pnpm typecheck` (not just `pnpm dev`) before committing any i18n change. The tab-related strings needed are: `pluginsPage.tabAll`, `pluginsPage.tabMcp`, `pluginsPage.tabPlugin` at minimum.
+Read the README `Authentication` section explicitly. OAuth pattern signals: "browser login", "OAuth", "no API key required", URL ending in `/mcp` or `/sse`. API key pattern signals: `--env KEY=value` in the install command, `export KEY=...` in setup instructions. For OAuth: set `requiredSecrets: []` and add `prerequisites: ['<Service> 계정', 'OAuth 인증 (브라우저 로그인)']`. For API key: set `requiredSecrets: ['EXACT_VAR_NAME']` and `installMode: 'external-setup'`.
 
 **Warning signs:**
-- `pnpm dev` works but `pnpm build` fails with an i18n type error
-- Diff shows changes to `ko.ts` but not `en.ts` (or vice versa)
-- New component uses `t.pluginsPage.tabPlugin` which does not yet exist in the `Translations` type
+- README shows OAuth flow but entry has `requiredSecrets: ['<SERVICE>_API_KEY']`
+- README shows `--env API_KEY=value` in install but entry has `requiredSecrets: []`
+- `prerequisites` mentions "OAuth" but `requiredSecrets` is non-empty
 
-**Phase to address:** Phase 5 (i18n update) — strings must be added alongside their UI consumers, not deferred
+**Phase to address:** Entry research phase — OAuth vs API key classification before writing any field
+
+---
+
+### Pitfall 9: New Entry `id` Collides With or Shadows Existing Entry — Silent Data Overwrite
+
+**What goes wrong:**
+`CORE_PLUGINS` and `PLUGIN_FIELD_OVERRIDES` are both `Record<string, ...>` keyed by `id`. If a new entry uses an `id` that already exists in `CORE_PLUGINS`, the second definition silently overwrites the first in JavaScript object literal syntax (or TypeScript reports a duplicate identifier in some configurations). The original entry disappears from `PLUGINS` without any runtime warning.
+
+**Why it happens:**
+With 51 existing entries, a new entry author may not scan all existing IDs. Generic names (`git`, `github`, `postgres`, `memory`) could plausibly be chosen for a new entry that is a variant of an existing one.
+
+**How to avoid:**
+Before choosing an `id`, run `Object.keys(PLUGINS)` check (or grep the existing IDs in `CORE_PLUGINS`). Use specific, collision-resistant IDs: `mcp-server-neon` rather than just `neon` if `neon` were taken, `openai-mcp` rather than `openai` to avoid future conflicts. The `id` field in `CORE_PLUGINS` should match the `id` property inside the object — these must be identical or the lookup fails.
+
+**Warning signs:**
+- New entry's chosen ID already appears in the existing `CORE_PLUGINS` list
+- After adding the entry, `Object.keys(PLUGINS).length` does not increase by the expected count
+- An existing entry's data changes unexpectedly after the new entry is added
+
+**Phase to address:** Entry authoring phase — ID uniqueness check before the entry is written
+
+---
+
+### Pitfall 10: `conflicts` Array Contains IDs Not Present in `PLUGINS` — Silent Scoring Error
+
+**What goes wrong:**
+`scoring.ts` `buildConflictWarnings` (and `conflicts.ts` `CONFLICT_PAIRS`) rely on valid plugin IDs. If a new entry's `conflicts` array references an ID that does not exist in `PLUGINS` (e.g., a plugin that was planned but not yet added, or a misspelled ID), `PLUGINS[conflictId]` returns `undefined`. Downstream code that accesses `.type` or `.name` on `undefined` throws at runtime or silently skips the conflict warning.
+
+**Why it happens:**
+Conflict relationships are often recorded based on anticipated future entries ("this new tool conflicts with X which we plan to add in phase 2"). By the time phase 2 runs, the ID is different from what was anticipated.
+
+**How to avoid:**
+Only add IDs to `conflicts` that currently exist in `PLUGINS`. If a conflict with a not-yet-added entry is known, add a code comment (`// conflicts with 'mcp-x' once added`) but leave the array empty. After all new entries are added, do a single pass to add cross-references. The existing test `lib/__tests__/plugins.test.ts` should be extended with: every ID in `plugin.conflicts` must exist as a key in `PLUGINS`.
+
+**Warning signs:**
+- `plugin.conflicts` contains an ID not in `Object.keys(PLUGINS)`
+- No test asserts that all conflict IDs are valid
+- Scoring test passes because the undefined entry is silently skipped
+
+**Phase to address:** Post-addition verification phase — validate all conflict ID references after all entries are added
 
 ---
 
@@ -171,12 +218,12 @@ Add both locale strings in the same commit as the UI component that consumes the
 
 | Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
 |----------|-------------------|----------------|-----------------|
-| Make `type` optional in `Plugin` | Skip updating 42 entries | `undefined` leaks into every consumer; requires `?? 'mcp'` fallback everywhere | Never — `DEFAULT_PLUGIN_FIELDS` default costs nothing |
-| Use `PluginCategory` values to represent MCP/Plugin tab | Single state variable | Contaminates scoring `ALL_CATEGORIES`; i18n `categories` Record needs new keys | Never |
-| Keep pseudo-plugin factory in `parseMcpList`, add `type: 'mcp'` default | Suppress TypeScript error quickly | Plugin list tokens labeled as MCPs; silently wrong type-aware results | Never after Plugin entries exist |
-| Inline `plugin.type === 'mcp'` checks in each consumer | Fast | No central filter; adding a third type requires hunting all call sites | Never — centralise behind a typed filter function |
-| Defer i18n English strings to a follow-up commit | Ship Korean UI faster | Build fails in CI; PR cannot merge | Never |
-| Copy `scorePlugins` into a new function for Plugin-only path | No risk to existing optimizer | Two diverging scoring implementations; tests must double | Only if rollback safety is critical; remove old version in same milestone |
+| Copy install command from a blog post or training data | Fast entry authoring | Wrong command, wrong package name, broken user setup | Never — always read the official README |
+| Guess `requiredSecrets` from service name pattern | Skips README read | Env var name wrong; user setup fails silently | Never — always read README config section |
+| Set `verificationStatus: 'partial'` without a follow-up plan | Avoids blocking the milestone | Partial entries accumulate; total verified count drifts; users install unvalidated entries | Only if a concrete re-verification phase is scheduled in the same milestone |
+| Add entry with `maintenanceStatus: 'active'` without checking GitHub archived status | Optimistic default | Users install abandoned software | Never — check archived status explicitly |
+| Write only Korean `desc`/`longDesc` and defer English translation | Ship faster | English locale is broken; no TypeScript error warns you | Never — both locales must ship together |
+| Use an approximate count ("added ~10 entries") in SUMMARY | Avoids exact counting | Verifier accepts wrong count; actual DB size unknown | Never — count from code, not from memory |
 
 ---
 
@@ -184,12 +231,12 @@ Add both locale strings in the same commit as the UI component that consumes the
 
 | Integration | Common Mistake | Correct Approach |
 |-------------|----------------|------------------|
-| `parseMcpList` pseudo-plugin factory | Add `type: 'mcp'` to suppress TypeScript error, apply to all branches | Delete the factory; pass real `Plugin[]` filtered by type to the parser |
-| `PLUGINS` record in `scoring.ts` | Call `Object.values(PLUGINS)` without type filter after Plugin entries are added | Filter by `plugin.type` before building complement/replacement candidates |
-| `PluginGrid` + `PluginSearch` filter chain | Add `'mcp'` / `'plugin'` as category values | Add separate `activeType` state; keep `PluginCategory` closed |
-| `conflicts.ts` `CONFLICT_PAIRS` | Define MCP-Plugin cross-type conflicts using same structure | Cross-type conflicts are valid — `CONFLICT_PAIRS` structure handles them; just add the pair with both IDs |
-| `lib/__tests__/parse-mcp-list.test.ts` mock objects | Leave mock `Plugin` objects without `type` field | Update all mock objects when `type` becomes required; `pnpm typecheck` catches this |
-| `lib/__tests__/scoring.test.ts` | Tests assert `complements` IDs without checking `plugin.type` | Add assertions that complements for MCP-only input are all `type === 'mcp'` |
+| `CORE_PLUGINS` + `PLUGIN_FIELD_OVERRIDES` for Plugin-type entries | Put `type: 'plugin'` in `PluginSeed` object (TypeScript error) or omit it entirely (defaults to `'mcp'`) | Add `type: "plugin" as const` to `PLUGIN_FIELD_OVERRIDES[id]`; never in `CORE_PLUGINS` |
+| `pluginDescEn` in `lib/i18n/plugins-en.ts` | Add new `PLUGINS` entry but forget English translation | Add `pluginDescEn[id]` in the same commit; extend the test to cover all IDs |
+| `plugins.test.ts` sanity count | Leave `greaterThanOrEqual(42)` threshold after adding 15 new entries | Update threshold to the new expected minimum (e.g., 60) so missing entries fail the test |
+| `scoring.ts` `buildComplements` | New MCP entry in a category not currently in `ALL_CATEGORIES` is never suggested | Check whether the new entry's `category` appears in `ALL_CATEGORIES`; add the category if it is a new one used by multiple entries |
+| `keywords` array in new entry | Generic keywords that overlap with every existing plugin (e.g., `'ai'`, `'코드'`) | Use specific, discriminating keywords that match real user queries; check overlap with existing entries' keywords |
+| `CONFLICT_PAIRS` in `lib/conflicts.ts` (if used) vs `plugin.conflicts` field | Add conflict in one place but not the other | Check which mechanism the scoring engine reads; ensure consistency |
 
 ---
 
@@ -197,9 +244,19 @@ Add both locale strings in the same commit as the UI component that consumes the
 
 | Trap | Symptoms | Prevention | When It Breaks |
 |------|----------|------------|----------------|
-| `Object.values(PLUGINS)` called inside every `buildComplements` invocation | Negligible at 57 entries; measurable at 200+ | Memoize filtered arrays outside the function (one `const MCP_PLUGINS` and `const PLUGIN_PLUGINS` at module level) | Not a concern for v1.2 scope |
-| `filterPlugins` in `parse-mcp-list.ts` scans all plugins on every keypress in `PluginTypeInput` | Slight lag at 150+ entries | Already capped at 8 results; add debounce if > 100 entries | At ~150 entries |
-| `scorePlugins` called synchronously inside `setTimeout(0)` in `OptimizerApp` | Fine at 57 entries | Keep as-is; scoring is O(n) with small n | Not a concern for v1.2 scope |
+| `Object.values(PLUGINS)` called on every scoring invocation with no type filter | At 51 entries: imperceptible. At 65 entries: still fine. At 200+: measurable | Add module-level `const MCP_PLUGINS` and `PLUGIN_PLUGINS` constants if DB grows past 100 | Not a concern for v1.3 (65-entry target) |
+| `filterPlugins` autocomplete scanning all 65+ entries on every keypress | Slight input lag at 150+ entries | Already capped at 8 results; current substring scan is O(n) and fine at 65 | At ~150 entries |
+| New entries with very long `longDesc` strings increasing initial bundle size | Slightly larger JS bundle | Keep `longDesc` under 400 chars; this is a static import | Negligible at 65 entries |
+
+---
+
+## Security Mistakes
+
+| Mistake | Risk | Prevention |
+|---------|------|------------|
+| Listing `requiredSecrets` with an insecure default value (e.g., `"ANTHROPIC_API_KEY=sk-..."`) | Secrets exposed in source code | `requiredSecrets` values are env var names only — never values |
+| Pointing `githubRepo` to a repo controlled by an unknown actor with a malicious install script | User installs malware via `claude plugin install` | Only add repos from verified vendors or with substantial community reputation (500+ stars, active issues, known maintainer) |
+| Adding a server whose `install` command fetches from an unverified registry URL | Supply chain risk | Prefer `npx -y @scoped/package` over arbitrary `npx <unscoped-name>`; flag unscoped packages for review |
 
 ---
 
@@ -207,24 +264,27 @@ Add both locale strings in the same commit as the UI component that consumes the
 
 | Pitfall | User Impact | Better Approach |
 |---------|-------------|-----------------|
-| Plugin tab shows 0 entries if Plugin DB is not yet populated when the tab UI ships | User thinks the feature is broken | Either ship tab UI simultaneously with the first Plugin entries, or show an "empty state" message with context |
-| Category filter not reset when switching between MCP and Plugin tabs | User sees 0 results because their selected category only has MCP entries | Reset `activeCategory` to `'all'` when `activeType` changes |
-| Score display in optimizer still says "MCP 조합 점수" after Plugin entries are included in scoring | User confusion about what was scored | Update score label to reflect the submission type: "MCP 점수", "Plugin 점수", or "MCP + Plugin 점수" |
-| Optimizer paste area shows no hint for `claude plugin list` format | Plugin users see all their entries marked "unrecognized" and abandon the feature | Show a concrete example of both `claude mcp list` and `claude plugin list` output in the paste hint |
-| Both tab clicks reset the category filter | Unexpected state loss when user had filtered by category before switching tabs | Preserve `activeCategory` across tab switches; only reset when the selected category has zero results in the new type |
+| New entry has `verificationStatus: 'partial'` but no explanation in `longDesc` | User sees "partial" badge and does not know what is unverified | Add a sentence to `longDesc` explaining what is not yet verified (e.g., "install command not tested on Windows") |
+| `bestFor` and `avoidFor` arrays left empty | Optimizer complement suggestions have no context; user cannot decide | Fill both arrays with at least 2 specific use cases; `avoidFor` is especially important for advanced/expensive servers |
+| `difficulty: 'advanced'` set without explaining why in `avoidFor` | User installs a complex server and gets stuck | Add entry to `avoidFor` explaining the specific barrier (e.g., "Figma Dev seat required") |
+| New MCP with `conflicts` referencing an existing entry — but the existing entry's `conflicts` is not updated reciprocally | Conflict warning only fires one direction | When adding a conflict relationship, update both entries' `conflicts` arrays |
 
 ---
 
 ## "Looks Done But Isn't" Checklist
 
-- [ ] **`type` field migration:** All 42 existing entries resolve to `type: 'mcp'` at runtime — verify with `Object.values(PLUGINS).every(p => p.type !== undefined)`
-- [ ] **Scoring type scope:** `scorePlugins(['context7', 'omc'])` returns `complements` that are all `type === 'mcp'` — verify no Plugin-type entries appear
-- [ ] **`PluginCategory` unchanged:** `ALL_CATEGORIES` in `scoring.ts` still has exactly 10 entries — verify by count assertion in scoring tests
-- [ ] **Tab URL state:** Navigate to `/plugins/[id]` from Plugin tab, press back — Plugin tab is still active — verify by manual navigation
-- [ ] **Both locale files updated:** `pnpm build` passes without i18n type errors — verify after every new string addition (not just `pnpm dev`)
-- [ ] **Parser sample updated:** `handleSampleData` in `OptimizerApp` includes a `❯` format line — verify in source
-- [ ] **Test mocks updated:** All `Plugin` mock objects in `lib/__tests__/` include the `type` field — verify `pnpm typecheck` passes
-- [ ] **Pseudo-plugin factory removed or fixed:** `parseMcpList` no longer constructs `Plugin` objects inline — verify by reading `parse-mcp-list.ts`
+- [ ] **Install command verified:** Every new entry's `install` array was read verbatim from the official README — not inferred from the package name or training data
+- [ ] **requiredSecrets exact match:** Every env var name in `requiredSecrets` was read from the README config/env section — not guessed from the service name
+- [ ] **OAuth vs API key classified correctly:** OAuth servers have `requiredSecrets: []` and an `prerequisites` entry; API key servers have the exact var name in `requiredSecrets`
+- [ ] **Maintenance status checked:** Every new entry's GitHub repo was checked for the "Archived" banner and a deprecation notice in the README
+- [ ] **English translation present:** `pluginDescEn[id]` exists for every new entry — verify `Object.keys(pluginDescEn).length` vs `Object.keys(PLUGINS).length`
+- [ ] **Plugin-type entries in OVERRIDES:** Every new Plugin-type entry has `type: "plugin" as const` in `PLUGIN_FIELD_OVERRIDES`, not in `CORE_PLUGINS`
+- [ ] **Conflict IDs valid:** Every ID in every `plugin.conflicts` array exists as a key in `PLUGINS`
+- [ ] **ID uniqueness confirmed:** No new entry ID collides with an existing entry
+- [ ] **Count verified from code:** `Object.keys(PLUGINS).length` matches the claimed new total — not taken from SUMMARY documentation
+- [ ] **Test threshold updated:** `plugins.test.ts` sanity count threshold updated to the new minimum (e.g., 60 if target is 60-65)
+- [ ] **`pnpm typecheck` passes:** Run after all entries are added; `pnpm dev` alone is insufficient
+- [ ] **`pnpm test` passes:** All 125+ tests pass including any new assertions added for the new entries
 
 ---
 
@@ -232,12 +292,14 @@ Add both locale strings in the same commit as the UI component that consumes the
 
 | Pitfall | Recovery Cost | Recovery Steps |
 |---------|---------------|----------------|
-| `type` optional, runtime `undefined` everywhere | MEDIUM | Make `type` required, add default to `DEFAULT_PLUGIN_FIELDS`, run `pnpm typecheck` to find all missed consumers, fix each |
-| `PluginCategory` contaminated with tab values | HIGH | Revert `PluginCategory` type, add separate `PluginItemType = 'mcp' \| 'plugin'`, update `PluginGrid` state, verify `scoring.ts` and `recommend.ts` unchanged |
-| Scoring surfaces Plugin complements for MCP-only input | LOW | Add type filter in `buildComplements` and `buildReplacements`, add regression test asserting type scope, no data migration needed |
-| Tab state lost on navigation | LOW | Move `activeType` to URL query param, change `PluginGrid` to read `initialType` prop, update `app/plugins/page.tsx` to pass `searchParams` |
-| i18n build failure | LOW | Add missing string keys to the failing locale file in the same commit |
-| Pseudo-plugin factory gives wrong type to plugin list tokens | LOW | Delete factory, pass real filtered `Plugin[]` to parser, update call site in `OptimizerApp` |
+| Wrong install command shipped | LOW | Update `CORE_PLUGINS[id].install`, add verification comment to `PLUGIN_FIELD_OVERRIDES[id]`, bump `verificationStatus` to `'partial'` if only partially verified |
+| Wrong `requiredSecrets` name | LOW | Update string in `PLUGIN_FIELD_OVERRIDES[id]`, add README reference comment |
+| Plugin-type entry resolved as `type: 'mcp'` | LOW | Add `type: "plugin" as const` to `PLUGIN_FIELD_OVERRIDES[id]`; run `pnpm test` to confirm |
+| Deprecated server added as active | MEDIUM | Set `maintenanceStatus: 'stale'`, add official alternative to `longDesc`, add `avoidFor` warning, update `verificationStatus` to `'partial'` |
+| English translation missing | LOW | Add `pluginDescEn[id]` entry, run `pnpm test` to verify coverage |
+| Count mismatch between docs and code | LOW | Recount from `Object.keys(PLUGINS).length`, update SUMMARY, update `plugins.test.ts` threshold |
+| Conflict ID references non-existent entry | LOW | Remove dangling ID from `conflicts` array, add code comment for future reference |
+| ID collision (existing entry overwritten) | HIGH | Rename new entry's ID throughout all files (`CORE_PLUGINS`, `PLUGIN_FIELD_OVERRIDES`, `pluginDescEn`, `reasonsEn`, `conflicts` arrays of other entries), verify `PLUGINS` count recovers |
 
 ---
 
@@ -245,30 +307,32 @@ Add both locale strings in the same commit as the UI component that consumes the
 
 | Pitfall | Prevention Phase | Verification |
 |---------|------------------|--------------|
-| `type` not in `DEFAULT_PLUGIN_FIELDS` (optional leak) | Phase 1: DB type migration | `pnpm typecheck` passes with `type` required; `Object.values(PLUGINS).every(p => p.type)` is true |
-| `parseMcpList` pseudo-factory broken by required `type` | Phase 1: DB type migration | `lib/__tests__/parse-mcp-list.test.ts` passes without `as Plugin` casts |
-| Scoring surfaces Plugin complements for MCP-only input | Phase 2: Scoring extension | New test: `scorePlugins(mcpIds, {typeScope:'mcp'})` returns only `type === 'mcp'` complements |
-| `ALL_CATEGORIES` penalty fires for Plugin-only categories | Phase 2: Scoring extension | Test: MCP-only user score unchanged after Plugin entries added to DB |
-| `PluginCategory` contaminated by tab values | Phase 3: Tab UI | `PluginCategory` type diff shows no new values; `ALL_CATEGORIES.length === 10` assertion passes |
-| Tab state lost on navigation | Phase 3: Tab UI | Manual nav test: Plugin tab preserved after `/plugins/[id]` navigation |
-| Optimizer paste hint not updated | Phase 4: Parser + optimizer UI | Both locale files show updated paste hint; `handleSampleData` includes `❯` format line |
-| i18n strings missing in one locale | Phase 5: i18n update | `pnpm build` succeeds; both `ko.ts` and `en.ts` compile against `Translations` type |
+| Wrong install command | Entry research — README fetch before authoring | Reviewer reads install command against fetched README text |
+| Wrong `requiredSecrets` name | Entry research — README config section read | Reviewer confirms var name against README |
+| OAuth vs API key misclassified | Entry research — README auth section read | `requiredSecrets` empty IFF `prerequisites` mentions OAuth |
+| Remote HTTP migration missed | Entry research — check for `--transport http` / `mcp.` URL | Install command pattern matches server's current README |
+| Deprecated/archived server added as active | Entry research — GitHub archived check | GitHub repo shows no archived banner; README has no deprecation notice |
+| Plugin-type entry missing from `PLUGIN_FIELD_OVERRIDES` | Entry authoring — two-file pattern | `pnpm typecheck` passes; runtime `PLUGINS[id].type === 'plugin'` confirmed |
+| `pluginDescEn` translation missing | Entry authoring — same commit as data | `pnpm test` plugin translation test passes |
+| Count mismatch in documentation | Verification phase | Verifier counts `Object.keys(PLUGINS).length` from source, not SUMMARY |
+| Conflict ID references missing entry | Post-addition verification | Test asserting all conflict IDs exist in `PLUGINS` passes |
+| ID collision | Entry authoring — uniqueness check | `Object.keys(PLUGINS).length` increases by exactly the number of new entries added |
+| `plugins.test.ts` threshold stale | Verification phase | `pnpm test` sanity count uses new minimum threshold |
 
 ---
 
 ## Sources
 
-- Direct inspection: `lib/types.ts` — `Plugin` type, `PluginCategory` union (HIGH confidence)
-- Direct inspection: `lib/plugins.ts` — `DEFAULT_PLUGIN_FIELDS`, `PLUGIN_FIELD_OVERRIDES` seed pattern (HIGH confidence)
-- Direct inspection: `lib/scoring.ts` — `ALL_CATEGORIES`, `buildComplements`, `buildReplacements`, `scorePlugins` (HIGH confidence)
-- Direct inspection: `lib/parse-mcp-list.ts` — pseudo-plugin factory, `isPluginList` branch, `ALIAS_MAP` (HIGH confidence)
-- Direct inspection: `lib/conflicts.ts` — `CONFLICT_PAIRS`, `REDUNDANCY_GROUPS` (HIGH confidence)
-- Direct inspection: `components/PluginGrid.tsx` — local `useState` for filter state (HIGH confidence)
-- Direct inspection: `components/OptimizerApp.tsx` — `handleSampleData`, paste flow (HIGH confidence)
-- Direct inspection: `lib/i18n/types.ts` — required `Translations` type structure (HIGH confidence)
-- Direct inspection: `lib/__tests__/scoring.test.ts`, `lib/__tests__/parse-mcp-list.test.ts` — test coverage gaps (HIGH confidence)
-- Project context: `.planning/PROJECT.md` — v1.2 milestone scope (HIGH confidence)
+- Direct inspection: `lib/plugins.ts` — `CORE_PLUGINS`, `PLUGIN_FIELD_OVERRIDES`, `DEFAULT_PLUGIN_FIELDS`, merge pattern lines 1626-1634 (HIGH confidence)
+- Direct inspection: `lib/types.ts` — `Plugin`, `PluginSeed`, `PluginOperationalFields`, `ItemType` (HIGH confidence)
+- Direct inspection: `lib/i18n/plugins-en.ts` — untyped `pluginDescEn` record, translation coverage gap (HIGH confidence)
+- Direct inspection: `lib/__tests__/plugins.test.ts` — existing sanity tests, translation coverage gap for non-Plugin entries (HIGH confidence)
+- Direct inspection: `lib/scoring.ts` — `ALL_CATEGORIES`, `buildComplements`, `buildReplacements` type filter dependency (HIGH confidence)
+- Project retrospective: `.planning/RETROSPECTIVE.md` v1.0 lessons — install command error rate, env var name precision requirement (HIGH confidence)
+- Project retrospective: `.planning/RETROSPECTIVE.md` v1.2 lessons — SUMMARY count mismatch, verifier trusting documentation over code (HIGH confidence)
+- In-code evidence: `PLUGIN_FIELD_OVERRIDES` comments documenting past corrections (perplexity package rename, vercel no-npm-package, figma no-github-repo, docker non-npx install, linear deprecated, ralph 404) (HIGH confidence)
+- Project context: `.planning/PROJECT.md` — v1.3 milestone scope, existing 51-entry DB target, 60-65 target range (HIGH confidence)
 
 ---
-*Pitfalls research for: Adding Plugin type system to MCP Plugin Advisor (v1.2 milestone)*
+*Pitfalls research for: Adding 10-15 new MCP server and Plugin entries to existing 51-entry verified database (v1.3 milestone)*
 *Researched: 2026-03-18*

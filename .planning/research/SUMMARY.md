@@ -1,183 +1,231 @@
 # Project Research Summary
 
-**Project:** Plugin Advisor v1.2 — MCP + Plugin Type System
-**Domain:** Additive type system extension to existing Claude Code plugin advisor
+**Project:** Plugin Advisor v1.3 — DB Expansion (51 → 60-65 entries)
+**Domain:** Static data expansion of a curated MCP server + Claude Code Plugin directory
 **Researched:** 2026-03-18
 **Confidence:** HIGH
 
 ## Executive Summary
 
-This milestone is a tightly scoped, additive change to an already-working product. The research found zero new runtime dependencies are required. The existing stack (Next.js 14, TypeScript, Tailwind CSS, shadcn/ui, Vitest) handles every requirement. The core task is: add a `type: 'mcp' | 'plugin'` discriminant to the `Plugin` type, classify 10-15 existing entries as `type: 'plugin'`, add a tab filter on the `/plugins` page, and extend the optimizer's scoring to be type-scope-aware. All four research files converge on the same dependency graph: types must be correct before DB changes, DB before scoring, scoring before UI.
+Plugin Advisor v1.3 is a data-only milestone: no new npm dependencies, no new UI components, no new API routes. The entire scope is adding 10-15 verified MCP server and Plugin entries to the existing 51-entry database in `lib/plugins.ts` and `lib/i18n/plugins-en.ts`. The product already has a recommendation engine, optimizer, admin panel, and i18n in place. The risk is not architectural — it is data quality. Every prior milestone introduced broken install commands, wrong env var names, or missing English translations that required follow-up correction.
 
-The recommended approach is to treat this as a five-step migration with a strict layering rule: `lib/types.ts` is the single source of truth for the `type` field, and every downstream file derives from it. The most important architectural decision is to add `type: 'mcp'` as a default in `DEFAULT_PLUGIN_FIELDS` rather than making the field optional. This one choice eliminates the highest-severity pitfall (all 42 existing entries silently becoming `undefined` at runtime) at zero migration cost. The scoring engine requires a `typeScope` parameter so MCP-only optimizer submissions do not receive Plugin-type complement suggestions — the two install mechanisms are incompatible and mixing them produces actively misleading output.
+The recommended approach is a strict research-first, verification-gated workflow. Before authoring any entry, fetch and read the official README to extract the verbatim install command, exact env var names, and OAuth vs API key classification. STACK.md identifies a clear Wave A (6 MCP entries: fetch, markitdown, magic-mcp, n8n-mcp, mongodb, time) + Wave B (5 entries: obsidian, shadcn-mcp, redis, claude-mem, superclaude) + Wave C reach (2 Plugin entries: peon-ping, ccpm). FEATURES.md independently surfaces an official Anthropic marketplace track (5 Plugin entries from `anthropics/claude-plugins-official`: feature-dev, pr-review-toolkit, commit-commands, frontend-design, security-guidance) as high-priority P1 additions. These two tracks should be evaluated together to select the final 10-15 entries.
 
-The principal risks are type-system contamination pitfalls, not architectural uncertainty. There is no novel engineering here. Every pattern (discriminated union with default, composable filter state, type-scoped scoring) is standard TypeScript/React. The risk is mechanical mistakes during the type migration, not design decisions. Running `pnpm typecheck` after each step — not just `pnpm dev` — is the single most effective mitigation across all eight pitfalls identified.
-
----
+The critical risks are all data-precision failures, not engineering failures. Wrong install commands destroy user trust immediately. Missing English translations are invisible in development but break the English UI. Plugin-type entries silently default to `type: "mcp"` if `PLUGIN_FIELD_OVERRIDES` is not updated. Deprecated or archived servers added as active mislead users. All 10 identified pitfalls have clear prevention steps that must be applied per-entry during authoring — the mitigation is a per-entry checklist, not a code change.
 
 ## Key Findings
 
 ### Recommended Stack
 
-No new dependencies. This milestone reuses everything already in the bundle. The key technical choices have already been made by the existing codebase — this research confirms they are correct for the extension.
+No stack changes are needed for v1.3. The existing Next.js 14, TypeScript, Tailwind CSS, shadcn/ui, Vitest stack handles all new entries automatically through the three-layer merge pattern in `lib/plugins.ts`. The recommendation engine (`recommend.ts`) and scoring engine (`scoring.ts`) iterate `Object.values(PLUGINS)` dynamically — new entries participate in recommendations, complement suggestions, and replacement scoring without any code changes.
 
-**Core technologies:**
+The only "stack decision" is which entries to add. STACK.md recommends 9 MCP servers (fetch, time, markitdown, magic-mcp, shadcn-mcp, n8n-mcp, mongodb, obsidian, redis) and 5 Plugins (claude-mem, superclaude, peon-ping, ccpm; voicemode deferred due to install friction). FEATURES.md recommends the official Anthropic marketplace track (firebase, gitlab, railway, posthog as MCPs; feature-dev, pr-review-toolkit, commit-commands, frontend-design, security-guidance as Plugins). Both tracks are valid; the final selection should prioritize by evidence strength and coverage gap filled.
 
-- **TypeScript discriminated union (`'mcp' | 'plugin'`):** The right mechanism for a two-value type discriminant. No runtime library needed. Exhaustiveness checking via `never` catches missing branches at compile time.
-- **shadcn/ui `TabsList` + `TabsTrigger`:** Already imported in `OptimizerApp.tsx`. Copy exact same usage pattern into `PluginGrid.tsx` — zero new UI primitives required.
-- **`DEFAULT_PLUGIN_FIELDS` merge pattern (in `lib/plugins.ts`):** The existing seed/override architecture handles the `type` default cleanly. Adding `type: 'mcp'` to `DEFAULT_PLUGIN_FIELDS` propagates to all 42 existing entries without touching any individual entry.
-- **`scorePlugins` ID-based model (in `lib/scoring.ts`):** Already type-agnostic by design. Needs only a `typeScope` parameter addition — no structural rewrite.
+**Core technologies (unchanged):**
+- **Next.js 14 (App Router):** framework — handles all routes and SSR; no changes needed
+- **TypeScript:** language — type system enforces data shape via `PluginSeed` and `Plugin` types
+- **Vitest:** testing — `plugins.test.ts` sanity count and translation coverage assertions must be updated
+- **`lib/plugins.ts`:** data layer — three-layer merge (DEFAULT → OVERRIDES → CORE); sole required file per entry
+- **`lib/i18n/plugins-en.ts`:** English translations — co-required for every new entry; not type-enforced (silent failure)
 
 ### Expected Features
 
-**Must have (table stakes for v1.2):**
-
-- `type: 'mcp' | 'plugin'` field on every `Plugin` entry, with all 42 existing entries correctly defaulted to `'mcp'`
-- 10-15 Plugin-type entries added to `PLUGINS` DB (omc, fireauto, gsd, bkit, agency-agents are the natural first wave — they use `/plugin marketplace add` or `git clone`, not `claude mcp add`)
-- MCP / Plugin / All tab UI on `/plugins` page with independent `activeType` state
-- Category filter and type tab composing correctly (AND logic) with reset on type switch when selected category yields zero results
-- `scorePlugins` extended with `typeScope` parameter so complement and replacement suggestions respect type context
-- Both `claude mcp list` and `claude plugin list` paste formats documented in optimizer UI hints and sample data
+**Must have (table stakes):**
+- Complete, verbatim install command per entry — users copy-paste; wrong command = immediate failure
+- Accurate `verificationStatus` field — `"partial"` until README confirmed, not assumed `"verified"`
+- `requiredSecrets` with exact env var names — missing or wrong name causes silent setup failure
+- English + Korean `desc`/`longDesc` — i18n parity already established at 51 entries; new entries must match
+- Correct `type: "mcp" | "plugin"` assignment — drives tab display, optimizer typeScope, and badge labels
+- `keywords[]` array (10-20 per entry) — powers the recommendation engine; thin arrays = invisible in /advisor
+- `conflicts[]` with valid IDs only — dangling references cause runtime scoring errors
 
 **Should have (differentiators):**
+- `bestFor` / `avoidFor` arrays — opinionated guidance users cannot get from a raw awesome-list
+- `installMode` accuracy distinguishing `safe-copy` vs `external-setup` vs `manual-required`
+- `difficulty` classification surfacing beginner-safe vs advanced entries
+- `maintenanceStatus` warning about stale repos before users invest setup time
+- `officialStatus: "official"` for vendor-maintained servers (Microsoft MarkItDown, MongoDB, Redis, shadcn)
+- Multiple install variants where both remote HTTP and local stdio exist
 
-- Type badge (MCP / Plugin) in `PluginTypeInput` autocomplete dropdown — low effort, visible quality signal
-- Tab state persisted in URL query param (`?type=plugin`) so Plugin tab survives `/plugins/[id]` navigation and is directly linkable
-- Score label updated to reflect submission type ("MCP 점수" / "Plugin 점수" / "MCP + Plugin 점수")
-- Category filter reset when switching type tabs to avoid zero-result confusion
-
-**Defer to v1.x or v2+:**
-
-- Type badge on `SelectedPluginChips` in optimizer — safe to defer, zero functional impact
-- AI combo analysis for Plugin-type entries
-- Persistent saved setups
-- Team-level combo sharing
+**Defer to v1.4+:**
+- `serena` MCP — Python/uvx runtime, high friction, `manual-required`; worth adding but needs careful labeling
+- `voicemode` Plugin — requires FFmpeg + PortAudio system dependencies; only ~900 stars; too much friction
+- `zapier` MCP — enterprise setup, non-trivial Zapier account requirements; medium confidence on usability
+- `redis` / `mongodb` — valuable but niche for the typical non-backend audience per FEATURES.md (STACK.md disagrees — treat as Wave B if targeting DB-tier completeness)
 
 ### Architecture Approach
 
-The architecture is a clean layered extension. `lib/types.ts` sits at the root — all other files derive the `type` field from it. `lib/plugins.ts` applies the default via `DEFAULT_PLUGIN_FIELDS`. `lib/scoring.ts` and `lib/conflicts.ts` are ID-based and require minimal changes (scoring needs `typeScope`; conflicts need none). `PluginGrid.tsx` adds one `useState` for `activeType` and one `TabsList` block. The `/plugins` server page shell remains untouched. The entire change surface is small: 6 files must change meaningfully, 2 need minor touches, 7+ stay completely unchanged.
+The architecture is a three-layer static data merge assembled at module load time. No structural code changes are required for DB expansion. Adding an entry requires: (1) a `CORE_PLUGINS` block in `lib/plugins.ts` (semantic data only), (2) an optional `PLUGIN_FIELD_OVERRIDES` block for non-default operational fields — mandatory when `type: "plugin"` or `installMode` deviates from defaults, and (3) a `pluginDescEn[id]` entry in `lib/i18n/plugins-en.ts`. The test file `lib/__tests__/plugins.test.ts` must also be updated: raise the count floor from 42 to the new target (60+) and add any new Plugin-type IDs to `PLUGIN_TYPE_IDS`.
 
-**Major components and their v1.2 changes:**
-
-1. `lib/types.ts` — ADD `ItemType = 'mcp' | 'plugin'`; ADD required `type: ItemType` field to `Plugin`
-2. `lib/plugins.ts` — ADD `type: 'mcp'` to `DEFAULT_PLUGIN_FIELDS`; ADD 10-15 Plugin entries with `type: 'plugin'`
-3. `lib/scoring.ts` — ADD `typeScope` parameter to `scorePlugins`; filter candidates in `buildComplements` and `buildReplacements`
-4. `components/PluginGrid.tsx` — ADD `activeType` state + `TabsList` row + type predicate in filter chain
-5. `lib/i18n/types.ts` + `ko.ts` + `en.ts` — ADD `pluginsPage.tabAll/tabMcp/tabPlugin` keys (both locales in same commit)
-6. `lib/parse-mcp-list.ts` — VERIFY `isPluginList` branch resolves new Plugin IDs; ADD `ALIAS_MAP` entries only if needed
-
-**Files that do not change:** `lib/conflicts.ts`, `components/OptimizerApp.tsx`, `components/PluginSearch.tsx`, `app/plugins/page.tsx`, `components/ResultsPanel.tsx`, `components/PluginGridCard.tsx`.
+**Major components (all unchanged except as data targets):**
+1. `CORE_PLUGINS` — semantic identity data; `PluginSeed` type enforces exclusion of operational fields here
+2. `PLUGIN_FIELD_OVERRIDES` — operational status (type, verificationStatus, installMode, etc.); `type: "plugin" as const` is mandatory here for all Plugin entries
+3. `PLUGINS` export — merged view consumed by all pages, scoring, and recommendation engines automatically
+4. `lib/i18n/plugins-en.ts` — English overlay; co-required for every entry; no type enforcement (silent failure)
+5. `lib/conflicts.ts` — dual conflict mechanism: `conflicts[]` for /advisor, `CONFLICT_PAIRS` for /optimizer warnings; both must be updated symmetrically when a new entry conflicts with an existing one
 
 ### Critical Pitfalls
 
-1. **`type` made optional instead of required** — All 42 existing entries silently get `undefined` at runtime; MCP tab shows zero entries. Prevention: add `type: 'mcp'` to `DEFAULT_PLUGIN_FIELDS` and make the field required from day one.
+1. **Wrong install command** — Historically the most-broken field across every milestone. Never infer from package name or training data. Fetch the official README verbatim before writing any entry. Check for `--transport http`, `uvx`, or remote HTTP migration signals.
 
-2. **`parseMcpList` pseudo-plugin factory gets a blanket `type: 'mcp'` default across both list branches** — Plugin list tokens are mislabeled as MCPs in type-aware contexts. Prevention: delete the factory; pass real `Plugin[]` filtered by type to the parser call site.
+2. **Wrong `requiredSecrets` env var name** — Off by one character breaks user setup silently. Read the README `Configuration` section for exact var names. OAuth servers get `requiredSecrets: []` — do not guess `<SERVICE>_API_KEY`.
 
-3. **`buildComplements`/`buildReplacements` surface Plugin entries for MCP-only submissions** — Suggestions point at entries requiring incompatible install commands. Prevention: add `typeScope` parameter before any Plugin entries enter `PLUGINS`.
+3. **Plugin-type entry defaults to `type: "mcp"`** — If `PLUGIN_FIELD_OVERRIDES[id]` does not declare `type: "plugin" as const`, the DEFAULT wins silently. TypeScript will not catch this. The entry appears in the wrong tab and breaks optimizer typeScope filtering.
 
-4. **`PluginCategory` union widened with `'mcp'` and `'plugin'` values** — Contaminates `ALL_CATEGORIES` in scoring (10 becomes 12), fires false coverage penalties, requires new i18n `categories` keys. Prevention: add a completely separate `activeType` state to `PluginGrid`; keep `PluginCategory` closed.
+4. **Missing English translation** — `pluginDescEn` is not type-enforced. A missing entry silently falls back to Korean for English-language users. Add `pluginDescEn[id]` in the same commit as the data entry. Extend the test to cover all IDs, not just Plugin-type IDs.
 
-5. **i18n strings added to `ko.ts` but not `en.ts` in the same commit** — `pnpm build` fails in CI while `pnpm dev` appears fine. Prevention: always add both locale values in the same commit as the UI component that consumes them.
+5. **Count mismatch between documentation and code** — v1.2 retrospective explicitly documents this failure. The verifier must count `Object.keys(PLUGINS).length` from source, not from SUMMARY claims. Update `plugins.test.ts` threshold to the new minimum so missing entries fail the test.
 
----
+6. **Deprecated/archived server added as active** — High star count does not mean maintained. Check the GitHub "Archived" banner and README deprecation notice for every new entry before writing any field.
 
 ## Implications for Roadmap
 
-The dependency graph is unambiguous. The build order is not a stylistic choice — TypeScript will produce compile errors at each step if the sequence is violated. Suggested phase structure:
+This milestone maps naturally to a research-gate → batch-authoring → verification structure. The data quality risks identified in PITFALLS.md require per-entry verification before authoring, so inline research during coding is insufficient. The recommended approach batches entries by confidence tier and install pattern similarity.
 
-### Phase 1: Type System Foundation
-**Rationale:** Every downstream change depends on `Plugin.type` being a required, correctly-defaulted field. A mistake here causes cascade failures across all other phases. Must be completed and verified (`pnpm typecheck`, `pnpm test`) before anything else proceeds.
-**Delivers:** `ItemType` type alias; required `type` field on `Plugin`; `DEFAULT_PLUGIN_FIELDS` updated with `type: 'mcp'`; all 42 existing entries correctly typed at runtime; `parseMcpList` pseudo-factory deleted or fixed.
-**Avoids:** Pitfall 1 (optional field with undefined runtime), Pitfall 2 (parser factory mislabeling both list formats).
+### Phase 1: Entry Selection and Verification Research
 
-### Phase 2: Plugin DB Population
-**Rationale:** With the type system in place, Plugin entries can be added safely. TypeScript enforces that every new entry declares `type`. This phase produces the data that drives tab filtering and scoring behavior in later phases.
-**Delivers:** 10-15 Plugin-type entries in `PLUGINS` (omc, fireauto, gsd, bkit, agency-agents plus new entries); classification rule applied consistently (`/plugin` / `git clone` install = `type: 'plugin'`).
-**Uses:** `PLUGIN_FIELD_OVERRIDES` pattern already in `lib/plugins.ts` — no structural change.
-**Avoids:** Starting scoring extension before the data that drives it exists.
+**Rationale:** PITFALLS.md identifies that wrong install commands, wrong env var names, and deprecated server additions all occur when research is skipped during entry authoring. A dedicated verification step per candidate before any code is written is the primary mitigation for 7 of the 10 identified pitfalls. This phase has no code output — it produces a verified candidate list with confirmed install commands, maintenance status, and auth patterns.
 
-### Phase 3: Scoring Extension
-**Rationale:** Scoring must be extended before Plugin entries can produce correct optimizer output. Adding `typeScope` to `scorePlugins` before the UI exposes mixed results prevents the most damaging UX bug (Plugin complements appearing in MCP-only analysis).
-**Delivers:** `typeScope: 'mcp' | 'plugin' | 'both'` parameter on `scorePlugins`; filtered candidate pools in `buildComplements` and `buildReplacements`; dynamic `scorableCategories` computation that excludes Plugin-only categories from MCP-only penalties.
-**Avoids:** Pitfall 3 (Plugin complements for MCP-only input), Pitfall 7 (ALL_CATEGORIES penalty firing for Plugin-only categories on MCP-only submissions).
+**Delivers:** Finalized list of 10-15 entries with: verbatim install commands from official READMEs, confirmed maintenance status (no archived repos), confirmed OAuth vs API key classification, confirmed `requiredSecrets` env var names.
 
-### Phase 4: Tab UI on /plugins
-**Rationale:** Tab UI is purely additive client-side state on top of an already-correct data layer. With Phases 1-2 done, `Object.values(PLUGINS)` already contains the right `type` values for filtering.
-**Delivers:** `activeType` state in `PluginGrid`; `TabsList` row (All / MCP / Plugin); composable filter predicate (AND logic with category); `?type=` URL query param for persistence across `/plugins/[id]` navigation; category filter reset on type switch.
-**Implements:** Composable Filters pattern (Pattern 2) from ARCHITECTURE.md.
-**Avoids:** Pitfall 4 (PluginCategory contamination), Pitfall 5 (tab state lost on navigation).
+**Addresses:** Table-stakes features (install commands, verificationStatus, requiredSecrets)
 
-### Phase 5: Optimizer UI + Parser Verification
-**Rationale:** The optimizer paste UI needs updated hints and sample data to expose the `claude plugin list` format support that the parser already handles. Low risk, high discoverability impact.
-**Delivers:** Updated `pasteLabel` and `pastePlaceholder` i18n keys; `handleSampleData` with `❯ omc@marketplace` style example line; format hint below textarea showing both command formats; verified `ALIAS_MAP` entries for new Plugin IDs.
-**Avoids:** Pitfall 6 (optimizer plugin paste support undiscoverable to Plugin users).
+**Avoids:** Pitfalls 1 (wrong install), 2 (wrong env var), 3 (remote HTTP migration missed), 7 (deprecated server), 8 (OAuth vs API key misclassified)
 
-### Phase 6: i18n Completion + Type Badges
-**Rationale:** i18n keys must accompany their UI consumers, not precede or follow them. This phase closes out all string additions from Phases 4-5 and adds the type badge to `PluginTypeInput`.
-**Delivers:** `pluginsPage.tabAll/tabMcp/tabPlugin` keys in both `ko.ts` and `en.ts`; type badge (MCP / Plugin) in autocomplete dropdown; `pnpm build` passes without i18n type errors.
-**Avoids:** Pitfall 8 (i18n build failure from missing locale keys in one locale).
+**Candidates to evaluate:**
+- Wave A MCP (STACK.md Tier 1 — highest confidence): fetch, time, markitdown, magic-mcp, shadcn-mcp, n8n-mcp
+- Wave B MCP (STACK.md Tier 2): mongodb, obsidian, redis
+- Official Plugin track (FEATURES.md P1): feature-dev, pr-review-toolkit, commit-commands, frontend-design, security-guidance
+- Community Plugin track (STACK.md Tier 1-2): claude-mem, superclaude, peon-ping, ccpm
+- Existing entry update: `linear` → official `mcp.linear.app/mcp` endpoint (flagged in STACK.md)
+
+### Phase 2: MCP Wave A — High-Confidence Official Entries
+
+**Rationale:** Start with the entries that have the highest confidence (official Anthropic/Microsoft/vendor-maintained) and the simplest install patterns (uvx/npx one-liners, no API key required). These are the safest to author and the most valuable to the typical beginner audience.
+
+**Delivers:** 6 new MCP entries in `lib/plugins.ts` + English translations in `lib/i18n/plugins-en.ts`
+
+**Entries:** fetch, time, markitdown, magic-mcp, shadcn-mcp, n8n-mcp
+
+**Uses:** Three-layer merge pattern — CORE_PLUGINS (semantic) + PLUGIN_FIELD_OVERRIDES (operational) + pluginDescEn (English)
+
+**Avoids:** Pitfall 4 (OVERRIDES missing for non-default installMode), Pitfall 5 (English translation missing), Pitfall 9 (ID collision with existing 51 entries)
+
+### Phase 3: MCP Wave B — Database and Knowledge Tier
+
+**Rationale:** DB-category entries (mongodb, redis) and knowledge-category entries (obsidian) require API keys or external prerequisites, making them `intermediate` difficulty. Group together for consistent installMode and requiredSecrets handling patterns.
+
+**Delivers:** 3 new MCP entries completing the DB tier (postgres + neon + supabase + mongodb + redis) and knowledge tier
+
+**Entries:** mongodb, obsidian, redis
+
+**Avoids:** Pitfall 2 (wrong requiredSecrets), Pitfall 8 (OAuth vs API key), Pitfall 7 (archived check for obsidian which is community-maintained)
+
+### Phase 4: Plugin Track — Official Anthropic Marketplace
+
+**Rationale:** Official Anthropic plugins (`anthropics/claude-plugins-official`) have verified `/plugin install` patterns and are the safest Plugin-type entries to add. These fill the `code-quality` (pr-review-toolkit), `workflow` (feature-dev, commit-commands), `ui-ux` (frontend-design), and `security` (security-guidance) gaps identified in FEATURES.md's category distribution analysis.
+
+**Delivers:** 5 new Plugin entries with `type: "plugin" as const` in PLUGIN_FIELD_OVERRIDES
+
+**Entries:** feature-dev, pr-review-toolkit, commit-commands, frontend-design, security-guidance
+
+**Avoids:** Pitfall 4 (Plugin-type defaulting to MCP due to missing OVERRIDES entry), Pitfall 3 (install pattern confusion between `/plugin install` and `claude mcp add`)
+
+**Note:** Update `PLUGIN_TYPE_IDS` in `plugins.test.ts` alongside each Plugin entry addition.
+
+### Phase 5: Community Plugin Track — High-Star Entries
+
+**Rationale:** claude-mem (37.7k stars) and superclaude (21.6k stars) are the highest-impact community Plugins by star count and fill the `memory` and `workflow` categories. peon-ping and ccpm are reach entries if the count target allows. These require more careful `installMode` and `difficulty` handling because install patterns are non-standard.
+
+**Delivers:** 2-4 community Plugin entries; superclaude requires a `pipx` install note (not yet in `/plugin install` system as of v5 BETA)
+
+**Entries:** claude-mem (P1), superclaude (P1), peon-ping (P2), ccpm (P2 if count target allows)
+
+**Avoids:** Pitfall 7 (superclaude v5 migration status must be confirmed before writing install command), Pitfall 3 (non-standard install documentation for superclaude)
+
+### Phase 6: Test Updates, Count Verification, and Final Validation
+
+**Rationale:** PITFALLS.md Pitfall 6 and the "Looks Done But Isn't" checklist both identify test threshold staleness and documentation count mismatch as a recurring failure mode in this codebase. A dedicated final verification phase with source-code counting (not SUMMARY claims) is the required mitigation.
+
+**Delivers:** Updated `plugins.test.ts` count floor (42 → 60+), confirmed `Object.keys(PLUGINS).length` matches target, confirmed all `pluginDescEn` keys present, `pnpm typecheck && pnpm lint && pnpm build && pnpm test` passing
+
+**Avoids:** Pitfall 5 (English translation coverage gap), Pitfall 6 (count mismatch verified from code not docs), Pitfall 10 (dangling conflict ID references)
+
+**Verification checklist (from PITFALLS.md):**
+- `Object.keys(PLUGINS).length` >= 60
+- `Object.keys(pluginDescEn).length` == `Object.keys(PLUGINS).length`
+- All `plugin.conflicts` IDs exist as PLUGINS keys
+- All Plugin-type IDs present in `PLUGIN_TYPE_IDS` test list
+- `pnpm test` passes with updated count threshold
 
 ### Phase Ordering Rationale
 
-- **Types before data before logic before UI** is the order TypeScript itself enforces via compile errors at each step.
-- **Scoring extension before UI exposure** is the product-safety order. Plugin entries in the DB with unscoped scoring produce misleading suggestions; users must never see this state.
-- **Tab UI before optimizer hints** because the `/plugins` page is the primary discovery surface for Plugin-type entries. Users need to see Plugin entries before they consider pasting `claude plugin list` output.
-- **i18n in the same phase as consumers** because string keys added without consuming components are dead code; keys missing from one locale block `pnpm build` in CI.
+- **Verification before authoring** prevents the top historical failure (wrong install commands) from entering the codebase at all rather than being corrected post-commit
+- **Official entries before community entries** because official Anthropic/vendor server READMEs have more reliable install documentation
+- **MCP entries before Plugin entries** because MCP entries have simpler type handling (default `type: "mcp"` requires no OVERRIDES); Plugin entries introduce the additional `PLUGIN_FIELD_OVERRIDES` type override requirement
+- **Dedicated final verification phase** because PITFALLS.md specifically identifies that count verification done within authoring phases leads to trusting documentation over code counting — a recurring codebase failure
 
 ### Research Flags
 
-Phases with well-documented patterns (skip additional research):
-- **Phase 1:** TypeScript discriminated union with defaults — completely standard; zero research needed.
-- **Phase 4:** shadcn/ui Tabs + React `useState` composable filter — already in use in `OptimizerApp.tsx`; copy pattern directly.
-- **Phase 6:** i18n key addition — mechanical; no research needed.
+Phases needing deeper research during planning:
 
-Phases that may need a spot-check during implementation:
-- **Phase 2 (Plugin DB Population):** Classification of borderline entries (`superpowers`, `taskmaster`, `bkit-starter`) requires inspection of their install commands. The rule is clear but the data is not fully enumerated. Budget 30-60 minutes to inspect each candidate entry's `install` field.
-- **Phase 3 (Scoring Extension):** The dynamic `scorableCategories` computation is new logic with no existing test coverage. Needs a regression test asserting that MCP-only user score is unchanged after Plugin entries are added to the DB.
-- **Phase 5 (Parser Verification):** `resolvePluginId` behavior for new Plugin IDs depends on their actual registered names in the CLI. `ALIAS_MAP` additions are data-driven and can only be determined by testing against real `claude plugin list` output.
+- **Phase 1 (Candidate Selection):** STACK.md and FEATURES.md partially overlap but with different priority rankings. STACK.md uses GitHub star counts; FEATURES.md uses coverage-gap analysis. The roadmapper must decide the final 10-15 entry list. Also confirm superclaude v5 `/plugin install` migration status before Phase 5 planning.
+- **Phase 5 (Community Plugins):** superclaude v5 migration is in BETA as of March 2026 — verify whether `/plugin install superclaude` works or if `pipx` is still required. peon-ping has Windows/WSL-only support via curl; document clearly for the Korean-primary audience.
 
----
+Phases with standard, well-documented patterns (research-phase not needed):
+
+- **Phase 2 (Wave A MCP):** All entries are official Anthropic/Microsoft/vendor servers with clear READMEs and npx/uvx one-liner install patterns
+- **Phase 4 (Official Anthropic Plugins):** All entries from `anthropics/claude-plugins-official` with verified `/plugin install` pattern
+- **Phase 6 (Verification):** Build order and test commands are fully defined in ARCHITECTURE.md with no ambiguity
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | All findings from direct codebase inspection. Zero external dependencies. No version uncertainty. |
-| Features | MEDIUM-HIGH | P1 features are well-defined. P2 features validated against analogous tools. Novel UX (Plugin-type scoring scope) has no direct precedent — the rule is sound but score label copy and category-reset behavior need UX validation during implementation. |
-| Architecture | HIGH | All integration surfaces read from source. Component boundaries and data flow are unambiguous. Build order is enforced by TypeScript's own compile-time errors. |
-| Pitfalls | HIGH | All 8 pitfalls derived from direct source inspection of the specific code constructs being touched. No inference from general patterns. |
+| Stack | HIGH | Data-only milestone; no new dependencies; entry candidates verified from official GitHub repos with star counts confirmed |
+| Features | HIGH | Architecture verified from direct source inspection; feature requirements derived from existing codebase structure and prior milestone retrospectives |
+| Architecture | HIGH | All integration surfaces read directly from source code; merge pattern, type constraints, and test assertions confirmed from actual file contents |
+| Pitfalls | HIGH | All 10 pitfalls derived from direct codebase inspection + multi-milestone retrospective (v1.0, v1.1, v1.2 lessons documented in RETROSPECTIVE.md) |
 
 **Overall confidence:** HIGH
 
 ### Gaps to Address
 
-- **Plugin entry classification for borderline entries:** `superpowers`, `taskmaster`, `bkit-starter` install mechanism needs inspection to assign `type`. Resolve during Phase 2 by reading each entry's `install` field in `lib/plugins.ts`.
-- **`resolvePluginId` behavior for new Plugin IDs:** Unknown until tested against real `claude plugin list` output. Plan `ALIAS_MAP` additions as a corrective pass in Phase 5, not upfront guesswork.
-- **Score label copy for mixed-type submissions:** "MCP + Plugin 점수" display string is not researched. Decide during Phase 3 implementation with a working prototype visible.
-- **Category filter reset UX on type tab switch:** PITFALLS.md recommends resetting `activeCategory` to `'all'` when `activeType` changes. An alternative (preserve category, show zero-result empty state) may feel less disruptive. Decide during Phase 4 with a working prototype.
+- **STACK.md vs FEATURES.md entry track conflict:** STACK.md focuses on GitHub-star-ranked community entries (claude-mem, superclaude, n8n-mcp, magic-mcp). FEATURES.md focuses on official Anthropic marketplace plugins (feature-dev, pr-review-toolkit, commit-commands). Both tracks have merit. Recommendation: take STACK.md Wave A (6 MCP) as fixed baseline, then select 4-9 more from FEATURES.md P1 Plugins and STACK.md Wave B to reach the 60-65 target.
 
----
+- **redis and mongodb priority disagreement:** STACK.md rates mongodb (Wave A) and redis (Wave B) as must-adds for DB tier completeness. FEATURES.md rates them as P3 — niche for the typical audience. Resolve by confirming target audience composition. If primarily developers with DB backends, include; if primarily solo devs and beginners, defer.
+
+- **SuperClaude install method uncertainty:** v5 plugin system migration is in BETA as of March 2026. The classic `pipx install superclaude && superclaude install` pattern works but is not `/plugin install`. If v5 ships before this milestone executes, update to the new pattern. If not, document `pipx` install clearly and set `difficulty: "intermediate"` with a note in `longDesc`.
+
+- **linear entry update is not a new entry:** The existing `linear` entry points to a deprecated SSE endpoint. This fix must be included in the milestone to avoid shipping a broken install command, but it is an update to an existing entry — not counted toward the 10-15 new entry target.
 
 ## Sources
 
 ### Primary (HIGH confidence)
 
-- Direct codebase inspection — `lib/types.ts`, `lib/plugins.ts`, `lib/scoring.ts`, `lib/conflicts.ts`, `lib/parse-mcp-list.ts`, `components/PluginGrid.tsx`, `components/OptimizerApp.tsx`, `components/PluginTypeInput.tsx`, `lib/i18n/types.ts`, `lib/i18n/ko.ts` — all architecture and pitfall findings
-- `.planning/PROJECT.md` — v1.2 milestone scope, explicit out-of-scope decisions, key decisions log
+- Direct source inspection: `lib/plugins.ts` (1,637 lines, 51 entries, all three data structures)
+- Direct source inspection: `lib/types.ts` (Plugin type, PluginCategory union — 10 members, ItemType)
+- Direct source inspection: `lib/scoring.ts`, `lib/conflicts.ts`, `lib/i18n/plugins-en.ts`, `lib/__tests__/plugins.test.ts`
+- Project retrospective: `.planning/RETROSPECTIVE.md` — v1.0, v1.1, v1.2 lessons (install error rate, env var precision, SUMMARY count mismatch)
+- `github.com/thedotmack/claude-mem` — 37.7k stars verified (March 2026)
+- `github.com/SuperClaude-Org/SuperClaude_Framework` — 21.6k stars verified
+- `github.com/czlonkowski/n8n-mcp` — 15.4k stars verified
+- `github.com/21st-dev/magic-mcp` — 4.5k stars verified
+- `github.com/mongodb-js/mongodb-mcp-server` — official MongoDB org
+- `github.com/redis/mcp-redis` — official Redis org (~454 stars)
+- `microsoft/markitdown` packages/markitdown-mcp — 90.9k parent repo stars
+- `modelcontextprotocol/servers` (fetch, time) — official Anthropic reference implementations
+- `ui.shadcn.com/docs/mcp` — official shadcn/ui MCP docs
+- `anthropics/claude-plugins-official` — official plugin marketplace, 83 entries
 
 ### Secondary (MEDIUM confidence)
 
-- Claude Code MCP official docs — `claude mcp list` and `claude plugin list` output format confirmation
-- `claude-code-plugin-analyzer` (GitHub community tool) — scoring methodology reference used to validate rule-based scoring approach
-- Claude Code MCP Server Selector TUI (GitHub) — context-window optimization UX patterns
-- Autocomplete UX patterns (smart-interface-design-patterns.com) — input design reference
-
-### Tertiary (LOW confidence)
-
-- WordPress plugin conflict diagnosis patterns — analogous domain; used to validate conflict detection UX table stakes assumptions only
+- `awesomeclaude.ai/top-mcp-servers` — star ranking data
+- `github.com/hesreallyhim/awesome-claude-code` — Claude Code plugin ecosystem survey
+- `github.com/PeonPing/peon-ping` — ~4k stars, ~100k users claimed
+- `github.com/automazeio/ccpm` — 6k stars, manual symlink install
+- WebSearch: fastmcp.me, mcpmarket.com, composio.dev — supplementary discovery
 
 ---
-
 *Research completed: 2026-03-18*
 *Ready for roadmap: yes*

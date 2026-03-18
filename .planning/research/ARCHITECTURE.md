@@ -1,8 +1,8 @@
 # Architecture Research
 
-**Domain:** MCP + Plugin type system integration into existing Plugin Advisor
+**Domain:** Static DB extension — adding 10-15 new MCP/Plugin entries to existing 51-entry DB
 **Researched:** 2026-03-18
-**Confidence:** HIGH — based on direct source reading of all integration surfaces
+**Confidence:** HIGH — all findings from direct source inspection of every integration surface
 
 ---
 
@@ -12,51 +12,69 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                        Pages (Next.js App Router)                    │
-│  ┌──────────────┐  ┌────────────────────┐  ┌──────────────────────┐ │
-│  │  /plugins    │  │  /optimizer        │  │  /advisor            │ │
-│  │  (Server SC) │  │  (Client SC)       │  │  (Client SC)         │ │
-│  └──────┬───────┘  └─────────┬──────────┘  └──────────────────────┘ │
-│         │                    │                                        │
-├─────────┴────────────────────┴────────────────────────────────────---┤
-│                     UI Components (Client)                            │
-│  ┌─────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────┐  │
-│  │ PluginGrid  │  │ OptimizerApp │  │PluginTypeIn- │  │ResultsP- │  │
-│  │ +typeFilter │  │ (no change)  │  │put +typeBadge│  │anel (no  │  │
-│  │ tab NEW     │  │              │  │ MINOR        │  │ change)  │  │
-│  └─────────────┘  └──────────────┘  └──────────────┘  └──────────┘  │
+│                         DATA LAYER (lib/)                           │
+├───────────────────────────────────────────────────────────────────--┤
+│  plugins.ts                                                         │
+│  ┌──────────────────────┐   ┌──────────────────────┐               │
+│  │ CORE_PLUGINS         │   │ PLUGIN_FIELD_OVERRIDES│               │
+│  │ Record<id,PluginSeed>│   │ Partial<Record<id,    │               │
+│  │                      │   │  Partial<Operational>>>│              │
+│  │ Semantic data:       │   │                       │               │
+│  │  id, name, tag,      │   │ Operational data:     │               │
+│  │  color, category,    │   │  verificationStatus,  │               │
+│  │  desc, longDesc,     │   │  difficulty, type,    │               │
+│  │  url, githubRepo,    │   │  installMode,         │               │
+│  │  install[], features,│   │  requiredSecrets,     │               │
+│  │  conflicts[],        │   │  bestFor, avoidFor    │               │
+│  │  keywords[]          │   │                       │               │
+│  └──────────┬───────────┘   └──────────┬────────────┘               │
+│             │                          │                            │
+│             │   DEFAULT_PLUGIN_FIELDS  │                            │
+│             │   (type:"mcp", partial,  │                            │
+│             │    safe-copy, …)         │                            │
+│             │         │                │                            │
+│             ▼         ▼                ▼                            │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │  PLUGINS export = Object.fromEntries(                        │   │
+│  │    { ...DEFAULT_PLUGIN_FIELDS,                               │   │
+│  │      ...PLUGIN_FIELD_OVERRIDES[id],                          │   │
+│  │      ...CORE_PLUGINS[id] }   ← CORE wins on field conflict   │   │
+│  │  )  as Record<string, Plugin>                                │   │
+│  └─────────────────────────────┬────────────────────────────────┘   │
+│                                │  single source of truth            │
+├────────────────────────────────┼────────────────────────────────────┤
+│  conflicts.ts                  │  i18n/plugins-en.ts                │
+│  CONFLICT_PAIRS[]              │  pluginDescEn: Record<id,          │
+│  REDUNDANCY_GROUPS[]           │    {desc, longDesc}>               │
+│  getConflicts(ids)             │                                    │
+│  getRedundancies(ids)          │  (Korean stays in plugins.ts;      │
+│                                │   English overlay per-id)          │
+├────────────────────────────────┴────────────────────────────────────┤
+│                       LOGIC LAYER (lib/)                            │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐              │
+│  │ scoring.ts   │  │ recommend.ts │  │ presets.ts   │              │
+│  │ scorePlugins │  │ keyword match│  │ PRESET_PACKS │              │
+│  │ buildComple- │  │ + AI mode    │  │              │              │
+│  │ ments/Replac │  └──────────────┘  └──────────────┘              │
+│  └──────────────┘                                                   │
 ├─────────────────────────────────────────────────────────────────────┤
-│                         lib/ (Pure Logic)                             │
-│  ┌───────────┐  ┌────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │ types.ts  │  │ plugins.ts │  │  scoring.ts  │  │ conflicts.ts │  │
-│  │ +ItemType │  │ +type field│  │  NO CHANGE   │  │  NO CHANGE   │  │
-│  │ +type on  │  │ +10-15 new │  │  (ID-based)  │  │  (ID-based)  │  │
-│  │  Plugin   │  │  entries   │  │              │  │              │  │
-│  └───────────┘  └────────────┘  └──────────────┘  └──────────────┘  │
-│  ┌──────────────────────┐  ┌──────────────────────────────────────┐  │
-│  │ parse-mcp-list.ts    │  │ i18n/ (types.ts + ko.ts + en.ts)     │  │
-│  │ VERIFY existing      │  │ ADD: pluginsPage tab keys            │  │
-│  │ plugin list branch   │  │ ADD: type label keys                 │  │
-│  └──────────────────────┘  └──────────────────────────────────────┘  │
+│                   UI LAYER (app/ + components/)                     │
+│  /advisor   /optimizer   /plugins   /plugins/[id]   /guides         │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Component Responsibilities
 
-| Component | Responsibility | Change in v1.2 |
+| Component | Responsibility | Key Constraint |
 |-----------|----------------|----------------|
-| `lib/types.ts` | All shared TypeScript types | ADD `ItemType = 'mcp' \| 'plugin'`; ADD `type: ItemType` field to `Plugin` |
-| `lib/plugins.ts` | Static DB: `PLUGINS` record + `DEFAULT_PLUGIN_FIELDS` + `PLUGIN_FIELD_OVERRIDES` | ADD `type` to `DEFAULT_PLUGIN_FIELDS` (default `'mcp'`); ADD 10-15 new Plugin entries with `type: 'plugin'` |
-| `lib/scoring.ts` | `scorePlugins(ids)` — deduction model, coverage, complements, replacements | NO CHANGE — operates on IDs only; type-agnostic by design |
-| `lib/conflicts.ts` | `getConflicts()`, `getRedundancies()` — hardcoded ID pairs | NO CHANGE — ID-based; works for both types |
-| `lib/parse-mcp-list.ts` | `parseMcpList()`, `filterPlugins()`, `resolvePluginId()` | VERIFY existing `isPluginList` branch handles new Plugin IDs; ADD to `ALIAS_MAP` only if needed |
-| `components/PluginGrid.tsx` | Filterable grid of all plugins — category + search | ADD `typeFilter` state + tab pill row + filter predicate |
-| `components/PluginSearch.tsx` | Search input + category filter pills | NO CHANGE — category filter remains; type tab lives in PluginGrid |
-| `components/PluginTypeInput.tsx` | Autocomplete for optimizer manual input | MINOR: add type badge in dropdown items |
-| `components/OptimizerApp.tsx` | Orchestrates optimizer input + analysis | NO CHANGE — already consumes unified `PLUGINS` + `parseMcpList` |
-| `app/plugins/page.tsx` | Server component shell for /plugins | NO CHANGE — PluginGrid owns its own tab state |
-| `lib/i18n/types.ts` | Translation shape contract | ADD keys: `pluginsPage.tabAll`, `tabMcp`, `tabPlugin` |
-| `lib/i18n/ko.ts` + `en.ts` | Translation values | ADD values for new keys |
+| `CORE_PLUGINS` | Semantic data: id, name, tag, color, category, desc, longDesc, url, githubRepo, install[], features[], conflicts[], keywords[] | `PluginSeed` type — operational fields (`type`, `verificationStatus`, etc.) are excluded by `Omit` |
+| `PLUGIN_FIELD_OVERRIDES` | Operational overrides applied per id: verificationStatus, difficulty, installMode, requiredSecrets, bestFor, avoidFor, **type** | Sparse — only entries that deviate from `DEFAULT_PLUGIN_FIELDS`; `type:"plugin"` entries must appear here |
+| `DEFAULT_PLUGIN_FIELDS` | Fallback for all operational fields including `type:"mcp"` | Applied first in merge order; provides `type:"mcp"` for every entry unless overridden |
+| `PLUGINS` export | Merged view assembled at module load; single consumer interface | Merge order: DEFAULT → OVERRIDES → CORE (CORE wins on field collision) |
+| `conflicts.ts` | Explicit conflict pairs and redundancy groups for /optimizer warning UI | Maintained separately from per-plugin `conflicts[]` array; both mechanisms coexist |
+| `i18n/plugins-en.ts` | English `desc` and `longDesc` per plugin id | Only `desc` + `longDesc`; name/tag/keywords/install are language-neutral |
+| `scoring.ts` | `scorePlugins()`: computes score, complements, replacements, coverage | Reads only `PLUGINS` + `getConflicts()` + `getRedundancies()`; no structural coupling to DB size |
+| `lib/__tests__/plugins.test.ts` | Type distribution assertions, translation coverage, minimum count floor | Hard-codes `PLUGIN_TYPE_IDS` list (9 items) and minimum entry count (42) — both become stale after new entries |
 
 ---
 
@@ -64,272 +82,291 @@
 
 ```
 lib/
-├── types.ts              # MODIFY: add ItemType + type field on Plugin
-├── plugins.ts            # MODIFY: add type to DEFAULT_PLUGIN_FIELDS + new Plugin entries
-├── scoring.ts            # NO CHANGE
-├── conflicts.ts          # NO CHANGE
-├── parse-mcp-list.ts     # VERIFY + minor ALIAS_MAP additions if needed
-└── i18n/
-    ├── types.ts          # MODIFY: add pluginsPage tab keys
-    ├── ko.ts             # MODIFY: add Korean values
-    └── en.ts             # MODIFY: add English values
-
-components/
-├── PluginGrid.tsx        # MODIFY: add typeFilter state + tab pills + filter
-├── PluginSearch.tsx      # NO CHANGE
-├── PluginTypeInput.tsx   # MINOR MODIFY: type badge in autocomplete dropdown
-├── OptimizerApp.tsx      # NO CHANGE
-├── SelectedPluginChips.tsx  # OPTIONAL: type badge on chip (safe to defer)
-└── ResultsPanel.tsx      # NO CHANGE
-
-app/plugins/page.tsx      # NO CHANGE
+├── plugins.ts              # MODIFIED — CORE_PLUGINS blocks + PLUGIN_FIELD_OVERRIDES blocks
+├── conflicts.ts            # CONDITIONALLY MODIFIED — new CONFLICT_PAIRS / REDUNDANCY_GROUPS
+├── i18n/
+│   └── plugins-en.ts       # MODIFIED — pluginDescEn entry for every new id
+├── types.ts                # CONDITIONALLY MODIFIED — PluginCategory union if new category needed
+├── scoring.ts              # UNCHANGED — data-driven, no structural changes
+├── recommend.ts            # UNCHANGED — keyword matching iterates PLUGINS automatically
+└── __tests__/
+    └── plugins.test.ts     # MODIFIED — PLUGIN_TYPE_IDS list + count floor
 ```
 
 ### Structure Rationale
 
-- **`lib/types.ts` is the single source of truth for the `type` field.** Every downstream file (`plugins.ts`, `PluginGrid`, `PluginTypeInput`) derives from it.
-- **`lib/plugins.ts` default is `'mcp'`.** All 42 existing entries represent MCP servers. A default in `DEFAULT_PLUGIN_FIELDS` means zero line-by-line edits to existing entries.
-- **`app/plugins/page.tsx` stays a thin server shell.** Tab state is ephemeral client UI — it belongs in `PluginGrid`, same as the existing `category` and `search` state.
-- **`scoring.ts` and `conflicts.ts` unchanged.** The deduction model is category-coverage-based, not type-based. This boundary is correct and should not be crossed.
+- **`plugins.ts` is the only always-required file for DB entries.** The three-layer merge means adding an entry requires one `CORE_PLUGINS` block and optionally one `PLUGIN_FIELD_OVERRIDES` block. No logic files need editing for new data alone.
+- **`plugins-en.ts` is co-required for every entry.** The UI falls back silently to Korean if an id is missing from `pluginDescEn` — no error is thrown. Missing translations are invisible in development and only surface for English-language users.
+- **`conflicts.ts` is conditionally required.** Needed only when a new entry conflicts with an existing entry. Not all new entries will have conflicts.
+- **`types.ts` requires review.** The `PluginCategory` union has exactly 10 members. If any new entry uses a category string not in the union, TypeScript will reject the CORE_PLUGINS entry at compile time.
+- **`plugins.test.ts` requires targeted updates.** The test file hard-codes both `PLUGIN_TYPE_IDS` (9 ids) and a minimum count floor (42). After adding new Plugin-type entries and raising the total, both become incorrect and will cause test failures.
 
 ---
 
 ## Architectural Patterns
 
-### Pattern 1: Additive Field with Default — Zero Breaking Change
+### Pattern 1: Three-Layer Merge for Plugin Records
 
-**What:** Add `type: ItemType` as a required field to `Plugin`. Set `type: 'mcp'` in `DEFAULT_PLUGIN_FIELDS`. All 42 existing entries receive the default without touching any individual entry. New Plugin entries explicitly declare `type: 'plugin'`.
+**What:** Each `Plugin` record is assembled at module load from three sources in fixed priority order: `DEFAULT_PLUGIN_FIELDS` (lowest) → `PLUGIN_FIELD_OVERRIDES[id]` (middle) → `CORE_PLUGINS[id]` (highest, wins on field collision).
 
-**When to use:** Extending a record type where all existing records share the same new value.
+**When to use:** Always. This is the established pattern for all 51 existing entries without exception.
 
-**Trade-offs:** Required field ensures new entries cannot be added without declaring type (TypeScript enforcement). Default means zero migration cost for existing data. The `PluginSeed` / `PluginOperationalFields` split in `plugins.ts` means `type` should be added to `PluginOperationalFields` so it participates in the override/default system.
+**Trade-offs:** Clean separation between semantic identity (CORE) and operational status (OVERRIDES). A reader must check both objects to understand the full record. For new entries, the split is mechanical — put display/behavioral data in CORE, put verification/difficulty/type in OVERRIDES.
 
-**Example:**
+**Adding a new MCP entry:**
 ```typescript
-// lib/types.ts
-export type ItemType = 'mcp' | 'plugin';
+// In CORE_PLUGINS — semantic data only, no operational fields:
+"new-mcp": {
+  id: "new-mcp",
+  name: "New MCP",
+  tag: "NMCP",
+  color: "#HEXVAL",
+  category: "integration",       // must be an existing PluginCategory value
+  githubRepo: "owner/repo",
+  desc: "한국어 설명.",
+  longDesc: "상세 한국어 설명.",
+  url: "https://github.com/owner/repo",
+  install: ["claude mcp add new-mcp -- npx -y new-mcp-package"],
+  features: ["feature 1", "feature 2"],
+  conflicts: [],                 // ids of conflicting plugins (string[])
+  keywords: ["keyword1", "keyword2"],
+},
 
-export type Plugin = {
-  // ... all existing fields unchanged ...
-  type: ItemType;   // ADD — required
-};
+// In PLUGIN_FIELD_OVERRIDES — only fields deviating from defaults:
+"new-mcp": {
+  verificationStatus: "verified",
+  difficulty: "beginner",
+  installMode: "external-setup",
+  requiredSecrets: ["NEW_MCP_API_KEY"],
+  bestFor: ["use case A"],
+  avoidFor: ["anti use case"],
+  // type:"mcp" is the DEFAULT — omit entirely for MCP entries
+},
 
-// lib/plugins.ts — add to PluginOperationalFields and DEFAULT_PLUGIN_FIELDS
-const DEFAULT_PLUGIN_FIELDS: PluginOperationalFields = {
-  // ... all existing defaults unchanged ...
-  type: 'mcp',   // ADD — all existing entries inherit this
-};
+// In pluginDescEn (plugins-en.ts) — English overlay:
+"new-mcp": {
+  desc: "English description.",
+  longDesc: "English long description.",
+},
 ```
 
-### Pattern 2: Composable Filters in PluginGrid
-
-**What:** Add a `typeFilter` state (`'all' | 'mcp' | 'plugin'`) to `PluginGrid.tsx` alongside the existing `category` and `search` state. All three filters compose with AND logic in the single `filtered` array. No new sub-component needed — a tab pill row sits above the existing `PluginSearch`.
-
-**When to use:** When filter dimensions are independent (type does not affect category; category does not affect type).
-
-**Trade-offs:** All filter state in one component. Simple. Passing `typeFilter` to `PluginSearch` is an option but adds prop complexity for no gain — PluginGrid already owns `category` state directly.
-
-**Example:**
+**Adding a new Plugin-type entry:**
 ```typescript
-// components/PluginGrid.tsx
-const [typeFilter, setTypeFilter] = useState<ItemType | 'all'>('all');
+// CORE_PLUGINS block is identical in structure to MCP entries.
+// The only difference is PLUGIN_FIELD_OVERRIDES must declare type:
+"new-plugin": {
+  // ... same CORE_PLUGINS structure as MCP ...
+},
 
-const filtered = allPlugins.filter((p) => {
-  if (typeFilter !== 'all' && p.type !== typeFilter) return false;
-  if (category !== 'all' && p.category !== category) return false;
-  if (!search.trim()) return true;
-  const q = search.toLowerCase();
-  return (
-    p.name.toLowerCase().includes(q) ||
-    p.desc.toLowerCase().includes(q) ||
-    p.keywords.some((kw) => kw.toLowerCase().includes(q))
-  );
-});
+// In PLUGIN_FIELD_OVERRIDES — type override is the only mandatory addition:
+"new-plugin": {
+  verificationStatus: "verified",
+  type: "plugin" as const,   // required — overrides DEFAULT "mcp"
+},
 ```
 
-### Pattern 3: Unified Scoring — Type-Agnostic ID Model
+### Pattern 2: Conflicts — Dual Mechanism
 
-**What:** `scorePlugins(ids: string[])` operates on IDs only. MCP and Plugin entries coexist in the same `PLUGINS` record under unique IDs. The scoring engine, conflict detection, and redundancy detection work correctly for mixed combos without any changes.
+**What:** Conflict data lives in two places simultaneously, serving different surfaces.
 
-**When to use:** When the existing abstraction is already correct — do not add type-branching inside scoring functions.
+1. `CORE_PLUGINS[id].conflicts: string[]` — per-entry list consumed by `recommend.ts` to exclude conflicting plugins from /advisor recommendations.
+2. `CONFLICT_PAIRS` in `conflicts.ts` — explicit pairs with Korean warning messages consumed by `scoring.ts`/`getConflicts()` for the /optimizer warning UI.
 
-**Trade-offs:** Zero migration cost. `buildCoverage` counts `category` coverage regardless of item type — intentionally correct (a Plugin covering `workflow` is valid coverage). `buildComplements` will now naturally suggest Plugin-type entries when a category is uncovered, which is the desired behavior. `buildReplacements` is also type-agnostic, which is correct.
+**When to use:** Any new entry that conflicts with an existing entry must update both mechanisms. If a new entry conflicts with `playwright`, add `"playwright"` to the new entry's `conflicts[]` array AND add a `ConflictPair` entry in `conflicts.ts`. Also update the existing `playwright` entry's `conflicts[]` array to maintain symmetry.
 
-**No code change required in `scoring.ts` or `conflicts.ts`.**
+**Synchronization rule:** `conflicts[]` arrays must be symmetric (if A lists B, B must list A). The `CONFLICT_PAIRS` mechanism is already symmetric by definition (it checks both directions).
+
+### Pattern 3: Category-Driven Complement Scoring
+
+**What:** `buildComplements()` in `scoring.ts` scans `Object.values(PLUGINS)` for the best-ranked uninstalled plugin per uncovered category. Ranking uses `rankForComplement()`: verified +4, partial +1, unverified -4; beginner +3, advanced -2; stale -3.
+
+**Implication for new entries:** New entries with `verificationStatus: "verified"` and `difficulty: "beginner"` will rank highest as complement suggestions. If a category currently has zero verified entries, adding the first verified one will immediately surface it as the top complement for all optimizer users missing that category. This is the intended behavior — high-quality new entries should be discoverable through the optimizer.
+
+**No code change required in `scoring.ts`.** The function scans `PLUGINS` dynamically and automatically includes any new entries after the module loads.
 
 ---
 
 ## Data Flow
 
-### /plugins Page — Type Tab Filter Flow
+### New Entry — Integration Path
 
 ```
-User clicks "Plugin" tab in PluginGrid
+Developer adds entry to CORE_PLUGINS (plugins.ts)
     ↓
-setTypeFilter('plugin')
+Optionally adds override to PLUGIN_FIELD_OVERRIDES
+    (required if: type="plugin" OR non-default operational fields)
     ↓
-filtered = allPlugins.filter(p =>
-  p.type === 'plugin'          // typeFilter predicate
-  && categoryMatch             // existing predicate
-  && searchMatch               // existing predicate
-)
+Adds translation to pluginDescEn (plugins-en.ts)
     ↓
-PluginGridCard renders filtered results (no change to card itself)
+PLUGINS export automatically includes new entry via Object.fromEntries merge
+    ↓
+    ├── /plugins page: entry appears in MCP or Plugin tab (by type)
+    ├── /plugins/[id]: detail page renders from PLUGINS[id]
+    ├── /optimizer autocomplete: entry searchable by name/id
+    ├── scoring.ts buildComplements: entry eligible as complement suggestion
+    ├── scoring.ts buildReplacements: entry eligible as verified alternative
+    └── recommend.ts: entry keywords match against user project text
 ```
 
-### /optimizer — Mixed MCP + Plugin Combo Flow
+### Type Assignment Flow
 
 ```
-User pastes `claude mcp list` OR `claude plugin list` output
+DEFAULT_PLUGIN_FIELDS  →  type: "mcp"  (base for ALL entries)
     ↓
-parseMcpList(raw, Object.keys(PLUGINS))
-    matched:   ['context7', 'omc', 'fireauto']   ← MCP and Plugin IDs mixed
-    unmatched: ['some-unknown-server']
+PLUGIN_FIELD_OVERRIDES[id].type = "plugin"  (overrides for 9 current Plugin entries)
     ↓
-OptimizerApp: setSelectedPlugins(matched.map(id => PLUGINS[id]))
+PLUGINS[id].type  =  "mcp" | "plugin"
     ↓
-User clicks "분석"
-    ↓
-scorePlugins(selectedIds)
-    getConflicts(ids)           ID-based, type-agnostic, no change
-    getRedundancies(ids)        ID-based, type-agnostic, no change
-    buildCoverage(ids)          category-based, type-agnostic, no change
-    buildComplements(...)       recommends best-ranked per uncovered category
-                                now includes Plugin-type candidates automatically
-    buildReplacements(...)      verificationStatus/maintenanceStatus based, no change
-    ↓
-ResultsPanel renders ScoringResult — no change
+    ├── /plugins tabs:          MCP tab vs Plugin tab filter
+    ├── /optimizer typeScope:   filters complement/replacement suggestions
+    └── Autocomplete badge:     "MCP" or "Plugin" label display
 ```
 
-### New Plugin Entry Registration Flow
+### Scoring Engine — No Structural Changes Required
 
-```
-New Plugin entry added to lib/plugins.ts:
-  { id: 'fireauto', type: 'plugin', category: 'workflow', ... }
-    ↓
-Automatically available across entire system:
-  Object.values(PLUGINS)  →  PluginGrid catalog + typeFilter
-  Object.keys(PLUGINS)    →  parseMcpList candidate resolution
-  PLUGINS[id]             →  scorePlugins lookups, conflict checks
-  filterPlugins()         →  PluginTypeInput autocomplete
-  resolvePluginId()       →  paste input matching
-```
+`scorePlugins()` is fully data-driven against the `PLUGINS` record:
+
+- `buildCoverage()` iterates `ids` and looks up `PLUGINS[id].category` — works for any new id
+- `buildComplements()` scans `Object.values(PLUGINS)` for candidates — automatically includes new entries
+- `buildReplacements()` scans `Object.values(PLUGINS)` for alternatives — automatically includes new entries
+- `getConflicts()` checks `CONFLICT_PAIRS` — only needs update if new entry has explicit conflicts
+
+Adding 10-15 entries changes the candidate pool size for complement/replacement selection but requires zero code changes in `scoring.ts`.
 
 ---
 
 ## Integration Points — New vs Modified Files
 
-### Files That Must Change
+### Files That Must Change (every new entry)
 
-| File | Change Type | What Changes |
-|------|-------------|--------------|
-| `lib/types.ts` | ADD | `ItemType` type alias; `type: ItemType` field on `Plugin` |
-| `lib/plugins.ts` | ADD | `type` in `PluginOperationalFields` pick list; `type: 'mcp'` in `DEFAULT_PLUGIN_FIELDS`; 10-15 new Plugin entries with `type: 'plugin'` |
-| `lib/i18n/types.ts` | ADD keys | `pluginsPage.tabAll`, `pluginsPage.tabMcp`, `pluginsPage.tabPlugin` |
-| `lib/i18n/ko.ts` | ADD values | Korean text for new tab keys |
-| `lib/i18n/en.ts` | ADD values | English text for new tab keys |
-| `components/PluginGrid.tsx` | MODIFY | `typeFilter` state; tab pill row UI; filter predicate extension |
+| Step | File | Change Required |
+|------|------|-----------------|
+| 1 | `lib/plugins.ts` | Add block to `CORE_PLUGINS`; add block to `PLUGIN_FIELD_OVERRIDES` if operational fields deviate from defaults |
+| 2 | `lib/i18n/plugins-en.ts` | Add `pluginDescEn[id]` with English `desc` and `longDesc` |
+| 3 | `lib/__tests__/plugins.test.ts` | Update `PLUGIN_TYPE_IDS` for any new Plugin-type entries; raise the minimum count floor from 42 |
 
-### Files With Minor Touches
+### Files That Change Conditionally
 
-| File | Change Type | What Changes |
-|------|-------------|--------------|
-| `lib/parse-mcp-list.ts` | VERIFY only | `isPluginList` branch already handles `❯ name@source` format. Confirm new Plugin IDs resolve correctly. Add entries to `ALIAS_MAP` only if normalization fails for specific names. No logic rewrite. |
-| `components/PluginTypeInput.tsx` | MINOR MODIFY | Add type badge (`MCP` / `Plugin`) next to plugin name in dropdown items |
-| `components/SelectedPluginChips.tsx` | OPTIONAL | Type badge on chip in optimizer. Safe to defer to a later task. |
+| File | Condition | Change |
+|------|-----------|--------|
+| `lib/types.ts` | New entry uses a `category` value not in the existing 10-member `PluginCategory` union | Add the new literal to the union |
+| `lib/conflicts.ts` | New entry conflicts with an existing entry | Add `ConflictPair` entry; optionally add `RedundancyGroup` if the new entry is functionally redundant with existing entries |
+| `CORE_PLUGINS[existing_id].conflicts[]` | New entry conflicts with an existing entry | Add new entry id to the existing entry's `conflicts[]` array to maintain symmetry |
 
 ### Files That Do Not Change
 
 | File | Reason |
 |------|--------|
-| `lib/scoring.ts` | Type-agnostic ID model is already correct for mixed combos |
-| `lib/conflicts.ts` | ID-based; `CONFLICT_PAIRS` and `REDUNDANCY_GROUPS` remain valid |
-| `components/OptimizerApp.tsx` | Already uses unified `PLUGINS` + `parseMcpList`; no new behavior required |
-| `components/PluginSearch.tsx` | Category filter unchanged; type tab lives in PluginGrid, not here |
-| `app/plugins/page.tsx` | Thin server shell; tab state belongs in PluginGrid client component |
-| `components/ResultsPanel.tsx` | `ScoringResult` shape unchanged |
-| `components/PluginGridCard.tsx` | Card rendering unchanged; type badge is optional and lives in Grid context if needed |
+| `lib/scoring.ts` | Data-driven; automatically handles any entries present in `PLUGINS` |
+| `lib/recommend.ts` | Keyword matching iterates `Object.values(PLUGINS)` — new entries participate automatically |
+| `lib/conflicts.ts` (REDUNDANCY_GROUPS) | Existing redundancy groups remain valid; add new groups only if new entries introduce new redundancy relationships |
+| All UI pages and components | Consume `PLUGINS` export; new entries appear automatically without UI code changes |
+
+### Internal Boundaries
+
+| Boundary | Communication | Key Note |
+|----------|---------------|----------|
+| `plugins.ts` → `scoring.ts` | `PLUGINS` export (Record<string, Plugin>) | scoring.ts is a pure consumer — no write-back |
+| `plugins.ts` → `recommend.ts` | `PLUGINS` export | Keyword matching iterates all entries automatically |
+| `plugins.ts` → `conflicts.ts` | None — independent modules | `conflicts[]` arrays in CORE_PLUGINS and `CONFLICT_PAIRS` in conflicts.ts must be manually kept in sync |
+| `plugins.ts` → UI pages | `PLUGINS` export (static import at build time) | Pages render whatever PLUGINS contains — no separate registration step |
+| `plugins-en.ts` → UI pages | `pluginDescEn` (static import) | Missing ids silently fall back to Korean strings — no runtime error |
 
 ---
 
 ## Build Order (Dependency Graph)
 
-The critical path flows `lib/types.ts` → `lib/plugins.ts` → UI components. Work in this sequence to avoid TypeScript errors at each step.
+Work in this order to keep TypeScript clean at each step and catch errors early.
 
 ```
-Step 1 — lib/types.ts
-  ADD: ItemType = 'mcp' | 'plugin'
-  ADD: type field to Plugin
-  Verification: pnpm typecheck passes (all 42 existing entries
-                will error until Step 2)
+Step 1 — lib/types.ts  (conditional)
+  IF new entries need a new PluginCategory value:
+    Add the literal to the union
+  Verification: pnpm typecheck
 
 Step 2 — lib/plugins.ts
-  ADD: type to PluginOperationalFields pick + DEFAULT_PLUGIN_FIELDS
-  ADD: 10-15 new Plugin entries with type: 'plugin'
-  Verification: pnpm typecheck passes, pnpm test passes (no scoring
-                changes so all 104 tests remain green)
+  For each new entry:
+    Add CORE_PLUGINS block (semantic data)
+    Add PLUGIN_FIELD_OVERRIDES block (if type="plugin" or non-default fields)
+  Verification: pnpm typecheck, pnpm build
 
-Step 3 — lib/i18n/types.ts + ko.ts + en.ts
-  ADD: tab translation keys
-  Verification: pnpm typecheck passes
+Step 3 — lib/conflicts.ts  (conditional)
+  IF new entries conflict with existing entries:
+    Add ConflictPair entries (with Korean msg)
+    Add RedundancyGroup entries if applicable
+    Update existing entries' conflicts[] arrays in CORE_PLUGINS for symmetry
+  Verification: pnpm test (scoring + parser tests)
 
-Step 4 — components/PluginGrid.tsx
-  ADD: typeFilter state + tab pill UI + filter predicate
-  Verification: /plugins page shows MCP/Plugin/All tabs and
-                filters correctly; Plugin entries appear under Plugin tab
+Step 4 — lib/i18n/plugins-en.ts
+  Add pluginDescEn[id] for every new entry (both MCP and Plugin type)
+  Verification: pnpm typecheck
 
-Step 5 — lib/parse-mcp-list.ts (verify/adjust)
-  VERIFY: paste `claude plugin list` output with new Plugin IDs
-  ADD to ALIAS_MAP: only entries that fail resolvePluginId
-  Verification: pnpm test (parser tests pass); manual paste test
-                in optimizer shows Plugin IDs matched
+Step 5 — lib/__tests__/plugins.test.ts
+  Update PLUGIN_TYPE_IDS to include new Plugin-type entry ids
+  Raise the minimum count floor (currently 42) to 51 + number of new entries
+  Verification: pnpm test (all tests pass including new count assertions)
 
-Step 6 — components/PluginTypeInput.tsx
-  ADD: type badge in dropdown suggestion items
-  Verification: optimizer type-input autocomplete shows MCP/Plugin
-                badge next to each suggestion
-
-Step 7 — components/SelectedPluginChips.tsx (optional)
-  ADD: type badge on selected chip
-  Verification: optimizer selected chips show type indicator
-  Note: safe to defer; zero functional impact
+Step 6 — Final verification
+  pnpm typecheck && pnpm lint && pnpm build && pnpm test
 ```
+
+---
+
+## Constraints That Bound New Entries
+
+| Constraint | Rule | Consequence of Violation |
+|------------|------|--------------------------|
+| `PluginCategory` union | `category` value must be one of the 10 defined literals | TypeScript compile error in CORE_PLUGINS |
+| `ItemType` union | `type` value must be `"mcp"` or `"plugin"` | TypeScript compile error in PLUGIN_FIELD_OVERRIDES |
+| `PluginSeed` type | CORE_PLUGINS entries must NOT include operational fields (verificationStatus, type, etc.) | TypeScript compile error — these are excluded by Omit |
+| `id` uniqueness | No duplicate keys in CORE_PLUGINS | Silent override — second entry silently wins, first entry is lost |
+| `conflicts[]` symmetry | If A conflicts B, B should list A | recommend.ts exclusion is directional only; conflicts appear for one direction but not both |
+| `plugins.test.ts` count floor | Currently set at 42; must be updated | Test failure: "PLUGINS object has at least 42 entries" passes but "at least N" test for new count fails |
+| `PLUGIN_TYPE_IDS` list | Must list all Plugin-type entry ids | Missing ids cause "every plugin-type entry has English translation" test to silently skip the new entry |
 
 ---
 
 ## Anti-Patterns
 
-### Anti-Pattern 1: Separate PLUGINS Records per Type
+### Anti-Pattern 1: Adding `type: "plugin"` Inside CORE_PLUGINS
 
-**What people do:** Create `MCP_PLUGINS` and `EXT_PLUGINS` as separate records, then merge them at export.
+**What people do:** Include `type: "plugin"` directly in the CORE_PLUGINS entry instead of PLUGIN_FIELD_OVERRIDES.
 
-**Why it's wrong:** Every call site uses `PLUGINS[id]`, `Object.keys(PLUGINS)`, `Object.values(PLUGINS)`. A split record doubles every lookup and requires merge logic at every consumer. The `type` field is exactly the right mechanism to distinguish at the data level.
+**Why it's wrong:** `PluginSeed` is `Omit<Plugin, keyof PluginOperationalFields>` and `type` is in `PluginOperationalFields`. TypeScript rejects this with a compile error. The separation exists precisely so operational status can change without touching semantic data.
 
-**Do this instead:** Single `PLUGINS` record. Distinguish by `p.type` in filter predicates.
+**Do this instead:** Always put `type: "plugin" as const` in `PLUGIN_FIELD_OVERRIDES[id]`.
 
-### Anti-Pattern 2: Type Branching Inside Scoring Functions
+### Anti-Pattern 2: Skipping `plugins-en.ts` for MCP Entries
 
-**What people do:** Add `if (plugin.type === 'plugin') { ... }` branches inside `scorePlugins`, `buildCoverage`, or `buildComplements`.
+**What people do:** Add translations only for Plugin-type entries, assuming MCP entries "don't need" English because MCP is the majority type.
 
-**Why it's wrong:** The scoring model is category-coverage-based. Whether an item is an MCP server or a Plugin, covering the `workflow` category is equally valid. Type-aware branching makes scoring asymmetric without a product rationale.
+**Why it's wrong:** `pluginDescEn` covers all 51 existing entries — every MCP entry has an English translation. A missing entry silently falls back to Korean with no error thrown. This failure mode is invisible during Korean-UI development and only surfaces for English-language users.
 
-**Do this instead:** Keep scoring type-agnostic. If a future decision requires weighting Plugin-type coverage differently, add a named penalty constant — do not branch on `type` inside existing scoring functions.
+**Do this instead:** Treat `plugins-en.ts` as a co-required change alongside `plugins.ts` for every new entry regardless of type.
 
-### Anti-Pattern 3: Tab State in Server Component
+### Anti-Pattern 3: Updating `conflicts[]` Without `CONFLICT_PAIRS`
 
-**What people do:** Lift the MCP/Plugin tab into `app/plugins/page.tsx` as a URL search param.
+**What people do:** Add a conflicting plugin id to the new entry's `conflicts[]` array but skip adding a `ConflictPair` to `conflicts.ts`.
 
-**Why it's wrong:** This adds URL routing complexity for ephemeral UI state. The existing `PluginGrid` already owns `category` and `search` as plain `useState` — the type tab is the same kind of filter state.
+**Why it's wrong:** The `conflicts[]` array is consumed by `recommend.ts` for the /advisor recommendation exclusion. `getConflicts()` in `conflicts.ts` is consumed by `scoring.ts` for the /optimizer warning UI. A conflict in `conflicts[]` but absent from `CONFLICT_PAIRS` will silently skip the optimizer warning.
 
-**Do this instead:** Add `typeFilter` state to `PluginGrid.tsx` alongside existing state. Keep `app/plugins/page.tsx` as a stateless server shell.
+**Do this instead:** For any conflict relationship, update `conflicts[]` arrays in both entries AND add a `ConflictPair` with a Korean `msg` in `conflicts.ts`.
 
-### Anti-Pattern 4: Rewriting the Parser for Plugin Format
+### Anti-Pattern 4: Forgetting to Update `PLUGIN_TYPE_IDS` in Tests
 
-**What people do:** Build a separate code path in `parse-mcp-list.ts` for `claude plugin list` output because it looks different from `claude mcp list`.
+**What people do:** Add a new Plugin-type entry and update `PLUGIN_FIELD_OVERRIDES` with `type: "plugin"` but don't update `PLUGIN_TYPE_IDS` in `plugins.test.ts`.
 
-**Why it's wrong:** The `isPluginList` branch already exists and handles the `❯ name@source` format. New Plugin IDs resolve through the same `resolvePluginId` function. The parser already handles both formats.
+**Why it's wrong:** The test `"every plugin-type entry has English translation in pluginDescEn"` only checks ids that are in `PLUGIN_TYPE_IDS`. A new Plugin-type entry not in this list will never be checked for translation coverage — the missing translation won't be caught until an English-language user reports it.
 
-**Do this instead:** Verify the existing `isPluginList` branch works with new Plugin IDs. Add to `ALIAS_MAP` only for entries that need specific name normalization. Do not rewrite the parser.
+**Do this instead:** Update `PLUGIN_TYPE_IDS` as part of the same commit that adds any new Plugin-type entry.
+
+### Anti-Pattern 5: Adding New Categories Without Measuring Impact
+
+**What people do:** Introduce a new `PluginCategory` value for a new entry without checking how `ALL_CATEGORIES` in `scoring.ts` affects uncovered-category penalty calculations.
+
+**Why it's wrong:** `scoring.ts` hard-codes `ALL_CATEGORIES` (the same 10 members as the `PluginCategory` union). `buildCoverage()` treats every category in `ALL_CATEGORIES` as a coverage target. Adding an 11th category to `types.ts` without adding it to `ALL_CATEGORIES` means the new category is never penalized as uncovered — a silent logic gap. Adding it to both `types.ts` and `ALL_CATEGORIES` immediately increases the maximum possible uncovered-category penalty for all users.
+
+**Do this instead:** Exhaust the existing 10 categories before adding new ones. The current category set (orchestration, workflow, code-quality, testing, documentation, data, security, integration, ui-ux, devops) is broad enough to classify any MCP or Plugin. Only introduce a new category if no existing category fits and you are prepared to update `ALL_CATEGORIES` in `scoring.ts` simultaneously.
 
 ---
 
@@ -337,25 +374,28 @@ Step 7 — components/SelectedPluginChips.tsx (optional)
 
 | Scale | Architecture Adjustments |
 |-------|--------------------------|
-| 42 MCPs + 15 Plugins (~57 items) | Static `PLUGINS` record is appropriate — O(1) lookup, zero API cost, ~600-line file |
-| 100+ items | Static record still fine; consider splitting `plugins.ts` into `mcp-plugins.ts` + `plugin-plugins.ts` merged at the export boundary |
-| 500+ items | Move DB to Supabase with static JSON build cache; existing Supabase infra already supports this pattern |
+| 51 → 65 entries (current milestone) | No structural changes needed. Pure data addition to existing files. |
+| 65 → 150 entries | Consider splitting `CORE_PLUGINS` into per-category files (e.g., `plugins-workflow.ts`, `plugins-integration.ts`) that export partial records, merged in `plugins.ts`. The single-file approach becomes unwieldy above ~100 entries. |
+| 150+ entries | Evaluate moving from a static JS object to JSON files with Zod schema validation. Enables non-developer contributions and a separate CI validation pipeline. Existing Supabase infrastructure already supports a DB-backed fallback. |
 
 ### Scaling Priorities
 
-1. **First bottleneck:** Bundle size of `lib/plugins.ts`. At 57 entries the file remains manageable. If it approaches 800+ lines, split by type into separate files with a unified re-export.
-2. **Second bottleneck:** `filterPlugins` is O(n) linear scan — fine up to ~200 items before needing an indexed structure.
+1. **First bottleneck:** `lib/plugins.ts` file length. Currently ~1,637 lines for 51 entries (~32 lines/entry average). At 150 entries the file approaches 4,800 lines. Split by category before reaching that scale.
+2. **Second bottleneck:** `pluginDescEn` translation sync. Currently only Plugin-type entries are covered by the "has English translation" test. A test asserting `Object.keys(PLUGINS).every(id => pluginDescEn[id])` would catch any entry (MCP or Plugin) with a missing translation — currently this is not tested.
 
 ---
 
 ## Sources
 
-- Direct source reading: `lib/types.ts`, `lib/plugins.ts`, `lib/scoring.ts`, `lib/conflicts.ts`, `lib/parse-mcp-list.ts`
-- Direct source reading: `components/OptimizerApp.tsx`, `components/PluginGrid.tsx`, `components/PluginSearch.tsx`, `components/PluginTypeInput.tsx`
-- Direct source reading: `app/plugins/page.tsx`, `lib/i18n/types.ts`
-- Project context: `.planning/PROJECT.md` — v1.2 milestone requirements and key decisions
-- Confidence: HIGH — all integration surfaces read from source; no documentation inference
+- Direct inspection: `lib/plugins.ts` (1,637 lines, 51 entries, all three data structures)
+- Direct inspection: `lib/types.ts` (Plugin type, PluginCategory union — 10 members, ItemType)
+- Direct inspection: `lib/scoring.ts` (scorePlugins, buildComplements, buildReplacements, ALL_CATEGORIES)
+- Direct inspection: `lib/conflicts.ts` (CONFLICT_PAIRS — 3 pairs, REDUNDANCY_GROUPS — 3 groups)
+- Direct inspection: `lib/i18n/plugins-en.ts` (pluginDescEn structure and coverage)
+- Direct inspection: `lib/__tests__/plugins.test.ts` (PLUGIN_TYPE_IDS — 9 ids, count floor — 42)
+- Direct inspection: `.planning/PROJECT.md` (v1.3 milestone scope and key architectural decisions)
+- Confidence: HIGH — all integration surfaces read from source; no training-data inference
 
 ---
-*Architecture research for: MCP + Plugin type system integration (v1.2)*
+*Architecture research for: Plugin Advisor v1.3 — DB extension (51 → 60-65 entries)*
 *Researched: 2026-03-18*
