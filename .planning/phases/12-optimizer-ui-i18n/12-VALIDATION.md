@@ -38,10 +38,11 @@ created: 2026-03-18
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 12-01-01 | 01 | 1 | I18N-01 | type check | `pnpm typecheck` | ✅ | ⬜ pending |
-| 12-01-02 | 01 | 1 | UI-03 | type check + smoke | `pnpm typecheck` | ✅ | ⬜ pending |
-| 12-01-03 | 01 | 1 | UI-04 | type check + visual | `pnpm typecheck` | ✅ | ⬜ pending |
-| 12-01-04 | 01 | 1 | UI-03, UI-04, I18N-01 | build | `pnpm build` | ✅ | ⬜ pending |
+| 12-01-01 | 01 | 1 | I18N-01 | type check | `pnpm typecheck` | ✅ existing | ⬜ pending |
+| 12-01-02 | 01 | 1 | UI-03 | type check | `pnpm typecheck` | ✅ existing | ⬜ pending |
+| 12-01-03 | 01 | 1 | UI-03 | manual smoke | `pnpm dev` → /optimizer → sample btn | manual | ⬜ pending |
+| 12-01-04 | 01 | 1 | UI-04 | manual smoke | `pnpm dev` → /optimizer → type tab → search | manual | ⬜ pending |
+| 12-01-05 | 01 | 1 | UI-04 | manual smoke | `pnpm dev` → /optimizer → check chips | manual | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -49,12 +50,7 @@ created: 2026-03-18
 
 ## Wave 0 Requirements
 
-*Existing infrastructure covers all phase requirements.*
-
-- Vitest test suite already installed and configured
-- `pnpm typecheck` validates i18n type safety (Translations type enforces key parity)
-- `pnpm build` validates full Next.js compilation including i18n imports
-- `pnpm test` runs existing parse-mcp-list tests that cover format handling
+Existing infrastructure covers all phase requirements. No new test files needed.
 
 ---
 
@@ -62,11 +58,12 @@ created: 2026-03-18
 
 | Behavior | Requirement | Why Manual | Test Instructions |
 |----------|-------------|------------|-------------------|
-| Sample data loads 5 plugins (3 MCP + 2 Plugin) | UI-03 | User interaction required | `pnpm dev` → /optimizer → click "샘플 데이터로 시작" → verify 5 chips appear |
-| MCP badge (blue) renders in autocomplete | UI-04 | Visual verification | `pnpm dev` → /optimizer → "직접 입력" tab → type "context7" → verify blue [MCP] badge |
-| Plugin badge (purple) renders in autocomplete | UI-04 | Visual verification | `pnpm dev` → /optimizer → "직접 입력" tab → type "superpowers" → verify purple [Plugin] badge |
-| Chips show type badges | UI-04 | Visual verification | Add plugins → verify MCP/Plugin badges on chips |
-| English locale shows updated strings | I18N-01 | Locale switch required | Switch to English → verify paste hint mentions both commands |
+| Sample data loads 5 plugins (3 MCP + 2 Plugin) | UI-03 | Visual confirmation of correct plugin loading | Click "샘플 데이터로 시작", verify 5 chips appear |
+| MCP badge renders blue in dropdown | UI-04 | Visual styling check | Type "context7" in autocomplete, verify blue MCP badge |
+| Plugin badge renders purple in dropdown | UI-04 | Visual styling check | Type "superpowers" in autocomplete, verify purple Plugin badge |
+| Badge appears on selected chips | UI-04 | Visual styling check | Add plugins, verify chips show type badge |
+
+*All automated verifications use existing `pnpm typecheck` and `pnpm build`.*
 
 ---
 
