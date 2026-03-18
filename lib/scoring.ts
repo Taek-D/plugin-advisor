@@ -1,4 +1,4 @@
-import type { PluginCategory, Plugin } from "./types";
+import type { PluginCategory, Plugin, ItemType } from "./types";
 import { PLUGINS } from "./plugins";
 import { getConflicts, getRedundancies } from "./conflicts";
 import type { ConflictWarning } from "./types";
@@ -32,6 +32,7 @@ export type ScoringResult = {
   coverage: CoverageResult;
   complements: ComplementSuggestion[];
   replacements: ReplacementSuggestion[];
+  typeScope: ItemType | "both";
 };
 
 // ─────────────────────────────────────────────
@@ -112,7 +113,8 @@ function buildCoverage(ids: string[]): CoverageResult {
 
 function buildComplements(
   uncovered: PluginCategory[],
-  installedIds: string[]
+  installedIds: string[],
+  typeScope: ItemType | "both"
 ): ComplementSuggestion[] {
   const installedSet = new Set(installedIds);
   const complements: ComplementSuggestion[] = [];
@@ -121,7 +123,9 @@ function buildComplements(
     // Find all plugins in this category that are not already installed
     const candidates = Object.values(PLUGINS).filter(
       (plugin) =>
-        plugin.category === category && !installedSet.has(plugin.id)
+        plugin.category === category &&
+        !installedSet.has(plugin.id) &&
+        (typeScope === "both" || plugin.type === typeScope)
     );
 
     if (candidates.length === 0) continue;
@@ -137,7 +141,7 @@ function buildComplements(
   return complements;
 }
 
-function buildReplacements(ids: string[]): ReplacementSuggestion[] {
+function buildReplacements(ids: string[], typeScope: ItemType | "both"): ReplacementSuggestion[] {
   const replacements: ReplacementSuggestion[] = [];
 
   for (const id of ids) {
@@ -162,7 +166,8 @@ function buildReplacements(ids: string[]): ReplacementSuggestion[] {
         p.id !== id &&
         p.category === plugin.category &&
         p.verificationStatus === "verified" &&
-        p.maintenanceStatus !== "stale"
+        p.maintenanceStatus !== "stale" &&
+        (typeScope === "both" || p.type === typeScope)
     );
 
     const best =
@@ -186,7 +191,10 @@ function buildReplacements(ids: string[]): ReplacementSuggestion[] {
 // Entry point
 // ─────────────────────────────────────────────
 
-export function scorePlugins(ids: string[]): ScoringResult {
+export function scorePlugins(
+  ids: string[],
+  typeScope: ItemType | "both" = "both"
+): ScoringResult {
   // Early return for empty input
   if (ids.length === 0) {
     return {
@@ -197,6 +205,7 @@ export function scorePlugins(ids: string[]): ScoringResult {
       coverage: { covered: [], uncovered: [...ALL_CATEGORIES] },
       complements: [],
       replacements: [],
+      typeScope,
     };
   }
 
@@ -208,8 +217,8 @@ export function scorePlugins(ids: string[]): ScoringResult {
     redundancies.length,
     coverage.uncovered.length
   );
-  const complements = buildComplements(coverage.uncovered, ids);
-  const replacements = buildReplacements(ids);
+  const complements = buildComplements(coverage.uncovered, ids, typeScope);
+  const replacements = buildReplacements(ids, typeScope);
 
   return {
     empty: false,
@@ -219,5 +228,6 @@ export function scorePlugins(ids: string[]): ScoringResult {
     coverage,
     complements,
     replacements,
+    typeScope,
   };
 }

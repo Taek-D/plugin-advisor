@@ -6,6 +6,7 @@ import {
   type ComplementSuggestion,
   type ReplacementSuggestion,
 } from "../scoring";
+import { PLUGINS } from "../plugins";
 
 // ─────────────────────────────────────────────
 // ANLYS-02: Empty input
@@ -292,5 +293,59 @@ describe("replacement suggestions", () => {
     const r = result.replacements.find((x) => x.original === "atlassian");
     expect(r).toBeDefined();
     expect(r?.reason).toBe("partial");
+  });
+});
+
+// ─────────────────────────────────────────────
+// SCORE-01/02/03: typeScope filtering
+// ─────────────────────────────────────────────
+describe("typeScope filtering", () => {
+  it("returns typeScope in result when specified", () => {
+    const result = scorePlugins(["context7"], "mcp");
+    expect(result.typeScope).toBe("mcp");
+  });
+
+  it("defaults typeScope to 'both' when not specified", () => {
+    const result = scorePlugins(["context7"]);
+    expect(result.typeScope).toBe("both");
+  });
+
+  it("empty input returns typeScope in result", () => {
+    const result = scorePlugins([], "mcp");
+    expect(result.typeScope).toBe("mcp");
+  });
+
+  it("mcp typeScope: complements contain only mcp-type plugins", () => {
+    const result = scorePlugins(["context7"], "mcp");
+    for (const c of result.complements) {
+      expect(PLUGINS[c.pluginId]?.type).toBe("mcp");
+    }
+  });
+
+  it("plugin typeScope: complements contain only plugin-type plugins", () => {
+    const result = scorePlugins(["omc"], "plugin");
+    for (const c of result.complements) {
+      expect(PLUGINS[c.pluginId]?.type).toBe("plugin");
+    }
+  });
+
+  it("mcp typeScope: replacements suggest only mcp-type alternatives", () => {
+    const result = scorePlugins(["linear"], "mcp");
+    for (const r of result.replacements) {
+      if (r.replacement !== null) {
+        expect(PLUGINS[r.replacement]?.type).toBe("mcp");
+      }
+    }
+  });
+
+  it("both typeScope: complements can include any type", () => {
+    const result = scorePlugins(["context7"], "both");
+    expect(result.complements.length).toBeGreaterThanOrEqual(0);
+  });
+
+  it("mcp typeScope: score unchanged from both for MCP-only input", () => {
+    const mcpResult = scorePlugins(["context7"], "mcp");
+    const bothResult = scorePlugins(["context7"], "both");
+    expect(mcpResult.score).toBe(bothResult.score);
   });
 });
