@@ -182,6 +182,63 @@ unknown-plugin (user): connected`;
     expect(result.matched).toEqual([]);
     expect(result.unmatched).toEqual([]);
   });
+
+  it("parses 'claude.ai X:' format from claude mcp list", () => {
+    const input = `Checking MCP server health...
+
+claude.ai Context7: https://mcp.context7.com/mcp - ✓ Connected
+claude.ai Notion: https://mcp.notion.com/mcp - ✓ Connected
+claude.ai Gmail: https://gmail.mcp.claude.com/mcp - ✓ Connected`;
+    const result = parseMcpList(input, pluginIds);
+    expect(result.matched).toContain("context7");
+    expect(result.unmatched).toContain("gmail");
+  });
+
+  it("parses 'name: command - status' format", () => {
+    const input = `github: bash -c export GITHUB_TOKEN=xxx && npx -y @modelcontextprotocol/server-github - ✓ Connected
+playwright: cmd /c npx -y @playwright/mcp - ✓ Connected
+firecrawl: cmd /c npx -y firecrawl-mcp - ✓ Connected`;
+    const result = parseMcpList(input, pluginIds);
+    expect(result.matched).toContain("github");
+    expect(result.matched).toContain("playwright");
+    expect(result.unmatched).toContain("firecrawl");
+  });
+
+  it("parses mixed claude mcp list output", () => {
+    const input = `Checking MCP server health...
+
+claude.ai Context7: https://mcp.context7.com/mcp - ✓ Connected
+context7: cmd /c npx -y @upstash/context7-mcp - ✓ Connected
+github: bash -c npx -y @modelcontextprotocol/server-github - ✓ Connected
+plugin:oh-my-claudecode:t: node /path/to/server.cjs - ✓ Connected`;
+    const result = parseMcpList(input, pluginIds);
+    expect(result.matched).toContain("context7");
+    expect(result.matched).toContain("github");
+  });
+
+  it("parses claude plugin list format", () => {
+    const input = `Installed plugins:
+
+  ❯ context7@some-marketplace
+    Version: 1.0.0
+    Scope: user
+    Status: ✔ enabled
+
+  ❯ unknown-plugin@marketplace
+    Version: 2.0.0
+    Scope: project
+    Status: ✔ enabled`;
+    const result = parseMcpList(input, pluginIds);
+    expect(result.matched).toContain("context7");
+    expect(result.unmatched).toContain("unknown-plugin");
+  });
+
+  it("deduplicates across claude.ai and local entries", () => {
+    const input = `claude.ai Context7: https://mcp.context7.com/mcp - ✓ Connected
+context7: cmd /c npx -y @upstash/context7-mcp - ✓ Connected`;
+    const result = parseMcpList(input, pluginIds);
+    expect(result.matched.filter((id) => id === "context7")).toHaveLength(1);
+  });
 });
 
 describe("filterPlugins", () => {

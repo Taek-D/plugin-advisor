@@ -8,6 +8,9 @@ export type ParseResult = {
 const ALIAS_MAP: Record<string, string> = {
   brave: "brave-search",
   "github-mcp": "github",
+  "oh-my-claudecode": "omc",
+  "server-github": "github",
+  "server-playwright": "playwright",
 };
 
 /**
@@ -111,25 +114,60 @@ export function parseMcpList(raw: string, pluginIds: string[]): ParseResult {
   const matchedSet = new Set<string>();
   const unmatchedList: string[] = [];
 
+  // Detect format: claude plugin list vs claude mcp list
+  const isPluginList = lines.some((l) => /^\s*❯\s/.test(l));
+
   for (const line of lines) {
     const trimmed = line.trim();
     if (!trimmed) continue;
 
     // Skip header-like lines
-    if (/^(MCP|Name|Status|---)/i.test(trimmed)) continue;
+    if (/^(Checking MCP|Installed plugins|MCP|Name|Status|Version|Scope|---)/i.test(trimmed)) continue;
 
     // Strip terminal control chars
     const cleaned = trimmed.replace(/\x1B\[[0-9;]*m/g, "");
 
-    // Extract first meaningful token from the line
-    // Remove unicode symbols at start (checkmarks, x-marks)
-    const withoutSymbols = cleaned.replace(/^[^\w@]+/, "");
+    let rawToken: string | null = null;
 
-    // Extract first word-like token (may include @ for scoped packages)
-    const tokenMatch = withoutSymbols.match(/^([@\w][\w./@-]*)/);
-    if (!tokenMatch) continue;
+    if (isPluginList) {
+      // claude plugin list: "❯ name@source" → extract name
+      const pluginMatch = cleaned.match(/❯\s+([\w-]+)/);
+      if (!pluginMatch) continue;
+      rawToken = pluginMatch[1];
+    } else {
+      // claude mcp list formats:
+      // 1. "claude.ai X: url - status" → extract X
+      const cloudMatch = cleaned.match(/^claude\.ai\s+([\w-]+)\s*:/);
+      if (cloudMatch) {
+        rawToken = cloudMatch[1];
+      }
 
-    const rawToken = tokenMatch[1];
+      // 2. "plugin:name:suffix: command - status" → extract name
+      if (!rawToken) {
+        const pluginPrefixMatch = cleaned.match(/^plugin:([\w-]+)/);
+        if (pluginPrefixMatch) {
+          rawToken = pluginPrefixMatch[1];
+        }
+      }
+
+      // 3. "name: command/url - status" → extract name before colon
+      if (!rawToken) {
+        const colonMatch = cleaned.match(/^([\w-]+)\s*:/);
+        if (colonMatch) {
+          rawToken = colonMatch[1];
+        }
+      }
+
+      // 4. Fallback: old formats ("name (user):", "✓ name Connected")
+      if (!rawToken) {
+        const withoutSymbols = cleaned.replace(/^[^\w@]+/, "");
+        const tokenMatch = withoutSymbols.match(/^([@\w][\w./@-]*)/);
+        if (!tokenMatch) continue;
+        rawToken = tokenMatch[1];
+      }
+    }
+
+    if (!rawToken) continue;
     const normalized = normalizeToken(rawToken);
     if (!normalized) continue;
 
