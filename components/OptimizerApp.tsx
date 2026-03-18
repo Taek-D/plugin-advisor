@@ -7,7 +7,7 @@ import { parseMcpList } from "@/lib/parse-mcp-list";
 import { scorePlugins } from "@/lib/scoring";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
-import type { Plugin } from "@/lib/types";
+import type { Plugin, ItemType } from "@/lib/types";
 import type { ScoringResult } from "@/lib/scoring";
 import type { ParseResult } from "@/lib/parse-mcp-list";
 import { Button } from "@/components/ui/button";
@@ -67,7 +67,13 @@ export default function OptimizerApp() {
     if (!hasPlugins) return;
     setAnalysisState("analyzing");
     setTimeout(() => {
-      const scored = scorePlugins(selectedIds);
+      const ids = selectedPlugins.map((p) => p.id);
+      const types = new Set(selectedPlugins.map((p) => p.type));
+      const typeScope: ItemType | "both" =
+        types.size === 1
+          ? (types.values().next().value as ItemType)
+          : "both";
+      const scored = scorePlugins(ids, typeScope);
       setResult(scored);
       setAnalysisState("done");
     }, 0);
