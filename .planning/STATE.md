@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: MCP + Plugin 통합
-status: in_progress
-stopped_at: "08-01-PLAN.md complete — Phase 8 Plan 1 of 1 done"
-last_updated: "2026-03-18T07:36:00.000Z"
+status: completed
+stopped_at: 08-01 complete — ItemType union + Plugin.type field + 115 tests passing
+last_updated: "2026-03-18T07:34:36.862Z"
 progress:
   total_phases: 5
-  completed_phases: 0
-  total_plans: 6
+  completed_phases: 1
+  total_plans: 1
   completed_plans: 1
   percent: 17
 ---
