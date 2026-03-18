@@ -16,6 +16,7 @@ export type PluginDifficulty = "beginner" | "intermediate" | "advanced";
 export type PlatformSupport = "windows" | "mac" | "linux";
 export type InstallMode = "safe-copy" | "manual-required" | "external-setup";
 export type MaintenanceStatus = "active" | "unclear" | "stale";
+export type ItemType = "mcp" | "plugin";
 
 export type PreflightCheck = {
   id: string;
@@ -63,6 +64,7 @@ export type Plugin = {
   maintenanceStatus: MaintenanceStatus;
   bestFor: string[];
   avoidFor: string[];
+  type: ItemType;
 };
 
 export type Recommendation = {

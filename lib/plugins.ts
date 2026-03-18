@@ -12,6 +12,7 @@ type PluginOperationalFields = Pick<
   | "maintenanceStatus"
   | "bestFor"
   | "avoidFor"
+  | "type"
 >;
 
 type PluginSeed = Omit<
@@ -30,6 +31,7 @@ const DEFAULT_PLUGIN_FIELDS: PluginOperationalFields = {
   maintenanceStatus: "active",
   bestFor: [],
   avoidFor: [],
+  type: "mcp",
 };
 
 const PLUGIN_FIELD_OVERRIDES: Partial<
