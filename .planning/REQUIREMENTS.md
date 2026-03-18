@@ -14,9 +14,9 @@ Requirements for milestone v1.2 — MCP + Plugin 통합.
 
 ### 데이터 (Plugin DB)
 
-- [ ] **DATA-01**: 주요 Plugin 10-15개가 DB에 추가되고, type: 'plugin'으로 분류된다
-- [ ] **DATA-02**: 각 Plugin 항목의 install 명령어, category, keywords, features가 검증된 상태로 등록된다
-- [ ] **DATA-03**: Plugin 항목의 한/영 번역이 동기화된다
+- [x] **DATA-01**: 주요 Plugin 10-15개가 DB에 추가되고, type: 'plugin'으로 분류된다
+- [x] **DATA-02**: 각 Plugin 항목의 install 명령어, category, keywords, features가 검증된 상태로 등록된다
+- [x] **DATA-03**: Plugin 항목의 한/영 번역이 동기화된다
 
 ### 점수화 (Scoring)
 
@@ -34,7 +34,7 @@ Requirements for milestone v1.2 — MCP + Plugin 통합.
 ### i18n
 
 - [ ] **I18N-01**: 탭 라벨, 타입 뱃지 등 신규 UI 텍스트가 한/영 모두 지원된다
-- [ ] **I18N-02**: 신규 Plugin 10-15개의 desc/longDesc 영문 번역이 등록된다
+- [x] **I18N-02**: 신규 Plugin 10-15개의 desc/longDesc 영문 번역이 등록된다
 
 ## Future Requirements
 
@@ -61,9 +61,9 @@ Deferred to future release.
 |-------------|-------|--------|
 | TYPE-01 | Phase 8 | Complete (2026-03-18) |
 | TYPE-02 | Phase 8 | Complete (2026-03-18) |
-| DATA-01 | Phase 9 | Pending |
-| DATA-02 | Phase 9 | Pending |
-| DATA-03 | Phase 9 | Pending |
+| DATA-01 | Phase 9 | Complete |
+| DATA-02 | Phase 9 | Complete |
+| DATA-03 | Phase 9 | Complete |
 | SCORE-01 | Phase 10 | Pending |
 | SCORE-02 | Phase 10 | Pending |
 | SCORE-03 | Phase 10 | Pending |
@@ -72,7 +72,7 @@ Deferred to future release.
 | UI-03 | Phase 12 | Pending |
 | UI-04 | Phase 12 | Pending |
 | I18N-01 | Phase 12 | Pending |
-| I18N-02 | Phase 9 | Pending |
+| I18N-02 | Phase 9 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 14 total
