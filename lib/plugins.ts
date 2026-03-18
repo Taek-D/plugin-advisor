@@ -42,37 +42,44 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     verificationStatus: "verified",
     bestFor: ["장기 프로젝트", "멀티 에이전트 자동화", "팀 오케스트레이션"],
     avoidFor: ["Claude Code 첫 설치 직후", "가벼운 개인 실험"],
+    type: "plugin" as const,
   },
   superpowers: {
     verificationStatus: "verified",
     difficulty: "beginner",
     bestFor: ["기존 코드 읽기", "빠른 생산성 향상"],
+    type: "plugin" as const,
   },
   "bkit-starter": {
     verificationStatus: "verified",
     difficulty: "beginner",
     bestFor: ["Claude Code 첫 사용", "설정 가이드"],
+    type: "plugin" as const,
   },
   bkit: {
     verificationStatus: "verified",
     difficulty: "intermediate",
     bestFor: ["PRD 기반 구현", "체계적인 워크플로"],
+    type: "plugin" as const,
   },
   context7: {
     verificationStatus: "verified",
     difficulty: "beginner",
     bestFor: ["라이브러리 사용", "공식 문서 확인"],
+    type: "plugin" as const,
   },
   repomix: {
     verificationStatus: "verified",
     difficulty: "beginner",
     bestFor: ["대형 코드베이스 이해", "온보딩"],
+    type: "plugin" as const,
   },
   playwright: {
     officialStatus: "official",
     verificationStatus: "verified",
     difficulty: "beginner",
     bestFor: ["웹앱 QA", "브라우저 테스트", "크로스 브라우저 E2E"],
+    type: "plugin" as const,
   },
   puppeteer: {
     // puppeteer was moved from modelcontextprotocol/servers to servers-archived repo.
@@ -89,6 +96,7 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     verificationStatus: "verified",
     difficulty: "beginner",
     bestFor: ["인증/결제 앱", "보안 점검"],
+    type: "plugin" as const,
   },
   firecrawl: {
     officialStatus: "official",
@@ -239,6 +247,7 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     requiredSecrets: ["SENTRY_ACCESS_TOKEN"],
     bestFor: ["프로덕션 에러 디버깅", "이슈 추적", "성능 모니터링"],
     avoidFor: ["Sentry 계정 없는 환경"],
+    type: "plugin" as const,
   },
   notion: {
     officialStatus: "official",
@@ -264,6 +273,7 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     prerequisites: ["Figma Dev or Full seat (Professional/Organization/Enterprise plan)", "Figma OAuth authentication via mcp.figma.com"],
     bestFor: ["디자인 → 코드 변환", "디자인 시스템 구현", "컴포넌트 코드 생성"],
     avoidFor: ["Figma 무료 플랜 (월 6회 제한)", "Figma 계정 없는 환경"],
+    type: "plugin" as const,
   },
   cloudflare: {
     // cloudflare/mcp-server-cloudflare: collection of remote MCP servers with OAuth (no API token needed).
@@ -340,6 +350,7 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     difficulty: "beginner",
     installMode: "safe-copy",
     bestFor: ["Claude Code 첫 세팅", "서비스 런칭 전 점검", "SEO/보안/UI 자동화"],
+    type: "plugin" as const,
   },
   "agency-agents": {
     verificationStatus: "verified",
@@ -348,6 +359,7 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     prerequisites: ["Git으로 저장소를 내려받고 ~/.claude/agents 에 복사하거나 install.sh 실행"],
     bestFor: ["역할 분리된 AI 팀", "전문가 페르소나 기반 협업"],
     avoidFor: ["원클릭 스타터 세팅", "설치 직후 가장 첫 플러그인"],
+    type: "plugin" as const,
   },
   ralph: {
     // ralph-wiggum repo (haizelabs/ralph-wiggum) returned 404 as of 2026-03-11 — repo does not exist
@@ -355,6 +367,7 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     difficulty: "intermediate",
     bestFor: ["반복 구현 자동화", "PRD 기반 루프"],
     avoidFor: ["단발성 작업", "첫 세팅 직후"],
+    type: "plugin" as const,
   },
   "sequential-thinking": {
     officialStatus: "official",
