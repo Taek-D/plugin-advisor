@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: MCP + Plugin 통합
-status: in_progress
-stopped_at: "Completed 10-scoring-extension/10-01-PLAN.md"
-last_updated: "2026-03-18T09:24:02Z"
+status: completed
+stopped_at: Completed 10-scoring-extension/10-01-PLAN.md
+last_updated: "2026-03-18T09:31:25.186Z"
 progress:
   total_phases: 5
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 3
   completed_plans: 3
   percent: 50
