@@ -43,7 +43,7 @@
 
 **Milestone Goal:** GitHub 스타 기준 인기 MCP 서버 6개 + Plugin 3개를 추가하여 DB를 51개 → 60개로 확장한다. 모든 항목은 공식 GitHub README 기반으로 install 명령, requiredSecrets, features가 검증된다.
 
-- [ ] **Phase 13: MCP 서버 6개 등록** — fetch, time, markitdown, magic-mcp, n8n-mcp, shadcn-mcp를 lib/plugins.ts + lib/i18n/plugins-en.ts에 등록
+- [x] **Phase 13: MCP 서버 6개 등록** — fetch, time, markitdown, magic-mcp, n8n-mcp, shadcn-mcp를 lib/plugins.ts + lib/i18n/plugins-en.ts에 등록 (completed 2026-03-19)
 - [ ] **Phase 14: Plugin 3개 등록** — claude-mem, superclaude, frontend-design을 type: 'plugin'으로 등록
 - [ ] **Phase 15: 검증 및 테스트 갱신** — install 명령 최종 확인, i18n 동기화, plugins.test.ts 카운트 갱신, CI 통과
 
@@ -58,10 +58,10 @@
   2. 각 항목의 install 명령이 공식 GitHub README에서 확인된 verbatim 명령과 일치한다
   3. /advisor에서 해당 키워드를 입력하면 신규 MCP 서버 중 적합한 항목이 추천 결과에 나타난다
   4. 각 항목의 verificationStatus가 실제 README 확인 여부에 맞게 설정된다 (unverified로 추가하지 않는다)
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans executed
 Plans:
-- [ ] 13-01-PLAN.md — fetch, time, markitdown 등록 (Python/pip 기반 공식 서버 3개)
-- [ ] 13-02-PLAN.md — magic-mcp, n8n-mcp, shadcn-mcp 등록 (API키/환경변수 필요 서버 3개)
+- [x] 13-01-PLAN.md — fetch, time, markitdown 등록 (Python/pip 기반 공식 서버 3개)
+- [x] 13-02-PLAN.md — magic-mcp, n8n-mcp, shadcn-mcp 등록 (API키/환경변수 필요 서버 3개)
 
 ### Phase 14: Plugin 3개 등록
 **Goal**: claude-mem, superclaude, frontend-design 3개 Plugin이 type: 'plugin'으로 DB에 등록되어 /plugins Plugin 탭과 /optimizer Plugin 보완 추천에서 노출된다
@@ -101,7 +101,7 @@ Plans:
 | 10. Scoring Extension | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 11. Catalog Tab UI | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 12. Optimizer UI + i18n | v1.2 | 1/1 | Complete | 2026-03-18 |
-| 13. MCP 서버 6개 등록 | 1/2 | In Progress|  | - |
+| 13. MCP 서버 6개 등록 | v1.3 | 2/2 | Complete | 2026-03-19 |
 | 14. Plugin 3개 등록 | v1.3 | 0/? | Not started | - |
 | 15. 검증 및 테스트 갱신 | v1.3 | 0/? | Not started | - |
 

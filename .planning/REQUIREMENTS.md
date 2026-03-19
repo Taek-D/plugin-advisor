@@ -12,9 +12,9 @@ Requirements for milestone v1.3 — DB 확장 (MCP + Plugin).
 - [x] **MCP-01**: fetch MCP 서버가 검증된 메타데이터(install, features, keywords, category)로 DB에 등록된다
 - [x] **MCP-02**: time MCP 서버가 검증된 메타데이터로 DB에 등록된다
 - [x] **MCP-03**: markitdown MCP 서버가 검증된 메타데이터로 DB에 등록된다
-- [ ] **MCP-04**: magic-mcp 서버가 검증된 메타데이터로 DB에 등록된다
-- [ ] **MCP-05**: n8n-mcp 서버가 검증된 메타데이터로 DB에 등록된다
-- [ ] **MCP-06**: shadcn-mcp 서버가 검증된 메타데이터로 DB에 등록된다
+- [x] **MCP-04**: magic-mcp 서버가 검증된 메타데이터로 DB에 등록된다
+- [x] **MCP-05**: n8n-mcp 서버가 검증된 메타데이터로 DB에 등록된다
+- [x] **MCP-06**: shadcn-mcp 서버가 검증된 메타데이터로 DB에 등록된다
 
 ### Plugin (3개)
 
@@ -55,9 +55,9 @@ Deferred to future release.
 | MCP-01 | Phase 13 | Complete |
 | MCP-02 | Phase 13 | Complete |
 | MCP-03 | Phase 13 | Complete |
-| MCP-04 | Phase 13 | Pending |
-| MCP-05 | Phase 13 | Pending |
-| MCP-06 | Phase 13 | Pending |
+| MCP-04 | Phase 13 | Complete |
+| MCP-05 | Phase 13 | Complete |
+| MCP-06 | Phase 13 | Complete |
 | PLG-01 | Phase 14 | Pending |
 | PLG-02 | Phase 14 | Pending |
 | PLG-03 | Phase 14 | Pending |
