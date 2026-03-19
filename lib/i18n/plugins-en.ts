@@ -168,6 +168,18 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     desc: "Desktop MCP for terminal control, diff editing, file search, and in-memory code execution.",
     longDesc: "Desktop Commander is an MCP server that gives Claude full control over the terminal and filesystem. It supports long-running process management, diff-based file editing, file/directory search, and in-memory Python/Node.js code execution. Particularly useful for Claude Desktop users and powerful for directly managing build/test/deploy processes in local development environments.",
   },
+  fetch: {
+    desc: "Fetches URLs and converts content to Markdown. Essential for HTTP requests, web scraping, and API response inspection.",
+    longDesc: "Fetch MCP is an official MCP server that retrieves web pages and API responses, converting them to Markdown for Claude Code. It supports pagination (start_index), raw mode (no Markdown conversion), custom headers, and local/internal IP access. Unlike Firecrawl which focuses on full-site crawling, Fetch specializes in single URL retrieval with no API key required.",
+  },
+  time: {
+    desc: "Current time lookup and timezone conversion. Useful for global team coordination and timestamp analysis.",
+    longDesc: "Time MCP is an official MCP server providing current time queries and timezone conversion. get_current_time returns the current time for any IANA timezone, and convert_time converts between timezones. Supports LOCAL_TIMEZONE environment variable for default timezone configuration. Useful for global team scheduling and log timestamp analysis.",
+  },
+  markitdown: {
+    desc: "Converts various files (PDF, DOCX, XLSX, images, audio) to Markdown. Official Microsoft project.",
+    longDesc: "MarkItDown MCP is a Microsoft-developed file-to-Markdown conversion server. It converts PDF, Word, Excel, PowerPoint, HTML, images, audio, and more into Markdown via a single convert_to_markdown tool supporting http/https/file/data URIs. Requires pip install and manual MCP configuration (no one-line claude mcp add command available).",
+  },
 };
 
 export const reasonsEn: Record<string, string> = {
@@ -213,4 +225,7 @@ export const reasonsEn: Record<string, string> = {
   stripe: "Payment integration needed. Stripe's official MCP handles payments, subscriptions, refunds, and documentation search — supports both remote OAuth and local API key modes.",
   neon: "Serverless Postgres database needed. Neon MCP provides Git-like database branching, migration execution, and SQL queries — pairs well with Next.js + Vercel stacks.",
   "desktop-commander": "Terminal automation and process management needed. Desktop Commander provides full terminal control, diff-based editing, file search, and in-memory code execution for local development.",
+  fetch: "HTTP data retrieval or web content inspection needed. Fetch MCP converts any URL to Markdown — ideal for API responses, web pages, and simple scraping without API keys.",
+  time: "Timezone handling or time conversion needed. Time MCP provides current time queries and timezone conversion using IANA identifiers — useful for global teams and log analysis.",
+  markitdown: "Document file analysis needed. MarkItDown converts PDF, DOCX, XLSX, PPTX, images, and audio to Markdown — official Microsoft tool for multi-format document processing.",
 };
