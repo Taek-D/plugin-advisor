@@ -1,5 +1,19 @@
 # Milestones
 
+## v1.3 DB 확장 (Shipped: 2026-03-19)
+
+**Phases:** 13-16 | **Plans:** 5 | **Timeline:** 1 day (2026-03-19)
+**Files:** 19 changed (+642 / -72)
+
+**Key accomplishments:**
+- 6개 MCP 서버 등록 (fetch, time, markitdown, magic-mcp, n8n-mcp, shadcn-mcp) — GitHub README 기반 verbatim install 명령 검증
+- 3개 Plugin 등록 (claude-mem, superclaude, frontend-design) — type: 'plugin' 분류, DB 42→51 확장
+- 9개 신규 항목 install 명령 + i18n(pluginDescEn) 소스 수준 검증, 테스트 임계값 51로 갱신
+- 9개 tailored Korean reason 문자열 추가 — /advisor 추천 카드에 맞춤 이유 표시
+- orphaned reasonsEn export 삭제 (zero consumers 확인) — dead code 정리
+
+---
+
 ## v1.2 MCP + Plugin 통합 (Shipped: 2026-03-18)
 
 **Phases:** 8-12 | **Plans:** 5 | **Timeline:** 1 day (2026-03-18)

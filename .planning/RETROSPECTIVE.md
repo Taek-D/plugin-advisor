@@ -124,6 +124,47 @@
 
 ---
 
+## Milestone: v1.3 — DB 확장
+
+**Shipped:** 2026-03-19
+**Phases:** 4 | **Plans:** 5 | **Sessions:** ~2
+
+### What Was Built
+- 6개 MCP 서버 등록 (fetch, time, markitdown, magic-mcp, n8n-mcp, shadcn-mcp)
+- 3개 Plugin 등록 (claude-mem, superclaude, frontend-design) — DB 42→51
+- 전체 install 명령 + i18n 소스 수준 검증, 테스트 임계값 51로 갱신
+- 9개 tailored Korean reason 문자열 추가 (REASONS 객체)
+- orphaned reasonsEn export 삭제 (dead code 정리)
+
+### What Worked
+- 초기 감사(audit)에서 INT-01/FLOW-01 gap을 발견하여 Phase 16을 추가 — 감사 기반 gap closure 패턴이 효과적
+- v1.0에서 확립한 GitHub README 기반 검증 + PLUGIN_FIELD_OVERRIDES 패턴을 그대로 재활용 — Phase 13/14가 매우 빠르게 완료
+- Phase 15(검증 전용)가 데이터 정합성 최종 확인 역할 — install 명령 verbatim 비교로 오류 방지
+- reasonsEn 삭제 전 grep으로 zero consumers 확인 — 안전한 dead code 제거 패턴
+
+### What Was Inefficient
+- 첫 감사에서 Phase 16 없이 tech_debt 상태로 완료 → Phase 16 추가 후 재감사 필요 — gap closure phase를 로드맵 단계에서 미리 계획했으면 감사 1회로 충분
+- summary-extract one_liner 여전히 null — 4번째 마일스톤에서도 미해결
+- Nyquist VALIDATION.md가 4개 phase 모두 draft/미서명 — 빠른 데이터 phase에서는 sign-off 누락 반복
+
+### Patterns Established
+- REASONS 객체 스타일: Korean, 1-2문장, 요. 종결, signal + benefit 구조
+- hyphenated ID는 quoted string key 필수 ("magic-mcp", "claude-mem" 등)
+- dead export 삭제 전 grep 확인 패턴 (zero consumers → 삭제 안전)
+- 감사 기반 gap closure: audit → gap 발견 → phase 추가 → 재감사
+
+### Key Lessons
+1. 데이터 전용 마일스톤은 감사 단계에서 cross-phase wiring gap이 발견되기 쉬움 — REASONS 같은 파생 데이터는 원본 데이터와 동시에 추가해야 함
+2. Plugin 설치 명령이 MCP와 완전히 다른 체계 (/plugin marketplace add + /plugin install) — 향후 Plugin 추가 시 반드시 별도 패턴으로 처리
+3. reasonsEn처럼 한 번도 사용되지 않는 export가 3개 마일스톤 동안 존재 — 새 export 추가 시 즉시 consumer 연결 또는 추가하지 않는 원칙 필요
+
+### Cost Observations
+- Model mix: 0% opus, 100% sonnet, 0% haiku (balanced profile)
+- Total execution: ~25m across 5 plans (estimated)
+- Notable: plan당 평균 ~5분 — v1.2의 6.4분 대비 추가 단축. 순수 데이터 추가라 빠름.
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -133,6 +174,7 @@
 | v1.0 | ~5 | 4 | 9 | 11.4m | 첫 마일스톤 — GSD 워크플로우 확립 |
 | v1.1 | ~3 | 3 | 5 | 11.6m | TDD 도입, 순수 함수 패턴 확립 |
 | v1.2 | ~2 | 5 | 5 | 6.4m | 패턴 재활용 효과 — 45% 속도 향상 |
+| v1.3 | ~2 | 4 | 5 | ~5m | 순수 데이터 마일스톤 — 최단 plan 시간 |
 
 ### Top Lessons (Verified Across Milestones)
 
