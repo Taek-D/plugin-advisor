@@ -5,6 +5,7 @@ import { pluginDescEn } from "../i18n/plugins-en";
 const PLUGIN_TYPE_IDS = [
   "omc", "superpowers", "agency-agents", "bkit-starter", "bkit",
   "ralph", "fireauto", "taskmaster", "gsd",
+  "claude-mem", "superclaude", "frontend-design",
 ] as const;
 
 describe("PLUGINS type field", () => {

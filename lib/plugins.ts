@@ -453,6 +453,29 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     installMode: "safe-copy",
     bestFor: ["워크플로 자동화 설계", "n8n 기반 통합 자동화", "비개발자 업무 자동화"],
   },
+  "claude-mem": {
+    type: "plugin" as const,
+    verificationStatus: "verified",
+    difficulty: "beginner",
+    installMode: "safe-copy",
+    bestFor: ["장기 프로젝트 컨텍스트 유지", "멀티 세션 개발", "반복 작업 패턴 기억"],
+  },
+  superclaude: {
+    type: "plugin" as const,
+    verificationStatus: "verified",
+    difficulty: "intermediate",
+    installMode: "safe-copy",
+    bestFor: ["체계적 개발 워크플로", "전문 커맨드 활용", "에이전트 기반 개발"],
+    avoidFor: ["pip/pipx SuperClaude 구버전 설치 환경 (먼저 제거 필요)"],
+  },
+  "frontend-design": {
+    type: "plugin" as const,
+    officialStatus: "official",
+    verificationStatus: "verified",
+    difficulty: "beginner",
+    installMode: "safe-copy",
+    bestFor: ["프론트엔드 UI 개발", "랜딩 페이지 디자인", "대시보드 제작"],
+  },
 };
 
 const CORE_PLUGINS: Record<string, PluginSeed> = {
@@ -678,6 +701,62 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
       "spec", "spec-driven", "명세", "요구사항", "requirements", "roadmap",
       "phase", "milestone", "workflow", "planning", "plan", "context engineering",
       "context rot", "장기 프로젝트", "prd", "execute", "verify",
+    ],
+  },
+  "claude-mem": {
+    id: "claude-mem",
+    name: "claude-mem",
+    tag: "MEM",
+    color: "#6366F1",
+    category: "orchestration",
+    githubRepo: "thedotmack/claude-mem",
+    desc: "세션 간 메모리 영속화. 코딩 세션의 모든 행동을 자동 캡처하고 다음 세션에 컨텍스트를 주입.",
+    longDesc:
+      "claude-mem은 Claude Code 세션이 끝나도 컨텍스트가 사라지지 않도록 메모리를 영속화하는 플러그인이에요. 세션 중 모든 도구 호출, 파일 편집, 결정을 자동으로 캡처해서 SQLite에 저장하고, AI 압축으로 의미 있는 요약을 생성해요. 다음 세션 시작 시 관련 컨텍스트를 자동으로 주입해서 \"어제 어디까지 했더라?\" 문제를 해결해줘요. 설치 후 별도 설정 없이 자동으로 동작해요.",
+    url: "https://github.com/thedotmack/claude-mem",
+    install: [
+      "/plugin marketplace add thedotmack/claude-mem",
+      "/plugin install claude-mem",
+    ],
+    features: [
+      "세션 간 자동 메모리 영속화",
+      "AI 기반 컨텍스트 압축 (10x 토큰 효율)",
+      "SQLite FTS5 기반 의미 검색",
+      "프라이버시 제어 (<private> 태그)",
+    ],
+    conflicts: [],
+    keywords: [
+      "메모리", "memory", "컨텍스트", "context", "세션", "session",
+      "영속화", "persist", "기억", "히스토리", "history",
+      "장기", "연속", "continuity",
+    ],
+  },
+  superclaude: {
+    id: "superclaude",
+    name: "SuperClaude",
+    tag: "SC",
+    color: "#8B5CF6",
+    category: "orchestration",
+    githubRepo: "SuperClaude-Org/SuperClaude_Plugin",
+    desc: "29개 /sc: 커맨드, 23개 전문 에이전트, 7가지 행동 모드. Claude Code를 구조화된 개발 플랫폼으로 확장.",
+    longDesc:
+      "SuperClaude는 Claude Code에 체계적인 개발 워크플로를 주입하는 플러그인이에요. /sc: 네임스페이스로 29개 전문 커맨드(리서치, 구현, 리뷰, 분석 등)와 23개 전문 에이전트, 7가지 인지 행동 모드를 제공해요. AIRIS MCP Gateway가 자동으로 구성되어 10개 통합 도구를 즉시 사용할 수 있어요. pip/pipx/npm 버전과 호환되지 않으므로, 이전 버전이 설치되어 있다면 먼저 제거해야 해요.",
+    url: "https://github.com/SuperClaude-Org/SuperClaude_Plugin",
+    install: [
+      "/plugin marketplace add SuperClaude-Org/SuperClaude_Plugin",
+      "/plugin install sc@SuperClaude-Org",
+    ],
+    features: [
+      "29개 /sc: 전문 커맨드",
+      "23개 전문 에이전트 + 7가지 행동 모드",
+      "AIRIS MCP Gateway 자동 구성 (10 tools)",
+      "자동 업데이트 (Claude Code plugin system)",
+    ],
+    conflicts: [],
+    keywords: [
+      "커맨드", "command", "에이전트", "agent", "워크플로", "workflow",
+      "슬래시", "slash", "생산성", "productivity", "구조화", "structured",
+      "개발", "development", "자동화", "automation",
     ],
   },
   fireauto: {
@@ -1561,6 +1640,34 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
       "shadcn", "ui 라이브러리", "컴포넌트 라이브러리", "shadcn-ui",
       "radix", "tailwind ui", "component library", "디자인 시스템",
       "design system", "ui kit", "리액트 컴포넌트", "react component",
+    ],
+  },
+  "frontend-design": {
+    id: "frontend-design",
+    name: "Frontend Design",
+    tag: "FED",
+    color: "#EC4899",
+    category: "ui-ux",
+    githubRepo: "anthropics/claude-code",
+    desc: "Anthropic 공식 프론트엔드 디자인 스킬. 독창적인 타이포그래피, 색상, 애니메이션으로 AI 슬롭을 탈피.",
+    longDesc:
+      "Frontend Design는 Anthropic이 직접 제공하는 공식 Claude Code 플러그인이에요. 일반적인 AI 생성 UI의 뻔한 패턴(Inter 폰트, 보라색 그라디언트, 밋밋한 레이아웃)을 피하고, 독창적인 타이포그래피, 대담한 색상 팔레트, 고임팩트 애니메이션, 비대칭 레이아웃을 활용해 프로덕션 품질의 인터페이스를 만들어줘요. /frontend-design, /design, /ui, /layout 커맨드를 지원하며, 프론트엔드 요청 시 자동으로 활성화돼요.",
+    url: "https://github.com/anthropics/claude-code/tree/main/plugins/frontend-design",
+    install: [
+      "/plugin marketplace add anthropics/claude-code",
+      "/plugin install frontend-design@claude-code-plugins",
+    ],
+    features: [
+      "독창적 UI 디자인 (AI 슬롭 탈피)",
+      "대담한 타이포그래피 + 색상 팔레트",
+      "고임팩트 애니메이션 및 인터랙션",
+      "/frontend-design, /design, /ui, /layout 커맨드",
+    ],
+    conflicts: [],
+    keywords: [
+      "프론트엔드", "frontend", "디자인", "design", "ui", "ux",
+      "컴포넌트", "component", "랜딩", "landing", "대시보드", "dashboard",
+      "애니메이션", "animation", "타이포그래피", "typography",
     ],
   },
 
