@@ -35,7 +35,7 @@ https://plugin-advisor.vercel.app
 ### 플러그인 조합 분석 (`/optimizer`)
 
 - **MCP list 붙여넣기**: `claude mcp list` 결과를 붙여넣으면 설치된 플러그인을 자동 인식 (2가지 포맷 지원, alias 정규화)
-- **직접 타이핑**: 42개 DB 기반 자동완성으로 플러그인 검색 및 추가 (ARIA combobox, 키보드 네비게이션)
+- **직접 타이핑**: 51개 DB 기반 자동완성으로 플러그인 검색 및 추가 (ARIA combobox, 키보드 네비게이션)
 - **조합 점수**: 100점 감점 모델 — 충돌(-20), 중복(-7), 미커버 카테고리(-7) 감점
 - **충돌/중복 경고**: 충돌하는 플러그인 쌍과 기능이 겹치는 그룹 감지
 - **커버리지 분석**: 10개 카테고리 중 현재 조합이 커버하는 영역을 시각화
@@ -45,8 +45,8 @@ https://plugin-advisor.vercel.app
 
 ### 플러그인 목록 (`/plugins`)
 
-- 42개 등록 플러그인 카드형 목록
-- 카테고리 필터링 (orchestration, workflow, code-quality, testing, documentation, data, security, integration, ui-ux, devops)
+- 51개 등록 플러그인 카드형 목록 (39 MCP + 12 Plugin)
+- MCP / Plugin 탭 분리 + 카테고리 필터링 (orchestration, workflow, code-quality, testing, documentation, data, security, integration, ui-ux, devops)
 - 텍스트 검색
 - 각 플러그인 상세 페이지 (`/plugins/[id]`)
 
