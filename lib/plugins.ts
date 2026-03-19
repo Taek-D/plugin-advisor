@@ -432,6 +432,27 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     bestFor: ["로컬 Git 자동화", "커밋/브랜치 관리", "diff 분석"],
     avoidFor: ["GitHub API 기반 협업 (→ GitHub MCP 사용)"],
   },
+  "magic-mcp": {
+    verificationStatus: "verified",
+    difficulty: "beginner",
+    installMode: "external-setup",
+    requiredSecrets: ["TWENTY_FIRST_API_KEY (21st.dev Magic Console에서 발급)"],
+    bestFor: ["AI 기반 UI 컴포넌트 빠른 생성", "React/Next.js UI 프로토타이핑"],
+    avoidFor: ["API 키 없는 환경"],
+  },
+  "shadcn-mcp": {
+    officialStatus: "official",
+    verificationStatus: "verified",
+    difficulty: "beginner",
+    installMode: "safe-copy",
+    bestFor: ["shadcn/ui 컴포넌트 검색 및 설치", "React+Tailwind 프로젝트 UI 구성"],
+  },
+  "n8n-mcp": {
+    verificationStatus: "verified",
+    difficulty: "intermediate",
+    installMode: "safe-copy",
+    bestFor: ["워크플로 자동화 설계", "n8n 기반 통합 자동화", "비개발자 업무 자동화"],
+  },
 };
 
 const CORE_PLUGINS: Record<string, PluginSeed> = {
@@ -767,6 +788,33 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
       "linear", "이슈", "issue", "스프린트", "sprint", "프로젝트 관리",
       "project management", "팀", "team", "칸반", "kanban", "백로그",
       "backlog", "애자일", "agile",
+    ],
+  },
+  "n8n-mcp": {
+    id: "n8n-mcp",
+    name: "n8n MCP",
+    tag: "N8N",
+    color: "#FF6D5A",
+    category: "workflow",
+    githubRepo: "czlonkowski/n8n-mcp",
+    desc: "n8n 워크플로 자동화 연동. n8n 없이도 문서/검증 모드(7개 core tools)로 사용 가능.",
+    longDesc:
+      "n8n MCP는 n8n 워크플로 자동화 플랫폼을 Claude Code에서 연동하는 서버예요. n8n 인스턴스 없이도 7개 core tools(문서 검증, 워크플로 설계 지원)로 기본 사용이 가능해요. n8n API Key를 연동하면 13개 추가 tools로 워크플로 생성, 실행, 모니터링까지 할 수 있어요. MCP_MODE=stdio와 환경변수 설정으로 Claude Code에 최적화된 설정을 제공해요.",
+    url: "https://github.com/czlonkowski/n8n-mcp",
+    install: [
+      "claude mcp add n8n-mcp -e MCP_MODE=stdio -e LOG_LEVEL=error -e DISABLE_CONSOLE_OUTPUT=true -- npx n8n-mcp",
+    ],
+    features: [
+      "워크플로 문서 검증 (core 7개 tools)",
+      "n8n 워크플로 생성/실행/모니터링 (API 연동 시)",
+      "MCP_MODE=stdio 최적화",
+      "n8n 없이 기본 모드 사용 가능",
+    ],
+    conflicts: [],
+    keywords: [
+      "n8n", "자동화", "automation", "워크플로", "workflow",
+      "노코드", "nocode", "통합", "integration", "파이프라인",
+      "pipeline", "트리거", "trigger", "연동", "zapier",
     ],
   },
 
@@ -1459,6 +1507,60 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
       "ui", "ux", "프론트", "frontend", "react", "vue", "svelte", "디자인",
       "design", "컴포넌트", "component", "landing", "랜딩", "웹앱", "webapp",
       "tailwind", "shadcn", "모바일", "mobile",
+    ],
+  },
+  "magic-mcp": {
+    id: "magic-mcp",
+    name: "Magic MCP",
+    tag: "MGC",
+    color: "#7C3AED",
+    category: "ui-ux",
+    githubRepo: "21st-dev/magic-mcp",
+    desc: "자연어로 AI UI 컴포넌트 생성. 21st.dev 라이브러리 기반 즉시 사용 가능한 컴포넌트.",
+    longDesc:
+      "Magic MCP는 21st.dev가 제공하는 AI UI 컴포넌트 생성 서버예요. /ui 커맨드로 자연어를 입력하면 21st.dev 컴포넌트 라이브러리에서 적합한 UI 컴포넌트를 생성하거나 추천해줘요. React/Next.js 프로젝트에서 버튼, 카드, 모달 같은 UI를 빠르게 만들 때 유용해요. TWENTY_FIRST_API_KEY가 필요하며 21st.dev Magic Console에서 발급받을 수 있어요. shadcn-mcp와 보완 관계 — shadcn은 기존 컴포넌트 라이브러리 접근, magic은 AI 기반 생성이에요.",
+    url: "https://github.com/21st-dev/magic-mcp",
+    install: [
+      "npx @21st-dev/cli@latest install claude --api-key <key>",
+    ],
+    features: [
+      "자연어 UI 컴포넌트 생성 (/ui 커맨드)",
+      "21st.dev 컴포넌트 라이브러리 접근",
+      "React/Next.js 프로젝트 지원",
+      "즉시 사용 가능한 코드 출력",
+    ],
+    conflicts: [],
+    keywords: [
+      "ai ui", "ui 생성", "컴포넌트 생성", "ai component", "magic",
+      "21st", "자동 ui", "프론트엔드 생성", "react 컴포넌트",
+      "generate", "생성", "frontend", "ui",
+    ],
+  },
+  "shadcn-mcp": {
+    id: "shadcn-mcp",
+    name: "shadcn/ui MCP",
+    tag: "SHAD",
+    color: "#18181B",
+    category: "ui-ux",
+    githubRepo: "shadcn-ui/ui",
+    desc: "shadcn/ui 공식 MCP. 컴포넌트 검색, 설치, 레지스트리 조회를 Claude Code에서 직접.",
+    longDesc:
+      "shadcn/ui MCP는 shadcn/ui 팀(Vercel)이 공식 제공하는 MCP 서버예요. Claude Code에서 shadcn/ui 컴포넌트를 검색하고 설치하고 레지스트리를 조회할 수 있어요. pnpm dlx shadcn@latest mcp init --client claude 명령으로 한 줄 설치가 가능해요. API 키 없이 공개 레지스트리 기준으로 동작해요. magic-mcp와 보완 관계 — magic은 AI 생성, shadcn은 기존 컴포넌트 라이브러리 접근이에요.",
+    url: "https://ui.shadcn.com/docs/mcp",
+    install: [
+      "pnpm dlx shadcn@latest mcp init --client claude",
+    ],
+    features: [
+      "shadcn/ui 컴포넌트 검색",
+      "컴포넌트 설치 자동화",
+      "레지스트리 조회",
+      "공식 shadcn/ui 팀 제공",
+    ],
+    conflicts: [],
+    keywords: [
+      "shadcn", "ui 라이브러리", "컴포넌트 라이브러리", "shadcn-ui",
+      "radix", "tailwind ui", "component library", "디자인 시스템",
+      "design system", "ui kit", "리액트 컴포넌트", "react component",
     ],
   },
 
