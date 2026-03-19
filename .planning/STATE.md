@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: DB 확장
 status: planning
-stopped_at: Phase 13 context gathered
-last_updated: "2026-03-18T15:10:25.231Z"
+stopped_at: Completed 13-mcp-6-01-PLAN.md
+last_updated: "2026-03-19T04:05:19.708Z"
 last_activity: 2026-03-18 — v1.3 roadmap created (phases 13-15)
 progress:
   total_phases: 3
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 2
+  completed_plans: 1
   percent: 0
 ---
 
@@ -53,6 +53,7 @@ Recent decisions affecting v1.3 work:
 - [v1.2]: PLUGIN_FIELD_OVERRIDES에서만 type: 'plugin' 재분류 — Plugin 항목 추가 시 반드시 OVERRIDES에 type: 'plugin' as const 선언 필요
 - [v1.2]: DEFAULT_PLUGIN_FIELDS로 type 주입 — CORE_PLUGINS에 type 필드 없음 (PluginSeed 타입 안전)
 - [v1.0]: GitHub README 기반 검증 — install 명령은 반드시 공식 README fetch 후 verbatim 복사
+- [Phase 13-mcp-6]: fetch/time use uvx (Python-based, not npx); markitdown uses pip install — all 3 set officialStatus=official, verificationStatus=verified
 
 ### Pending Todos
 
@@ -65,6 +66,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-18T15:10:25.228Z
-Stopped at: Phase 13 context gathered
+Last session: 2026-03-19T04:05:19.706Z
+Stopped at: Completed 13-mcp-6-01-PLAN.md
 Resume with: /gsd:plan-phase 13
