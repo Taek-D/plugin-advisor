@@ -5,7 +5,7 @@
 - ✅ **v1.0 Plugin Metadata Verification** — Phases 1-4 (shipped 2026-03-16)
 - ✅ **v1.1 Plugin Optimizer** — Phases 5-7 (shipped 2026-03-17)
 - ✅ **v1.2 MCP + Plugin 통합** — Phases 8-12 (shipped 2026-03-18)
-- 🚧 **v1.3 DB 확장** — Phases 13-15 (in progress)
+- ✅ **v1.3 DB 확장** — Phases 13-15 (shipped 2026-03-19)
 
 ## Phases
 
@@ -39,13 +39,13 @@
 
 </details>
 
-### 🚧 v1.3 DB 확장 (In Progress)
+### ✅ v1.3 DB 확장 (SHIPPED 2026-03-19)
 
 **Milestone Goal:** GitHub 스타 기준 인기 MCP 서버 6개 + Plugin 3개를 추가하여 DB를 42개 → 51개로 확장한다. 모든 항목은 공식 GitHub README 기반으로 install 명령, requiredSecrets, features가 검증된다.
 
 - [x] **Phase 13: MCP 서버 6개 등록** — fetch, time, markitdown, magic-mcp, n8n-mcp, shadcn-mcp를 lib/plugins.ts + lib/i18n/plugins-en.ts에 등록 (completed 2026-03-19)
 - [x] **Phase 14: Plugin 3개 등록** — claude-mem, superclaude, frontend-design을 type: 'plugin'으로 등록 (completed 2026-03-19)
-- [ ] **Phase 15: 검증 및 테스트 갱신** — install 명령 최종 확인, i18n 동기화, plugins.test.ts 카운트 갱신, CI 통과
+- [x] **Phase 15: 검증 및 테스트 갱신** — install 명령 최종 확인, i18n 동기화, plugins.test.ts 카운트 갱신(42→51), CI 통과 (completed 2026-03-19)
 
 ## Phase Details
 
@@ -85,9 +85,9 @@ Plans:
   2. 모든 신규 항목의 pluginDescEn 키가 lib/i18n/plugins-en.ts에 존재한다 (번역 누락 없음)
   3. plugins.test.ts의 카운트 임계값이 51로 업데이트되고 pnpm test가 통과한다
   4. pnpm typecheck, pnpm lint, pnpm build가 모두 에러 없이 통과한다
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 Plans:
-- [ ] 15-01-PLAN.md — install 검증 + i18n 확인 + 테스트 임계값 51 갱신 + CI 통과
+- [x] 15-01-PLAN.md — install 검증 + i18n 확인 + 테스트 임계값 51 갱신 + CI 통과
 
 ## Progress
 
@@ -107,7 +107,7 @@ Plans:
 | 12. Optimizer UI + i18n | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 13. MCP 서버 6개 등록 | v1.3 | 2/2 | Complete | 2026-03-19 |
 | 14. Plugin 3개 등록 | v1.3 | 1/1 | Complete | 2026-03-19 |
-| 15. 검증 및 테스트 갱신 | v1.3 | 0/1 | Not started | - |
+| 15. 검증 및 테스트 갱신 | v1.3 | 1/1 | Complete | 2026-03-19 |
 
 ---
 *Full v1.0 details: `.planning/milestones/v1.0-ROADMAP.md`*
