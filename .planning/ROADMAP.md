@@ -104,7 +104,7 @@ Plans:
 | 11. Catalog Tab UI | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 12. Optimizer UI + i18n | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 13. MCP 서버 6개 등록 | v1.3 | Complete    | 2026-03-19 | 2026-03-19 |
-| 14. Plugin 3개 등록 | 1/1 | Complete   | 2026-03-19 | - |
+| 14. Plugin 3개 등록 | 1/1 | Complete    | 2026-03-19 | - |
 | 15. 검증 및 테스트 갱신 | v1.3 | 0/? | Not started | - |
 
 ---
