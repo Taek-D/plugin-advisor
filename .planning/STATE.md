@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: DB 확장
 status: completed
-stopped_at: Completed 15-01-PLAN.md
-last_updated: "2026-03-19T06:23:31.955Z"
-last_activity: 2026-03-19 — Phase 15 complete (verification + test update, CI green)
+stopped_at: Completed 16-01-PLAN.md
+last_updated: "2026-03-19T07:21:22Z"
+last_activity: 2026-03-19 — Phase 16 complete (reason strings + dead export removal, CI green)
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 4
-  completed_plans: 4
+  total_phases: 4
+  completed_phases: 4
+  total_plans: 5
+  completed_plans: 5
   percent: 100
 ---
 
@@ -26,15 +26,15 @@ See: .planning/PROJECT.md (updated 2026-03-18)
 ## Current Position
 
 ```
-Phase:    15 of 15 (complete)
+Phase:    16 of 16 (complete)
 Plan:     1 of 1 in current phase
-Status:   Phase 15 complete — VER-01~04 all green, threshold 42→51
-Last activity: 2026-03-19 — Phase 15 complete (verification + test update, CI green)
+Status:   Phase 16 complete — RSN-01~02 all green, reason strings + dead export cleanup
+Last activity: 2026-03-19 — Phase 16 complete (reason strings + dead export removal, CI green)
 
-Lifetime:  3 milestones, 15 phases complete, 23 plans complete
+Lifetime:  3 milestones, 16 phases complete, 24 plans complete
 ```
 
-Progress: [██████████] 100% (v1.3: 3/3 phases)
+Progress: [██████████] 100% (v1.3: 4/4 phases)
 
 ## Performance Metrics
 
@@ -64,6 +64,8 @@ Recent decisions affecting v1.3 work:
 - [14-01]: type: 'plugin' as const in PLUGIN_FIELD_OVERRIDES only — PluginSeed type does not include type field
 - [15-01]: Threshold set to 51 (not 60) — REQUIREMENTS.md VER-03 specifies 42+9=51; RESEARCH.md value of 60 was erroneous
 - [15-01]: fetch install = uvx mcp-server-fetch (not uvx mcp-fetch) — official package name is mcp-server-fetch
+- [16-01]: reasonsEn deleted (zero consumers confirmed by typecheck) — pluginDescEn retained as sole export in plugins-en.ts
+- [16-01]: hyphenated REASONS keys use quoted string syntax (magic-mcp, n8n-mcp, shadcn-mcp, claude-mem, frontend-design)
 
 ### Pending Todos
 
@@ -75,6 +77,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-19T06:12:18Z
-Stopped at: Completed 15-01-PLAN.md
-Resume with: v1.3 milestone complete — no next phase
+Last session: 2026-03-19T07:21:22Z
+Stopped at: Completed 16-01-PLAN.md
+Resume with: v1.3 milestone fully complete — all 4 phases done (phases 13-16)
