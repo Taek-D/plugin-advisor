@@ -180,6 +180,18 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     desc: "Converts various files (PDF, DOCX, XLSX, images, audio) to Markdown. Official Microsoft project.",
     longDesc: "MarkItDown MCP is a Microsoft-developed file-to-Markdown conversion server. It converts PDF, Word, Excel, PowerPoint, HTML, images, audio, and more into Markdown via a single convert_to_markdown tool supporting http/https/file/data URIs. Requires pip install and manual MCP configuration (no one-line claude mcp add command available).",
   },
+  "magic-mcp": {
+    desc: "AI-powered UI component generation via natural language. Leverages the 21st.dev component library for instant, production-ready components.",
+    longDesc: "Magic MCP is an AI UI component generation server by 21st.dev. Use the /ui command with natural language to generate or discover UI components from the 21st.dev library. Great for quickly building buttons, cards, modals, and more in React/Next.js projects. Requires TWENTY_FIRST_API_KEY from the 21st.dev Magic Console. Complements shadcn-mcp — magic generates via AI, shadcn accesses existing component libraries.",
+  },
+  "shadcn-mcp": {
+    desc: "Official shadcn/ui MCP server. Search, install, and browse shadcn/ui components directly from Claude Code.",
+    longDesc: "shadcn/ui MCP is the official MCP server provided by the shadcn/ui team (Vercel). It enables searching, installing, and browsing the shadcn/ui component registry directly from Claude Code. One-line install via pnpm dlx shadcn@latest mcp init --client claude. No API key needed — uses the public registry. Complements magic-mcp — shadcn provides library access, magic provides AI generation.",
+  },
+  "n8n-mcp": {
+    desc: "n8n workflow automation integration. Works without n8n instance in documentation/verification mode with 7 core tools.",
+    longDesc: "n8n MCP integrates the n8n workflow automation platform with Claude Code. It works without an n8n instance using 7 core tools for documentation and workflow design verification. Connecting an n8n API Key unlocks 13 additional tools for workflow creation, execution, and monitoring. Configured with MCP_MODE=stdio for optimal Claude Code integration.",
+  },
 };
 
 export const reasonsEn: Record<string, string> = {
@@ -228,4 +240,7 @@ export const reasonsEn: Record<string, string> = {
   fetch: "HTTP data retrieval or web content inspection needed. Fetch MCP converts any URL to Markdown — ideal for API responses, web pages, and simple scraping without API keys.",
   time: "Timezone handling or time conversion needed. Time MCP provides current time queries and timezone conversion using IANA identifiers — useful for global teams and log analysis.",
   markitdown: "Document file analysis needed. MarkItDown converts PDF, DOCX, XLSX, PPTX, images, and audio to Markdown — official Microsoft tool for multi-format document processing.",
+  "magic-mcp": "AI-powered UI component generation needed. Magic MCP creates production-ready React/Next.js components from natural language via 21st.dev's library — requires TWENTY_FIRST_API_KEY.",
+  "shadcn-mcp": "shadcn/ui component library access needed. Official shadcn/ui MCP enables component search, installation, and registry browsing directly from Claude Code — no API key required.",
+  "n8n-mcp": "Workflow automation design or n8n integration needed. n8n MCP provides 7 core tools without an n8n instance, plus 13 additional tools when connected to n8n's API.",
 };
