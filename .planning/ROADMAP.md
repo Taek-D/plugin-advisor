@@ -41,7 +41,7 @@
 
 ### 🚧 v1.3 DB 확장 (In Progress)
 
-**Milestone Goal:** GitHub 스타 기준 인기 MCP 서버 6개 + Plugin 3개를 추가하여 DB를 51개 → 60개로 확장한다. 모든 항목은 공식 GitHub README 기반으로 install 명령, requiredSecrets, features가 검증된다.
+**Milestone Goal:** GitHub 스타 기준 인기 MCP 서버 6개 + Plugin 3개를 추가하여 DB를 42개 → 51개로 확장한다. 모든 항목은 공식 GitHub README 기반으로 install 명령, requiredSecrets, features가 검증된다.
 
 - [x] **Phase 13: MCP 서버 6개 등록** — fetch, time, markitdown, magic-mcp, n8n-mcp, shadcn-mcp를 lib/plugins.ts + lib/i18n/plugins-en.ts에 등록 (completed 2026-03-19)
 - [x] **Phase 14: Plugin 3개 등록** — claude-mem, superclaude, frontend-design을 type: 'plugin'으로 등록 (completed 2026-03-19)
@@ -74,18 +74,20 @@ Plans:
   4. PLUGIN_FIELD_OVERRIDES에 type: 'plugin' as const가 선언되어 타입 분류가 정확하다
 **Plans:** 1/1 plans complete
 Plans:
-- [ ] 14-01-PLAN.md — claude-mem, superclaude, frontend-design 등록 + i18n + 테스트 업데이트
+- [x] 14-01-PLAN.md — claude-mem, superclaude, frontend-design 등록 + i18n + 테스트 업데이트
 
 ### Phase 15: 검증 및 테스트 갱신
-**Goal**: 신규 9개 항목의 데이터 정확성이 소스 코드 수준에서 확인되고, plugins.test.ts가 60개 기준으로 갱신되며, pnpm typecheck/lint/build/test가 모두 통과한다
+**Goal**: 신규 9개 항목의 데이터 정확성이 소스 코드 수준에서 확인되고, plugins.test.ts가 51개 기준으로 갱신되며, pnpm typecheck/lint/build/test가 모두 통과한다
 **Depends on**: Phase 14
 **Requirements**: VER-01, VER-02, VER-03, VER-04
 **Success Criteria** (what must be TRUE):
-  1. Object.keys(PLUGINS).length가 60 이상이다 (소스 코드에서 직접 확인)
+  1. Object.keys(PLUGINS).length가 51 이상이다 (소스 코드에서 직접 확인)
   2. 모든 신규 항목의 pluginDescEn 키가 lib/i18n/plugins-en.ts에 존재한다 (번역 누락 없음)
-  3. plugins.test.ts의 카운트 임계값이 60으로 업데이트되고 pnpm test가 통과한다
+  3. plugins.test.ts의 카운트 임계값이 51로 업데이트되고 pnpm test가 통과한다
   4. pnpm typecheck, pnpm lint, pnpm build가 모두 에러 없이 통과한다
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 15-01-PLAN.md — install 검증 + i18n 확인 + 테스트 임계값 51 갱신 + CI 통과
 
 ## Progress
 
@@ -103,9 +105,9 @@ Plans:
 | 10. Scoring Extension | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 11. Catalog Tab UI | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 12. Optimizer UI + i18n | v1.2 | 1/1 | Complete | 2026-03-18 |
-| 13. MCP 서버 6개 등록 | v1.3 | Complete    | 2026-03-19 | 2026-03-19 |
-| 14. Plugin 3개 등록 | 1/1 | Complete    | 2026-03-19 | - |
-| 15. 검증 및 테스트 갱신 | v1.3 | 0/? | Not started | - |
+| 13. MCP 서버 6개 등록 | v1.3 | 2/2 | Complete | 2026-03-19 |
+| 14. Plugin 3개 등록 | v1.3 | 1/1 | Complete | 2026-03-19 |
+| 15. 검증 및 테스트 갱신 | v1.3 | 0/1 | Not started | - |
 
 ---
 *Full v1.0 details: `.planning/milestones/v1.0-ROADMAP.md`*
