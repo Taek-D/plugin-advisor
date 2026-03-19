@@ -72,7 +72,9 @@ Plans:
   2. /optimizer에서 Plugin 보완 추천 시 신규 Plugin이 후보로 나타난다
   3. 각 Plugin의 install 명령이 공식 GitHub README에서 확인된 명령과 일치한다
   4. PLUGIN_FIELD_OVERRIDES에 type: 'plugin' as const가 선언되어 타입 분류가 정확하다
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 14-01-PLAN.md — claude-mem, superclaude, frontend-design 등록 + i18n + 테스트 업데이트
 
 ### Phase 15: 검증 및 테스트 갱신
 **Goal**: 신규 9개 항목의 데이터 정확성이 소스 코드 수준에서 확인되고, plugins.test.ts가 60개 기준으로 갱신되며, pnpm typecheck/lint/build/test가 모두 통과한다
@@ -102,7 +104,7 @@ Plans:
 | 11. Catalog Tab UI | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 12. Optimizer UI + i18n | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 13. MCP 서버 6개 등록 | v1.3 | Complete    | 2026-03-19 | 2026-03-19 |
-| 14. Plugin 3개 등록 | v1.3 | 0/? | Not started | - |
+| 14. Plugin 3개 등록 | v1.3 | 0/1 | Not started | - |
 | 15. 검증 및 테스트 갱신 | v1.3 | 0/? | Not started | - |
 
 ---
