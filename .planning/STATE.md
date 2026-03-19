@@ -4,7 +4,7 @@ milestone: v1.3
 milestone_name: DB 확장
 status: completed
 stopped_at: Completed 16-01-PLAN.md
-last_updated: "2026-03-19T07:21:22Z"
+last_updated: "2026-03-19T07:28:47.479Z"
 last_activity: 2026-03-19 — Phase 16 complete (reason strings + dead export removal, CI green)
 progress:
   total_phases: 4

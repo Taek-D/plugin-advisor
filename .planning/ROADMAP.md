@@ -123,7 +123,7 @@ Plans:
 | 13. MCP 서버 6개 등록 | v1.3 | 2/2 | Complete | 2026-03-19 |
 | 14. Plugin 3개 등록 | v1.3 | 1/1 | Complete | 2026-03-19 |
 | 15. 검증 및 테스트 갱신 | v1.3 | 1/1 | Complete | 2026-03-19 |
-| 16. 추천 이유 문자열 보완 | v1.3 | 1/1 | Complete | 2026-03-19 |
+| 16. 추천 이유 문자열 보완 | v1.3 | Complete    | 2026-03-19 | 2026-03-19 |
 
 ---
 *Full v1.0 details: `.planning/milestones/v1.0-ROADMAP.md`*
