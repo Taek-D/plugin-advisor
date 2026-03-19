@@ -26,7 +26,7 @@ Requirements for milestone v1.3 — DB 확장 (MCP + Plugin).
 
 - [ ] **VER-01**: 신규 9개 항목의 install 명령어가 공식 GitHub README와 일치한다
 - [ ] **VER-02**: 신규 9개 항목의 한국어 desc/longDesc와 영문 번역이 동기화된다
-- [ ] **VER-03**: plugins.test.ts 카운트 임계값이 60개로 업데이트되고 타입 분포 테스트가 갱신된다
+- [ ] **VER-03**: plugins.test.ts 카운트 임계값이 51개로 업데이트되고 타입 분포 테스트가 갱신된다
 - [ ] **VER-04**: pnpm typecheck, lint, build, test가 모두 통과한다
 
 ## Future Requirements
