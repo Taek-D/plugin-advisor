@@ -49,7 +49,7 @@ describe("PLUGINS type field", () => {
     }
   });
 
-  it("PLUGINS object has at least 42 entries (sanity check)", () => {
-    expect(Object.keys(PLUGINS).length).toBeGreaterThanOrEqual(42);
+  it("PLUGINS object has at least 51 entries (sanity check)", () => {
+    expect(Object.keys(PLUGINS).length).toBeGreaterThanOrEqual(51);
   });
 });
