@@ -18,9 +18,9 @@ Requirements for milestone v1.3 — DB 확장 (MCP + Plugin).
 
 ### Plugin (3개)
 
-- [ ] **PLG-01**: claude-mem Plugin이 검증된 메타데이터로 DB에 등록되고 type: 'plugin'으로 분류된다
-- [ ] **PLG-02**: superclaude Plugin이 검증된 메타데이터로 DB에 등록되고 type: 'plugin'으로 분류된다
-- [ ] **PLG-03**: frontend-design Plugin이 검증된 메타데이터로 DB에 등록되고 type: 'plugin'으로 분류된다
+- [x] **PLG-01**: claude-mem Plugin이 검증된 메타데이터로 DB에 등록되고 type: 'plugin'으로 분류된다
+- [x] **PLG-02**: superclaude Plugin이 검증된 메타데이터로 DB에 등록되고 type: 'plugin'으로 분류된다
+- [x] **PLG-03**: frontend-design Plugin이 검증된 메타데이터로 DB에 등록되고 type: 'plugin'으로 분류된다
 
 ### 검증 (Verification)
 
@@ -58,9 +58,9 @@ Deferred to future release.
 | MCP-04 | Phase 13 | Complete |
 | MCP-05 | Phase 13 | Complete |
 | MCP-06 | Phase 13 | Complete |
-| PLG-01 | Phase 14 | Pending |
-| PLG-02 | Phase 14 | Pending |
-| PLG-03 | Phase 14 | Pending |
+| PLG-01 | Phase 14 | Complete |
+| PLG-02 | Phase 14 | Complete |
+| PLG-03 | Phase 14 | Complete |
 | VER-01 | Phase 15 | Pending |
 | VER-02 | Phase 15 | Pending |
 | VER-03 | Phase 15 | Pending |

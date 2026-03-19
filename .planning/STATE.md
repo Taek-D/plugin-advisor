@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.3
 milestone_name: DB 확장
-status: planning
-stopped_at: Completed 13-02-PLAN.md
-last_updated: "2026-03-19T04:19:07.335Z"
-last_activity: 2026-03-19 — Phase 13 complete (6 MCP servers registered, DB 45→48)
+status: executing
+stopped_at: Completed 14-01-PLAN.md
+last_updated: "2026-03-19T13:47:00.000Z"
+last_activity: 2026-03-19 — Phase 14 complete (3 plugins registered, DB 48→51)
 progress:
   total_phases: 3
-  completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
-  percent: 33
+  completed_phases: 2
+  total_plans: 3
+  completed_plans: 3
+  percent: 67
 ---
 
 # Project State
@@ -21,20 +21,20 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-18)
 
 **Core value:** 사용자의 프로젝트에 맞는 검증된 Claude Code 플러그인 조합을 정확하게 추천하는 것.
-**Current focus:** Phase 13 — MCP 서버 6개 등록
+**Current focus:** Phase 14 complete — Phase 15 next
 
 ## Current Position
 
 ```
-Phase:    14 of 15 (Plugin 3개 등록)
+Phase:    15 of 15 (next phase)
 Plan:     0 of ? in current phase
-Status:   Phase 13 complete — Phase 14 ready to plan
-Last activity: 2026-03-19 — Phase 13 complete (6 MCP servers registered, DB 45→48)
+Status:   Phase 14 complete — DB 48→51, 3 plugins registered
+Last activity: 2026-03-19 — Phase 14 complete (3 plugins registered, DB 48→51)
 
-Lifetime:  3 milestones, 13 phases complete, 21 plans complete
+Lifetime:  3 milestones, 14 phases complete, 22 plans complete
 ```
 
-Progress: [███░░░░░░░] 33% (v1.3: 1/3 phases)
+Progress: [██████░░░░] 67% (v1.3: 2/3 phases)
 
 ## Performance Metrics
 
@@ -58,6 +58,10 @@ Recent decisions affecting v1.3 work:
 - [13-02]: shadcn-mcp uses pnpm dlx (not npx) — 공식 shadcn/ui CLI 패턴 유지
 - [13-02]: n8n-mcp installMode=safe-copy — n8n 인스턴스 없이 7 core tools로 기본 동작 가능
 - [13-02]: magic-mcp and shadcn-mcp conflicts=[] — 보완 관계이므로 충돌 없음
+- [14-01]: claude-mem install = /plugin marketplace add + /plugin install (not npm install -g — hooks not registered)
+- [14-01]: superclaude install ID = sc@SuperClaude-Org (marketplace.json key is 'sc', not 'superclaude')
+- [14-01]: frontend-design marketplace source = anthropics/claude-code monorepo (not standalone repo)
+- [14-01]: type: 'plugin' as const in PLUGIN_FIELD_OVERRIDES only — PluginSeed type does not include type field
 
 ### Pending Todos
 
@@ -65,11 +69,10 @@ None.
 
 ### Blockers/Concerns
 
-- PLG-02 (superclaude): v5 plugin system BETA 상태 (2026-03) — `/plugin install superclaude` 가능 여부 또는 `pipx` 경로를 Phase 14 계획 단계에서 공식 README 확인 필요
-- 모든 신규 항목: install 명령 오류는 과거 모든 마일스톤의 주요 실패 원인 — 코딩 전 README fetch 필수
+None.
 
 ## Session Continuity
 
-Last session: 2026-03-19T04:11:22Z
-Stopped at: Completed 13-02-PLAN.md
-Resume with: /gsd:plan-phase 14
+Last session: 2026-03-19T13:47:00Z
+Stopped at: Completed 14-01-PLAN.md
+Resume with: /gsd:plan-phase 15
