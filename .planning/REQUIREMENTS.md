@@ -29,6 +29,11 @@ Requirements for milestone v1.3 — DB 확장 (MCP + Plugin).
 - [x] **VER-03**: plugins.test.ts 카운트 임계값이 51개로 업데이트되고 타입 분포 테스트가 갱신된다
 - [x] **VER-04**: pnpm typecheck, lint, build, test가 모두 통과한다
 
+### 추천 이유 (Reason Strings) — Gap Closure
+
+- [ ] **RSN-01**: 신규 9개 항목(fetch, time, markitdown, magic-mcp, n8n-mcp, shadcn-mcp, claude-mem, superclaude, frontend-design)의 Korean reason 문자열이 lib/plugin-reasons.ts REASONS 객체에 존재한다
+- [ ] **RSN-02**: lib/i18n/plugins-en.ts의 reasonsEn export가 orphaned 상태가 아니다 (consumer 연결 또는 제거)
+
 ## Future Requirements
 
 Deferred to future release.
@@ -66,9 +71,12 @@ Deferred to future release.
 | VER-03 | Phase 15 | Complete |
 | VER-04 | Phase 15 | Complete |
 
+| RSN-01 | Phase 16 | Pending |
+| RSN-02 | Phase 16 | Pending |
+
 **Coverage:**
-- v1.3 requirements: 13 total
-- Mapped to phases: 13
+- v1.3 requirements: 15 total
+- Mapped to phases: 15
 - Unmapped: 0
 
 ---
