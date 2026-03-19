@@ -192,6 +192,18 @@ export const pluginDescEn: Record<string, { desc: string; longDesc: string }> = 
     desc: "n8n workflow automation integration. Works without n8n instance in documentation/verification mode with 7 core tools.",
     longDesc: "n8n MCP integrates the n8n workflow automation platform with Claude Code. It works without an n8n instance using 7 core tools for documentation and workflow design verification. Connecting an n8n API Key unlocks 13 additional tools for workflow creation, execution, and monitoring. Configured with MCP_MODE=stdio for optimal Claude Code integration.",
   },
+  "claude-mem": {
+    desc: "Persistent memory across Claude Code sessions. Auto-captures actions and injects relevant context into future sessions.",
+    longDesc: "claude-mem gives Claude Code persistent memory across sessions. Every tool call, file edit, and decision is automatically captured, compressed with AI, and stored in a local SQLite database. When you start a new session, relevant context is injected automatically — no more re-explaining your project from scratch. Install once and it works silently in the background.",
+  },
+  superclaude: {
+    desc: "29 /sc: commands, 23 specialized agents, 7 behavioral modes. Extends Claude Code into a structured development platform.",
+    longDesc: "SuperClaude transforms Claude Code into a structured development platform through 29 slash commands under the /sc: namespace, 23 specialized agents, and 7 cognitive behavioral modes. The AIRIS MCP Gateway is auto-configured with 10 integrated tools. Incompatible with previous pip/pipx/npm SuperClaude versions — remove old installations first. Automatic updates are managed by Claude Code's plugin system.",
+  },
+  "frontend-design": {
+    desc: "Official Anthropic frontend design skill. Escape AI slop with distinctive typography, color palettes, and animations.",
+    longDesc: "Frontend Design is Anthropic's official Claude Code plugin for creating production-grade frontend interfaces. It pushes Claude away from generic AI aesthetics (Inter font, purple gradients, predictable layouts) toward distinctive typography, bold color palettes, high-impact animations, and asymmetric layouts. Supports /frontend-design, /design, /ui, and /layout commands, and activates automatically when you ask Claude to build frontend interfaces.",
+  },
 };
 
 export const reasonsEn: Record<string, string> = {
@@ -243,4 +255,7 @@ export const reasonsEn: Record<string, string> = {
   "magic-mcp": "AI-powered UI component generation needed. Magic MCP creates production-ready React/Next.js components from natural language via 21st.dev's library — requires TWENTY_FIRST_API_KEY.",
   "shadcn-mcp": "shadcn/ui component library access needed. Official shadcn/ui MCP enables component search, installation, and registry browsing directly from Claude Code — no API key required.",
   "n8n-mcp": "Workflow automation design or n8n integration needed. n8n MCP provides 7 core tools without an n8n instance, plus 13 additional tools when connected to n8n's API.",
+  "claude-mem": "Long-term project context retention needed. claude-mem auto-captures every session's actions and injects relevant memory into new sessions — eliminating the 'where did I leave off?' problem.",
+  superclaude: "Structured development workflow needed. SuperClaude provides 29 /sc: commands, 23 specialized agents, and 7 behavioral modes for systematic coding. Incompatible with pip/pipx/npm versions — remove old installs first.",
+  "frontend-design": "Frontend UI development detected. Frontend Design is Anthropic's official plugin for production-grade interfaces — distinctive typography, bold colors, and high-impact animations that escape generic AI aesthetics.",
 };
