@@ -306,6 +306,30 @@ const PLUGIN_FIELD_OVERRIDES: Partial<
     bestFor: ["로컬 DB 디버깅", "SQL 검증", "스키마 탐색"],
     avoidFor: ["Claude Code 첫 사용", "쓰기 작업 필요 시 (읽기 전용)"],
   },
+  fetch: {
+    officialStatus: "official",
+    verificationStatus: "verified",
+    difficulty: "beginner",
+    installMode: "safe-copy",
+    prerequisites: ["Python 또는 uvx (uv) 설치"],
+    bestFor: ["단순 HTTP 데이터 조회", "웹 페이지 요약", "API 응답 파싱"],
+  },
+  time: {
+    officialStatus: "official",
+    verificationStatus: "verified",
+    difficulty: "beginner",
+    installMode: "safe-copy",
+    prerequisites: ["Python 또는 uvx (uv) 설치"],
+    bestFor: ["글로벌 팀 시간 조율", "타임존 변환", "로그 타임스탬프 분석"],
+  },
+  markitdown: {
+    officialStatus: "official",
+    verificationStatus: "verified",
+    difficulty: "intermediate",
+    installMode: "manual-required",
+    prerequisites: ["Python 설치", "pip 사용 가능 환경"],
+    bestFor: ["문서 파일 분석", "PDF/Office 파일 Markdown 변환", "다포맷 문서 처리"],
+  },
   filesystem: {
     // In modelcontextprotocol/servers main branch; package @modelcontextprotocol/server-filesystem v0.6.3 confirmed
     officialStatus: "official",
@@ -923,6 +947,34 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
       "collaboration", "지식 관리", "knowledge",
     ],
   },
+  markitdown: {
+    id: "markitdown",
+    name: "MarkItDown MCP",
+    tag: "MID",
+    color: "#2563EB",
+    category: "documentation",
+    githubRepo: "microsoft/markitdown",
+    desc: "다양한 파일(PDF, DOCX, XLSX, 이미지 등)을 Markdown으로 변환. Microsoft 공식.",
+    longDesc:
+      "MarkItDown MCP는 Microsoft가 개발한 파일→Markdown 변환 서버예요. PDF, Word, Excel, PowerPoint, HTML, 이미지, 오디오 등 다양한 포맷을 Markdown으로 변환해줘요. convert_to_markdown 툴 하나로 http/https/file/data URI를 모두 지원해요. Claude Code에서 문서 파일을 직접 읽고 분석할 때 유용하지만, claude mcp add 단일 명령이 아닌 pip 설치 후 수동 설정이 필요해요.",
+    url: "https://github.com/microsoft/markitdown/tree/main/packages/markitdown-mcp",
+    install: [
+      "pip install markitdown-mcp",
+      "markitdown-mcp",
+    ],
+    features: [
+      "PDF/DOCX/XLSX/PPTX → Markdown 변환",
+      "이미지 OCR 및 오디오 전사",
+      "http/https/file/data URI 지원",
+      "Claude Code 문서 분석 연동",
+    ],
+    conflicts: [],
+    keywords: [
+      "마크다운", "markdown", "변환", "convert", "pdf", "docx", "워드", "word",
+      "엑셀", "excel", "파워포인트", "ppt", "파일", "file",
+      "문서", "document", "ocr",
+    ],
+  },
 
   // ─────────────────────────────────────────────
   // Data
@@ -1087,6 +1139,33 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
       "postgres", "postgresql", "데이터베이스", "database", "db", "sql",
       "쿼리", "query", "스키마", "schema", "마이그레이션", "migration",
       "테이블", "table", "rdb",
+    ],
+  },
+  fetch: {
+    id: "fetch",
+    name: "Fetch MCP",
+    tag: "FCH",
+    color: "#0EA5E9",
+    category: "data",
+    githubRepo: "modelcontextprotocol/servers",
+    desc: "URL 내용을 Markdown으로 변환 fetch. HTTP 요청, 웹 스크래핑, API 응답 조회.",
+    longDesc:
+      "Fetch MCP는 지정한 URL의 웹 페이지나 API 응답을 Markdown으로 변환해서 Claude Code에 전달해주는 공식 MCP 서버예요. 단순 HTTP GET뿐 아니라 커스텀 헤더, 페이지네이션(start_index), raw 모드(Markdown 변환 없이 원본 반환)도 지원해요. 로컬/내부 IP도 접근 가능하고, 로봇 이름 설정도 커스터마이즈할 수 있어요. Firecrawl과 달리 단일 URL 조회에 특화돼 있고 API 키가 필요 없어요.",
+    url: "https://github.com/modelcontextprotocol/servers/tree/main/src/fetch",
+    install: [
+      "claude mcp add fetch -- uvx mcp-server-fetch",
+    ],
+    features: [
+      "URL → Markdown 변환",
+      "페이지네이션 지원 (start_index)",
+      "raw 모드 (Markdown 변환 없이 원본)",
+      "로컬/내부 IP 접근 가능",
+    ],
+    conflicts: [],
+    keywords: [
+      "http요청", "api호출", "url", "fetch", "REST",
+      "웹페이지", "스크래핑", "scrape", "html",
+      "get", "request", "웹", "web",
     ],
   },
 
@@ -1318,6 +1397,33 @@ const CORE_PLUGINS: Record<string, PluginSeed> = {
       "figma", "피그마", "디자인", "design", "ui", "목업", "mockup",
       "프로토타입", "prototype", "핸드오프", "handoff", "컴포넌트",
       "component", "스타일", "style", "토큰", "token", "디자인 시스템",
+    ],
+  },
+  time: {
+    id: "time",
+    name: "Time MCP",
+    tag: "TIME",
+    color: "#8B5CF6",
+    category: "integration",
+    githubRepo: "modelcontextprotocol/servers",
+    desc: "현재 시간 조회 및 시간대 변환. 글로벌 팀 협업이나 타임존 처리에 유용.",
+    longDesc:
+      "Time MCP는 현재 시간 조회와 시간대 변환을 제공하는 공식 MCP 서버예요. get_current_time으로 특정 타임존의 현재 시간을, convert_time으로 시간대 간 변환을 할 수 있어요. LOCAL_TIMEZONE 환경변수나 --local-timezone 인자로 기본 시간대를 설정할 수 있어요. 글로벌 팀 협업, 스케줄링, 로그 타임스탬프 분석 같은 시간대 처리가 필요한 상황에서 유용해요.",
+    url: "https://github.com/modelcontextprotocol/servers/tree/main/src/time",
+    install: [
+      "claude mcp add time -- uvx mcp-server-time",
+    ],
+    features: [
+      "현재 시간 조회 (타임존 지정)",
+      "시간대 변환 (소스→타깃)",
+      "LOCAL_TIMEZONE 환경변수 지원",
+      "IANA 타임존 식별자 사용",
+    ],
+    conflicts: [],
+    keywords: [
+      "시간", "time", "타임존", "timezone", "시간대", "시계",
+      "날짜", "date", "utc", "변환", "convert",
+      "글로벌", "global", "스케줄", "schedule",
     ],
   },
 
