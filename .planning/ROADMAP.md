@@ -100,8 +100,9 @@ Plans:
   2. /advisor에서 신규 항목 추천 시 plugin.desc가 아닌 tailored reason이 표시된다
   3. lib/i18n/plugins-en.ts의 reasonsEn export가 consumer에 연결되거나 제거되어 orphaned export가 없다
   4. pnpm typecheck, lint, build, test가 모두 통과한다
+**Plans:** 1 plan
 Plans:
-- [ ] 16-01-PLAN.md — REASONS 문자열 추가 + reasonsEn 정리
+- [ ] 16-01-PLAN.md — REASONS 문자열 9개 추가 + reasonsEn orphan 삭제
 
 ## Progress
 
@@ -121,8 +122,8 @@ Plans:
 | 12. Optimizer UI + i18n | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 13. MCP 서버 6개 등록 | v1.3 | 2/2 | Complete | 2026-03-19 |
 | 14. Plugin 3개 등록 | v1.3 | 1/1 | Complete | 2026-03-19 |
-| 15. 검증 및 테스트 갱신 | v1.3 | Complete    | 2026-03-19 | 2026-03-19 |
-| 16. 추천 이유 문자열 보완 | v1.3 | Pending | — | — |
+| 15. 검증 및 테스트 갱신 | v1.3 | 1/1 | Complete | 2026-03-19 |
+| 16. 추천 이유 문자열 보완 | v1.3 | 0/1 | Planned | — |
 
 ---
 *Full v1.0 details: `.planning/milestones/v1.0-ROADMAP.md`*
