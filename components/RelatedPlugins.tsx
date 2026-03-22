@@ -45,11 +45,11 @@ export default function RelatedPlugins({ currentId, category }: Props) {
                   >
                     {p.tag}
                   </Badge>
-                  <span className="text-[11px] font-bold text-foreground">
+                  <span className="text-xs font-bold text-foreground">
                     {p.name}
                   </span>
                 </div>
-                <div className="text-[10px] text-muted-foreground">{desc}</div>
+                <div className="text-[0.625rem] text-muted-foreground">{desc}</div>
               </Card>
             </Link>
           );

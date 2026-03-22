@@ -26,18 +26,18 @@ export default function SelectedPluginChips({
         return (
           <div
             key={plugin.id}
-            className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5"
+            className="flex items-center gap-2 rounded-full border border-overlay-border bg-overlay-subtle px-3 py-1.5"
           >
             <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
             <span className="text-xs font-semibold text-foreground">
               {plugin.name}
             </span>
             {plugin.type === "mcp" ? (
-              <Badge className="px-1 py-0 text-[10px] border-blue-500/30 bg-blue-500/10 text-blue-400">
+              <Badge className="px-1 py-0 text-[0.625rem] border-blue-500/30 bg-blue-500/10 text-blue-400">
                 MCP
               </Badge>
             ) : (
-              <Badge className="px-1 py-0 text-[10px] border-purple-500/30 bg-purple-500/10 text-purple-400">
+              <Badge className="px-1 py-0 text-[0.625rem] border-purple-500/30 bg-purple-500/10 text-purple-400">
                 Plugin
               </Badge>
             )}
@@ -47,7 +47,7 @@ export default function SelectedPluginChips({
             <button
               onClick={() => onRemove(plugin.id)}
               aria-label={`${plugin.name} ${t.optimizer.removePlugin}`}
-              className="ml-1 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-white/10 hover:text-foreground"
+              className="ml-1 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-overlay-border hover:text-foreground"
             >
               <X className="h-3 w-3" />
             </button>

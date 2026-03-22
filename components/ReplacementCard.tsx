@@ -84,7 +84,7 @@ export default function ReplacementCard({
           </p>
           <button
             onClick={handleCopy}
-            className="shrink-0 rounded-lg bg-white/5 px-3 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-white/10"
+            className="shrink-0 rounded-lg bg-overlay-subtle px-3 py-1.5 text-xs font-medium text-foreground/80 transition-colors hover:bg-overlay-border"
             aria-label={copied ? t.optimizer.installCopied : t.optimizer.installCopy}
           >
             <span className="flex items-center gap-1">

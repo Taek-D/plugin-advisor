@@ -43,7 +43,7 @@ export default function ReplacementSection({
 
       {/* Collapsible body */}
       <div
-        className="overflow-hidden transition-all duration-300 ease-in-out"
+        className="overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out"
         style={{ maxHeight: open ? "9999px" : "0px" }}
       >
         <div className="mt-3 space-y-2">

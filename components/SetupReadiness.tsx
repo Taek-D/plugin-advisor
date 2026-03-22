@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ShieldCheck, AlertTriangle, CheckSquare, Square } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
 import { useI18n } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 import type { PreflightCheck, SetupWarning } from "@/lib/types";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -87,6 +88,8 @@ export default function SetupReadiness({
               <button
                 key={check.id}
                 type="button"
+                role="checkbox"
+                aria-checked={checked}
                 onClick={() =>
                   setCheckedIds((current) =>
                     current.includes(check.id)
@@ -94,11 +97,12 @@ export default function SetupReadiness({
                       : [...current, check.id]
                   )
                 }
-                className={`flex w-full items-start gap-2 rounded-2xl border px-3 py-3 text-left transition-colors hover:border-primary/40 ${
+                className={cn(
+                  "flex w-full items-start gap-2 rounded-2xl border px-3 py-3 text-left transition-colors hover:border-primary/40",
                   checked
                     ? "border-primary/20 bg-primary/7"
-                    : "border-white/10 bg-white/5"
-                }`}
+                    : "border-overlay-border bg-overlay-subtle"
+                )}
               >
                 {checked ? (
                   <CheckSquare className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
@@ -110,7 +114,7 @@ export default function SetupReadiness({
                   {locale === "en" ? check.labelEn : check.label}
                 </span>
 
-                <span className="rounded-full border border-white/10 bg-background/60 px-2 py-1 text-[10px] font-semibold text-text-dim">
+                <span className="rounded-full border border-overlay-border bg-background/60 px-2 py-1 text-[0.625rem] font-semibold text-text-dim">
                   {check.required
                     ? locale === "en"
                       ? "Required"
@@ -125,7 +129,7 @@ export default function SetupReadiness({
         </div>
       )}
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-white/10 bg-background/40 px-3 py-3 text-xs text-muted-foreground">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-overlay-border bg-background/40 px-3 py-3 text-xs text-muted-foreground">
         <span>
           {requiredIds.length > 0
             ? locale === "en"

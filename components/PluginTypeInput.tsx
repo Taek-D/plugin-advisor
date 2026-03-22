@@ -115,7 +115,7 @@ export default function PluginTypeInput({
           onBlur={handleBlur}
           onFocus={handleFocus}
           placeholder={t.optimizer.typePlaceholder}
-          className="border-white/10 bg-white/5"
+          className="border-overlay-border bg-overlay-subtle"
           role="combobox"
           aria-expanded={isOpen}
           aria-autocomplete="list"
@@ -129,7 +129,7 @@ export default function PluginTypeInput({
         {isOpen && suggestions.length > 0 && (
           <div
             role="listbox"
-            className="absolute left-0 right-0 top-full z-50 mt-1 max-h-64 overflow-y-auto rounded-xl border border-white/10 bg-card shadow-lg"
+            className="absolute left-0 right-0 top-full z-50 mt-1 max-h-64 overflow-y-auto rounded-xl border border-overlay-border bg-card shadow-lg"
           >
             {suggestions.map((plugin, index) => (
               <div
@@ -143,7 +143,7 @@ export default function PluginTypeInput({
                   "flex cursor-pointer items-center gap-3 px-3 py-2.5 text-sm transition-colors",
                   index === highlightedIndex
                     ? "bg-primary/10 text-foreground"
-                    : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+                    : "text-muted-foreground hover:bg-overlay-subtle hover:text-foreground"
                 )}
               >
                 <span
@@ -156,11 +156,11 @@ export default function PluginTypeInput({
                       {plugin.name}
                     </span>
                     {plugin.type === "mcp" ? (
-                      <Badge className="px-1 py-0 text-[10px] border-blue-500/30 bg-blue-500/10 text-blue-400">
+                      <Badge className="px-1 py-0 text-[0.625rem] border-blue-500/30 bg-blue-500/10 text-blue-400">
                         MCP
                       </Badge>
                     ) : (
-                      <Badge className="px-1 py-0 text-[10px] border-purple-500/30 bg-purple-500/10 text-purple-400">
+                      <Badge className="px-1 py-0 text-[0.625rem] border-purple-500/30 bg-purple-500/10 text-purple-400">
                         Plugin
                       </Badge>
                     )}

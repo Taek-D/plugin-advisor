@@ -66,7 +66,7 @@ export default function ServicesPage() {
   const { locale } = useI18n();
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <div className="mb-8 max-w-3xl">
         <Badge variant="outline" className="mb-3 text-primary">
           {locale === "en" ? "Setup support" : "세팅 지원"}
@@ -90,7 +90,7 @@ export default function ServicesPage() {
               <div className="text-sm font-semibold text-foreground">
                 {locale === "en" ? service.titleEn : service.title}
               </div>
-              <Badge variant="outline" className="text-[11px] text-muted-foreground">
+              <Badge variant="outline" className="text-xs text-muted-foreground">
                 {locale === "en" ? "Planned" : "준비 중"}
               </Badge>
             </div>

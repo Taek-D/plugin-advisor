@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Check, Copy, Terminal, ExternalLink } from "lucide-react";
 import { saveFavorite } from "@/lib/favorites";
 import { useI18n } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics";
 import { getManualSetupPlugins, getSafeCopyPlugins } from "@/lib/setup";
 import { Card } from "@/components/ui/card";
@@ -72,22 +73,23 @@ export default function InstallScript({ selectedIds, readyToCopy = false }: Prop
           <div className="flex flex-wrap items-center gap-2 text-xs font-medium tracking-wide text-text-dim">
             <span>{t.installScript.title}</span>
             <span
-              className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+              className={cn(
+                "rounded-full px-2.5 py-1 text-xs font-semibold",
                 readyToCopy
                   ? "border border-primary/20 bg-primary/10 text-primary"
                   : "border border-warning/20 bg-warning/10 text-warning"
-              }`}
+              )}
             >
               {copyStatus}
             </span>
           </div>
 
           <div className="mt-2 flex flex-wrap gap-2">
-            <span className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">
+            <span className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
               {safePlugins.length} {locale === "en" ? "verified plugins" : "개 검증 플러그인"}
             </span>
             {manualPlugins.length > 0 && (
-              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">
+              <span className="rounded-full border border-overlay-border bg-overlay-subtle px-2.5 py-1 text-xs font-semibold text-muted-foreground">
                 {manualPlugins.length} {locale === "en" ? "manual steps" : "개 수동 단계"}
               </span>
             )}
@@ -123,9 +125,10 @@ export default function InstallScript({ selectedIds, readyToCopy = false }: Prop
               </Button>
               <button
                 onClick={() => setSaving(false)}
-                className="text-left text-xs text-muted-foreground transition-colors hover:text-foreground sm:text-center"
+                aria-label={locale === "en" ? "Cancel" : "닫기"}
+                className="min-h-[44px] px-3 text-left text-xs text-muted-foreground transition-colors hover:text-foreground sm:min-h-0 sm:text-center"
               >
-                닫기
+                {locale === "en" ? "Cancel" : "닫기"}
               </button>
             </div>
           ) : (
@@ -158,7 +161,7 @@ export default function InstallScript({ selectedIds, readyToCopy = false }: Prop
       </div>
 
       {safePlugins.length > 0 ? (
-        <pre className="overflow-x-auto whitespace-pre-wrap rounded-2xl border border-white/10 bg-black/20 p-4 text-[13px] leading-[1.9] sm:text-xs">
+        <pre className="overflow-x-auto whitespace-pre-wrap rounded-2xl border border-overlay-border bg-background/40 p-4 text-xs leading-relaxed sm:text-sm">
           {script.split("\n").map((line, index) => (
             <span
               key={index}
@@ -170,7 +173,7 @@ export default function InstallScript({ selectedIds, readyToCopy = false }: Prop
           ))}
         </pre>
       ) : (
-        <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-3 text-sm leading-relaxed text-muted-foreground">
+        <div className="rounded-2xl border border-overlay-border bg-overlay-subtle px-3 py-3 text-sm leading-relaxed text-muted-foreground">
           {locale === "en"
             ? "No fully verified copy-safe commands are available for this selection. Follow the manual steps below instead."
             : "이번 선택에는 한 번에 복사해도 안전한 명령이 없습니다. 아래 수동 단계를 확인해 주세요."}
@@ -194,11 +197,11 @@ export default function InstallScript({ selectedIds, readyToCopy = false }: Prop
           {manualPlugins.map((plugin) => (
             <div
               key={plugin.id}
-              className="rounded-2xl border border-white/10 bg-white/5 px-3 py-3"
+              className="rounded-2xl border border-overlay-border bg-overlay-subtle px-3 py-3"
             >
               <div className="mb-2 flex flex-wrap items-center gap-2">
                 <span className="text-sm font-semibold text-foreground">{plugin.name}</span>
-                <span className="rounded-full border border-primary/20 bg-primary/5 px-2 py-1 text-[11px] text-primary">
+                <span className="rounded-full border border-primary/20 bg-primary/5 px-2 py-1 text-xs text-primary">
                   {plugin.installMode === "external-setup"
                     ? locale === "en"
                       ? "External setup"
@@ -213,9 +216,9 @@ export default function InstallScript({ selectedIds, readyToCopy = false }: Prop
                 {plugin.install.map((command, index) => (
                   <div
                     key={`${plugin.id}-${index}`}
-                    className="flex items-center gap-2 rounded-2xl border border-white/10 bg-background/60 px-3 py-2"
+                    className="flex items-center gap-2 rounded-2xl border border-overlay-border bg-background/60 px-3 py-2"
                   >
-                    <code className="flex-1 overflow-x-auto text-[11px] text-muted-foreground">
+                    <code className="flex-1 overflow-x-auto text-xs text-muted-foreground">
                       {command}
                     </code>
                     <Button
@@ -263,7 +266,7 @@ export default function InstallScript({ selectedIds, readyToCopy = false }: Prop
 
       <Button
         variant="outline"
-        className="mt-4 h-11 w-full rounded-full border-white/10 bg-white/5"
+        className="mt-4 h-11 w-full rounded-full border-overlay-border bg-overlay-subtle"
         onClick={handleInstallComplete}
         disabled={reportedInstalled}
       >

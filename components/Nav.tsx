@@ -24,7 +24,7 @@ export default function Nav() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-white/10 bg-background/72 backdrop-blur-xl">
+    <nav aria-label="Main navigation" className="sticky top-0 z-50 border-b border-overlay-border bg-background/70 backdrop-blur-md">
       <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6">
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center justify-between gap-3 overflow-hidden sm:gap-4">
@@ -36,7 +36,7 @@ export default function Nav() {
                 <div className="font-heading text-xs font-bold tracking-[0.24em] text-foreground sm:text-sm">
                   PLUGIN ADVISOR
                 </div>
-                <div className="hidden text-[11px] text-muted-foreground sm:block">
+                <div className="hidden text-xs text-muted-foreground sm:block">
                   {locale === "en"
                     ? "Starter setup, not plugin clutter"
                     : "플러그인 과시보다 세팅 성공"}
@@ -49,7 +49,7 @@ export default function Nav() {
               size="xs"
               onClick={() => setLocale(locale === "ko" ? "en" : "ko")}
               aria-label={locale === "ko" ? "Switch to English" : "영어에서 한국어로 전환"}
-              className="border-white/10 bg-card/55 text-muted-foreground hover:border-primary hover:text-primary md:hidden"
+              className="border-overlay-border bg-card/55 text-muted-foreground hover:border-primary hover:text-primary md:hidden"
             >
               {locale === "ko" ? "EN" : "KO"}
             </Button>
@@ -57,7 +57,7 @@ export default function Nav() {
 
           <div className="flex items-center gap-2 md:flex-1 md:justify-end">
             <div className="no-scrollbar -mx-1 overflow-x-auto px-1 md:mx-0 md:px-0">
-              <div className="inline-flex min-w-max rounded-full border border-white/10 bg-card/55 p-1">
+              <div className="inline-flex min-w-max rounded-full border border-overlay-border bg-card/55 p-1">
                 {links.map((link) => {
                   const isActive =
                     link.href === "/"
@@ -68,10 +68,11 @@ export default function Nav() {
                     <Link
                       key={link.href}
                       href={link.href}
+                      aria-current={isActive ? "page" : undefined}
                       className={cn(
-                        "cursor-pointer whitespace-nowrap rounded-full px-4 py-2.5 text-xs font-medium transition-colors",
+                        "cursor-pointer whitespace-nowrap rounded-full px-4 py-2.5 text-xs font-medium transition-colors duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]",
                         isActive
-                          ? "bg-primary/12 text-foreground"
+                          ? "bg-primary/[0.12] text-foreground"
                           : "text-muted-foreground hover:text-foreground"
                       )}
                     >
@@ -84,7 +85,7 @@ export default function Nav() {
 
             <Badge
               variant="outline"
-              className="hidden border-white/10 bg-card/50 text-muted-foreground md:inline-flex"
+              className="hidden border-overlay-border bg-card/50 text-muted-foreground md:inline-flex"
             >
               {Object.keys(PLUGINS).length} {t.nav.pluginCount}
             </Badge>
@@ -94,7 +95,7 @@ export default function Nav() {
               size="xs"
               onClick={() => setLocale(locale === "ko" ? "en" : "ko")}
               aria-label={locale === "ko" ? "Switch to English" : "영어에서 한국어로 전환"}
-              className="hidden border-white/10 bg-card/55 text-muted-foreground hover:border-primary hover:text-primary md:inline-flex"
+              className="hidden border-overlay-border bg-card/55 text-muted-foreground hover:border-primary hover:text-primary md:inline-flex"
             >
               {locale === "ko" ? "EN" : "KO"}
             </Button>

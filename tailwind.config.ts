@@ -54,12 +54,18 @@ const config: Config = {
         "text-dim": "hsl(var(--text-dim))",
         "text-faint": "hsl(var(--text-faint))",
         success: "hsl(var(--primary))",
-        warning: "#F59E0B",
+        warning: "hsl(var(--warning))",
+        "ai-accent": {
+          DEFAULT: "hsl(var(--ai-accent))",
+          strong: "hsl(var(--ai-accent-strong))",
+        },
         error: "hsl(var(--destructive))",
         "bg-error-subtle": "hsl(var(--bg-error-subtle))",
         "border-error-subtle": "hsl(var(--border-error-subtle))",
         "bg-warning-subtle": "hsl(var(--bg-warning-subtle))",
         "border-warning-subtle": "hsl(var(--border-warning-subtle))",
+        "overlay-subtle": "hsl(var(--overlay-subtle))",
+        "overlay-border": "hsl(var(--overlay-border))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -67,7 +73,7 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "Pretendard Variable", "system-ui", "sans-serif"],
+        sans: ["Pretendard Variable", "var(--font-space-grotesk)", "system-ui", "sans-serif"],
         heading: ["var(--font-space-grotesk)", "sans-serif"],
         mono: ["var(--font-mono)", "monospace"],
       },
@@ -94,7 +100,7 @@ const config: Config = {
         },
       },
       animation: {
-        "fade-in": "fade-in 0.3s ease",
+        "fade-in": "fade-in 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
         blink: "blink 1.2s infinite",
         "float-up": "float-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         "accordion-down": "accordion-down 0.2s ease-out",

@@ -92,7 +92,7 @@ export default function Home() {
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
           <div className="surface-panel relative animate-float-up overflow-hidden rounded-[28px] p-8 sm:p-10">
-            <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top_left,rgba(34,197,94,0.18),transparent_60%)]" />
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.18),transparent_60%)]" />
             <div className="relative">
               <div className="mb-6 flex">
                 <span className="section-kicker">
@@ -102,7 +102,7 @@ export default function Home() {
                   : "Claude Code 스타터 세팅 가이드"}
                 </span>
               </div>
-              <h1 className="mb-6 max-w-3xl font-heading text-4xl font-extrabold leading-tight tracking-tight text-foreground sm:text-6xl">
+              <h1 className="mb-6 max-w-3xl font-heading text-4xl font-extrabold leading-tight tracking-tight text-foreground text-pretty sm:text-6xl">
               {locale === "en"
                 ? "Set up Claude Code without tripping over the first week."
                 : "Claude Code 첫 세팅, 덜 헤매고 시작하게 도와주는 가이드"}
@@ -116,7 +116,7 @@ export default function Home() {
                 {quickSignals.map((signal) => (
                   <span
                     key={signal}
-                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-muted-foreground"
+                    className="rounded-full border border-overlay-border bg-overlay-subtle px-3 py-1 text-xs font-medium text-muted-foreground"
                   >
                     {signal}
                   </span>
@@ -133,7 +133,7 @@ export default function Home() {
                   </Button>
                 </Link>
                 <Link href="/guides" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="h-12 w-full rounded-full border-white/10 bg-white/5 px-8 text-base font-bold sm:w-auto">
+                  <Button size="lg" variant="outline" className="h-12 w-full rounded-full border-overlay-border bg-overlay-subtle px-8 text-base font-bold sm:w-auto">
                     {locale === "en" ? "Open starter guides" : "스타터 가이드 보기"}
                   </Button>
                 </Link>
@@ -171,7 +171,7 @@ export default function Home() {
               <div className="space-y-4">
                 {quickSteps.map((step) => (
                   <div key={step.title} className="flex gap-3">
-                    <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5">
+                    <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-overlay-border bg-overlay-subtle">
                       <step.icon className="h-4 w-4 text-foreground" />
                     </div>
                     <div>
@@ -200,8 +200,8 @@ export default function Home() {
             </p>
           </Card>
           <Card className="surface-panel-soft rounded-[24px] p-6">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-[#7C3AED]/10">
-              <Sparkles className="h-6 w-6 text-[#A78BFA]" />
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+              <Sparkles className="h-6 w-6 text-primary" />
             </div>
             <h3 className="mb-2 text-lg font-bold text-foreground">
               {locale === "en"

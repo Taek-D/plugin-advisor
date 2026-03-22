@@ -38,10 +38,10 @@ export default function CoverageGrid({
 
   const progressColor =
     coverageRatio >= 0.8
-      ? "#22c55e"
+      ? "hsl(var(--primary))"
       : coverageRatio >= 0.5
-      ? "#3b82f6"
-      : "#eab308";
+      ? "hsl(217 91% 60%)"
+      : "hsl(var(--warning))";
 
   const summaryText = t.optimizer.coverageSummary
     .replace("{covered}", String(coveredCount))
@@ -64,9 +64,9 @@ export default function CoverageGrid({
       {/* Coverage summary */}
       <div className="mb-4">
         <p className="mb-1.5 text-sm text-foreground">{summaryText}</p>
-        <div className="h-2 w-full rounded-full bg-white/10">
+        <div className="h-2 w-full rounded-full bg-overlay-border">
           <div
-            className="h-2 rounded-full transition-all duration-500"
+            className="h-2 rounded-full transition-[width] duration-500"
             style={{
               width: `${coverageRatio * 100}%`,
               backgroundColor: progressColor,
@@ -83,17 +83,21 @@ export default function CoverageGrid({
           return (
             <div
               key={category}
+              role={!isCovered ? "button" : undefined}
+              tabIndex={!isCovered ? 0 : undefined}
+              aria-label={!isCovered ? `${t.categories[category]} — 보완 플러그인 보기` : undefined}
               onClick={!isCovered ? () => handleUncoveredClick(category) : undefined}
+              onKeyDown={!isCovered ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleUncoveredClick(category); } } : undefined}
               className={[
                 "flex flex-col items-center gap-1 rounded-xl p-2 text-center transition-opacity",
                 isCovered
                   ? "opacity-100"
-                  : "cursor-pointer opacity-30 hover:opacity-60",
+                  : "cursor-pointer opacity-50 hover:opacity-80",
               ].join(" ")}
               title={!isCovered ? t.categories[category] : undefined}
             >
               <Icon className="h-5 w-5 text-foreground" />
-              <span className="text-[10px] leading-tight text-muted-foreground">
+              <span className="text-[0.625rem] leading-tight text-muted-foreground">
                 {t.categories[category]}
               </span>
             </div>

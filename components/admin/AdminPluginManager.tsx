@@ -533,16 +533,16 @@ function PluginCard({ plugin, actionLoading, onDelete, onRestore }: PluginCardPr
           <span className="truncate text-sm font-semibold text-foreground">{plugin.name}</span>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
-          <span className="rounded-md border border-white/10 bg-background/40 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+          <span className="rounded-md border border-overlay-border bg-background/40 px-1.5 py-0.5 font-mono text-[0.625rem] text-muted-foreground">
             {plugin.tag}
           </span>
           {plugin.isCustom && (
-            <span className="rounded-full border border-primary/30 bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+            <span className="rounded-full border border-primary/30 bg-primary/10 px-1.5 py-0.5 text-[0.625rem] font-semibold text-primary">
               커스텀
             </span>
           )}
           {plugin.isDeleted && (
-            <span className="rounded-full border border-destructive/30 bg-destructive/10 px-1.5 py-0.5 text-[10px] font-semibold text-destructive">
+            <span className="rounded-full border border-destructive/30 bg-destructive/10 px-1.5 py-0.5 text-[0.625rem] font-semibold text-destructive">
               숨김
             </span>
           )}
@@ -552,7 +552,7 @@ function PluginCard({ plugin, actionLoading, onDelete, onRestore }: PluginCardPr
       <p className="text-xs leading-relaxed text-muted-foreground line-clamp-2">{plugin.desc}</p>
 
       <div className="mt-auto flex items-center justify-between">
-        <span className="text-[11px] text-text-dim">
+        <span className="text-xs text-text-dim">
           {CATEGORY_LABELS[plugin.category] ?? plugin.category}
         </span>
         <div className="flex gap-1.5">

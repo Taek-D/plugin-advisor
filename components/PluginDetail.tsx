@@ -68,14 +68,16 @@ export default function PluginDetail({ plugin }: Props) {
           </Badge>
         )}
         <Badge variant="outline">
-          {locale === "en" ? plugin.difficulty : `난이도 ${plugin.difficulty}`}
+          {locale === "en"
+            ? plugin.difficulty === "beginner" ? "Beginner-friendly" : plugin.difficulty === "intermediate" ? "Intermediate" : "Advanced"
+            : plugin.difficulty === "beginner" ? "입문자 친화" : plugin.difficulty === "intermediate" ? "중간 난이도" : "고급 설정"}
         </Badge>
         <Badge variant="outline">
           {locale === "en"
-            ? plugin.verificationStatus
-            : `검증 ${plugin.verificationStatus}`}
+            ? plugin.verificationStatus === "verified" ? "Install verified" : plugin.verificationStatus === "partial" ? "Partially verified" : "Not verified"
+            : plugin.verificationStatus === "verified" ? "설치 검증됨" : plugin.verificationStatus === "partial" ? "부분 검증" : "검증 전"}
         </Badge>
-        <Button variant="outline" size="sm" asChild className="font-mono text-[10px]">
+        <Button variant="outline" size="sm" asChild className="font-mono text-[0.6875rem]">
           <a href={plugin.url} target="_blank" rel="noreferrer">
             GitHub <ExternalLink className="ml-1 inline h-3 w-3" />
           </a>
@@ -87,7 +89,7 @@ export default function PluginDetail({ plugin }: Props) {
       </p>
 
       <div className="mb-8">
-        <div className="mb-2.5 text-[11px] font-medium tracking-[2px] text-text-dim">
+        <div className="mb-2.5 text-[0.6875rem] font-medium uppercase tracking-widest text-text-dim">
           {t.detail.features}
         </div>
         <div className="flex flex-wrap gap-2">
@@ -108,12 +110,12 @@ export default function PluginDetail({ plugin }: Props) {
       </div>
 
       <div className="mb-8">
-        <div className="mb-2.5 text-[11px] font-medium tracking-[2px] text-text-dim">
+        <div className="mb-2.5 text-[0.6875rem] font-medium uppercase tracking-widest text-text-dim">
           {t.detail.install}
         </div>
 
         {(plugin.prerequisites.length > 0 || plugin.requiredSecrets.length > 0) && (
-          <div className="mb-4 rounded-md border border-border bg-background px-4 py-3 text-sm text-muted-foreground">
+          <div className="mb-4 rounded-md border border-border bg-card/70 px-4 py-3 text-sm text-muted-foreground">
             {plugin.prerequisites.map((item) => (
               <div key={`${plugin.id}-prereq-${item}`}>- {item}</div>
             ))}
@@ -127,7 +129,7 @@ export default function PluginDetail({ plugin }: Props) {
           {plugin.install.map((command, index) => (
             <div
               key={`${plugin.id}-${index}`}
-              className="flex items-center gap-2 rounded-md border border-border bg-background px-4 py-2.5"
+              className="flex items-center gap-2 rounded-md border border-border bg-card/70 px-4 py-2.5"
             >
               <code className="flex-1 overflow-x-auto text-xs text-muted-foreground">
                 {command}
@@ -136,7 +138,8 @@ export default function PluginDetail({ plugin }: Props) {
                 variant="outline"
                 size="sm"
                 onClick={() => copyCommand(command, index)}
-                className="shrink-0 font-mono text-[10px]"
+                aria-label={`${t.detail.copy}: ${command}`}
+                className="shrink-0 font-mono text-[0.6875rem]"
               >
                 {copiedIdx === index ? (
                   <span className="flex items-center gap-1">
@@ -162,7 +165,7 @@ export default function PluginDetail({ plugin }: Props) {
         </Card>
       ) : version?.latestVersion ? (
         <Card className="mb-8 p-4">
-          <div className="mb-1.5 text-[11px] font-medium tracking-[2px] text-text-dim">
+          <div className="mb-1.5 text-[0.6875rem] font-medium uppercase tracking-widest text-text-dim">
             {t.detail.latestVersion}
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -199,14 +202,14 @@ export default function PluginDetail({ plugin }: Props) {
       )}
 
       <div className="mb-10">
-        <div className="mb-2.5 text-[11px] font-medium tracking-[2px] text-text-dim">
+        <div className="mb-2.5 text-[0.6875rem] font-medium uppercase tracking-widest text-text-dim">
           {t.detail.keywords}
         </div>
         <div className="flex flex-wrap gap-1.5">
           {plugin.keywords.map((keyword) => (
             <span
               key={keyword}
-              className="rounded-sm border border-primary/20 bg-primary/5 px-2 py-0.5 text-xs text-[#7070FF]"
+              className="rounded-sm border border-primary/20 bg-primary/5 px-2 py-0.5 text-xs text-primary"
             >
               {keyword}
             </span>

@@ -58,12 +58,12 @@ export default function PluginCard({
   return (
     <div
       className={cn(
-        "group rounded-[24px] border bg-card/70 p-4 transition-all sm:p-5",
+        "group rounded-[24px] border bg-card/70 p-4 transition-[border-color,box-shadow] sm:p-5",
         inConflict
           ? "border-destructive/50 bg-bg-error-subtle"
           : selected
             ? "border-current shadow-[0_18px_45px_rgba(0,0,0,0.18)]"
-            : "border-white/10 hover:border-muted-foreground"
+            : "border-overlay-border hover:border-muted-foreground"
       )}
       style={{ color: selected ? plugin.color : undefined }}
     >
@@ -90,19 +90,20 @@ export default function PluginCard({
               : undefined
           }
         >
-          {selected && <span className="text-xs font-bold text-white">✓</span>}
+          {selected && <span className="text-xs font-bold text-primary-foreground">✓</span>}
         </div>
 
         <div className="min-w-0 flex-1">
           <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span
+                <button
+                  type="button"
                   onClick={onDetail}
-                  className="cursor-pointer font-heading text-base font-bold text-white transition-colors hover:text-primary"
+                  className="cursor-pointer font-heading text-base font-bold text-foreground transition-colors hover:text-primary"
                 >
                   {plugin.name}
-                </span>
+                </button>
                 <Badge
                   className="border-transparent"
                   style={{
@@ -121,13 +122,13 @@ export default function PluginCard({
               </div>
 
               <div className="mt-2 flex flex-wrap gap-1.5">
-                <Badge variant="outline" className="border-white/10 bg-white/5 text-primary">
+                <Badge variant="outline" className="border-overlay-border bg-overlay-subtle text-primary">
                   {metadataBadge}
                 </Badge>
-                <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-muted-foreground">
+                <span className="rounded-full border border-overlay-border bg-overlay-subtle px-2 py-1 text-xs text-muted-foreground">
                   {difficultyCopy[plugin.difficulty]}
                 </span>
-                <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-muted-foreground">
+                <span className="rounded-full border border-overlay-border bg-overlay-subtle px-2 py-1 text-xs text-muted-foreground">
                   {verificationCopy[plugin.verificationStatus]}
                 </span>
                 {inConflict && <Badge variant="destructive">{t.card.conflict}</Badge>}
@@ -138,13 +139,13 @@ export default function PluginCard({
               variant="outline"
               size="xs"
               onClick={onDetail}
-              className="rounded-full border-white/10 bg-white/5"
+              className="rounded-full border-overlay-border bg-overlay-subtle"
             >
               {t.card.detail}
             </Button>
           </div>
 
-          <div className="mb-3 rounded-2xl border border-white/10 bg-background/45 px-3 py-3 text-sm leading-relaxed text-foreground">
+          <div className="mb-3 rounded-2xl border border-overlay-border bg-background/45 px-3 py-3 text-sm leading-relaxed text-foreground">
             <HighlightedText
               text={recommendation.reason}
               keywords={recommendation.matchedKeywords}
@@ -157,21 +158,21 @@ export default function PluginCard({
               {recommendation.matchedKeywords.slice(0, 5).map((keyword) => (
                 <span
                   key={keyword}
-                  className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] text-text-dim"
+                  className="inline-flex items-center rounded-full px-2 py-0.5 text-xs text-text-dim"
                   style={{ background: `${plugin.color}10` }}
                 >
                   {keyword}
                 </span>
               ))}
               {recommendation.matchedKeywords.length > 5 && (
-                <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] text-text-dim">
+                <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs text-text-dim">
                   +{recommendation.matchedKeywords.length - 5}
                 </span>
               )}
             </div>
           )}
 
-          <div className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-[13px]">
+          <div className="mt-1 text-xs leading-relaxed text-muted-foreground sm:text-sm">
             {desc}
           </div>
         </div>

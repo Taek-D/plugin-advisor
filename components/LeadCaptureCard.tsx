@@ -46,7 +46,7 @@ export default function LeadCaptureCard({ compact = false }: Props) {
           <Clock3 className="h-4 w-4" />
         </span>
         <div>
-          <div className="mb-1 inline-flex rounded-full border border-primary/20 bg-primary/5 px-2 py-1 text-[11px] font-semibold text-primary">
+          <div className="mb-1 inline-flex rounded-full border border-primary/20 bg-primary/5 px-2 py-1 text-xs font-semibold text-primary">
             {locale === "en" ? "Coming soon" : "서비스 준비중"}
           </div>
           <h3 className="font-heading text-base font-bold text-foreground">
@@ -90,8 +90,8 @@ export default function LeadCaptureCard({ compact = false }: Props) {
           variant="outline"
           className={
             compact
-              ? "h-11 w-full rounded-full border-white/10 bg-white/5"
-              : "rounded-full border-white/10 bg-white/5"
+              ? "h-11 w-full rounded-full border-overlay-border bg-overlay-subtle"
+              : "rounded-full border-overlay-border bg-overlay-subtle"
           }
           onClick={() =>
             trackEvent("service_cta_click", {

@@ -36,13 +36,13 @@ export default function McpPasteInput({ onParsed }: McpPasteInputProps) {
         onChange={(e) => setText(e.target.value)}
         placeholder={t.optimizer.pastePlaceholder}
         rows={6}
-        className="resize-none border-white/10 bg-white/5 font-mono text-sm"
+        className="resize-none border-overlay-border bg-overlay-subtle font-mono text-sm"
       />
       <Button
         onClick={handleParse}
         disabled={!text.trim()}
         variant="outline"
-        className="border-white/10"
+        className="border-overlay-border"
       >
         {t.optimizer.parseBtn}
       </Button>

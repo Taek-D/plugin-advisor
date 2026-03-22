@@ -10,13 +10,8 @@ export const metadata: Metadata = {
 
 export default function PluginsPage() {
   return (
-    <div className="mx-auto max-w-[960px] px-4 py-8 sm:px-6">
-      <h1 className="mb-1.5 font-heading text-[18px] font-extrabold sm:text-[22px]">
-        플러그인 둘러보기
-      </h1>
-      <p className="mb-6 text-[11px] text-muted-foreground">
-        MCP 서버와 Plugin을 탭으로 나누어 탐색하거나, 카테고리별로 필터링할 수 있어요.
-      </p>
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      {/* Title rendered inside PluginGrid (client) for i18n */}
 
       <PluginSuggestionCallout sourcePage="/plugins" variant="banner" />
       <Suspense fallback={null}>

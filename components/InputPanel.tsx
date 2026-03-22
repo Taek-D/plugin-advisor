@@ -152,7 +152,7 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
 
       <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="no-scrollbar -mx-1 overflow-x-auto px-1">
-          <TabsList className="w-max min-w-full rounded-full border border-white/10 bg-white/5 p-1 sm:min-w-0">
+          <TabsList className="w-max min-w-full rounded-full border border-overlay-border bg-overlay-subtle p-1 sm:min-w-0">
             {tabs.map((tab) => (
               <TabsTrigger
                 key={tab.key}
@@ -171,9 +171,9 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
             active={analysisMode === "ai"}
             onClick={() => setAnalysisMode(analysisMode === "keyword" ? "ai" : "keyword")}
             className={cn(
-              "w-full justify-center rounded-full border-white/10 bg-white/5 px-4 py-2 lg:w-auto",
+              "w-full justify-center rounded-full border-overlay-border bg-overlay-subtle px-4 py-2 lg:w-auto",
               analysisMode === "ai" &&
-                "border-[#7C3AED]/50 bg-[#7C3AED]/10 text-[#A78BFA] hover:border-[#7C3AED]/50 hover:text-[#A78BFA]"
+                "border-ai-accent-strong/50 bg-ai-accent-strong/10 text-ai-accent hover:border-ai-accent-strong/50 hover:text-ai-accent"
             )}
           >
             {analysisMode === "ai" ? (
@@ -190,7 +190,7 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
         )}
       </div>
 
-      <div className="mb-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+      <div className="mb-4 rounded-2xl border border-overlay-border bg-overlay-subtle px-4 py-3 text-xs leading-relaxed text-muted-foreground">
         {locale === "en"
           ? "Use this when you want a quick manual diagnosis instead of starting from a preset pack."
           : "프리셋 대신 프로젝트 설명을 직접 넣고 빠르게 진단받고 싶을 때 사용하세요."}
@@ -212,7 +212,7 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
             value={text}
             onChange={(event) => setText(event.target.value)}
             placeholder={t.input.placeholder}
-            className="min-h-[220px] rounded-2xl border-white/10 bg-background/55 leading-relaxed placeholder:text-text-faint focus-visible:ring-primary"
+            className="min-h-[220px] rounded-2xl border-overlay-border bg-background/55 leading-relaxed placeholder:text-text-faint focus-visible:ring-primary"
             style={{ resize: "vertical" }}
           />
         </>
@@ -221,7 +221,7 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
       {mode === "file" && (
         <div
           onClick={() => fileRef.current?.click()}
-          className="cursor-pointer rounded-2xl border-2 border-dashed border-white/10 bg-background/55 p-8 text-center transition-colors hover:border-primary"
+          className="cursor-pointer rounded-2xl border-2 border-dashed border-overlay-border bg-background/55 p-8 text-center transition-colors hover:border-primary"
         >
           {fname ? (
             <>
@@ -257,7 +257,7 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
             value={ghUrl}
             onChange={(event) => setGhUrl(event.target.value)}
             placeholder={t.input.ghPlaceholder}
-            className="h-auto rounded-2xl border-white/10 bg-background/55 px-4 py-3 text-sm placeholder:text-text-faint focus-visible:ring-primary"
+            className="h-auto rounded-2xl border-overlay-border bg-background/55 px-4 py-3 text-sm placeholder:text-text-faint focus-visible:ring-primary"
           />
         </>
       )}
@@ -277,7 +277,7 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
         aria-busy={loading}
         className={cn(
           "mt-5 h-12 w-full rounded-full text-sm font-semibold",
-          analysisMode === "ai" && "bg-[#7C3AED] hover:bg-[#7C3AED]/90"
+          analysisMode === "ai" && "bg-ai-accent-strong hover:bg-ai-accent-strong/90"
         )}
       >
         {loading ? (

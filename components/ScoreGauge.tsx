@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useI18n } from "@/lib/i18n";
 import { getGrade, GRADE_COLORS } from "@/lib/optimizer-utils";
 import { Card } from "@/components/ui/card";
@@ -25,7 +26,13 @@ export default function ScoreGauge({
   const { t } = useI18n();
   const grade = getGrade(score);
   const color = GRADE_COLORS[grade];
-  const offset = CIRCUMFERENCE - (score / 100) * CIRCUMFERENCE;
+  const targetOffset = CIRCUMFERENCE - (score / 100) * CIRCUMFERENCE;
+  const [offset, setOffset] = useState(CIRCUMFERENCE);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setOffset(targetOffset));
+    return () => cancelAnimationFrame(frame);
+  }, [targetOffset]);
 
   const conflictPenalty = conflicts.length * 20;
   const redundancyPenalty = redundancies.length * 7;
@@ -61,7 +68,7 @@ export default function ScoreGauge({
               cy={68}
               r={RADIUS}
               fill="none"
-              stroke="rgba(255,255,255,0.08)"
+              stroke="hsl(var(--overlay-border))"
               strokeWidth={10}
             />
             {/* Filled arc */}
@@ -75,12 +82,12 @@ export default function ScoreGauge({
               strokeLinecap="round"
               strokeDasharray={CIRCUMFERENCE}
               strokeDashoffset={offset}
-              style={{ transition: "stroke-dashoffset 0.6s ease" }}
+              className="transition-[stroke-dashoffset] duration-[600ms] ease-out motion-reduce:transition-none"
             />
           </svg>
           {/* Score overlay */}
           <div className="absolute flex flex-col items-center justify-center">
-            <span className="text-4xl font-extrabold leading-none text-foreground">
+            <span className="text-4xl font-extrabold leading-none text-foreground" style={{ fontVariantNumeric: "tabular-nums" }}>
               {score}
             </span>
             <span
@@ -94,7 +101,7 @@ export default function ScoreGauge({
 
         {/* Perfect combo message */}
         {score === 100 && (
-          <p className="text-sm font-semibold text-green-400">
+          <p className="text-sm font-semibold text-primary">
             {t.optimizer.perfectCombo}
           </p>
         )}
@@ -103,17 +110,17 @@ export default function ScoreGauge({
         {(conflictPenalty > 0 || redundancyPenalty > 0 || uncoveredPenalty > 0) && (
           <div className="flex flex-wrap justify-center gap-2">
             {conflictPenalty > 0 && (
-              <span className="rounded-full bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-400">
+              <span className="rounded-full bg-destructive/10 px-3 py-1 text-xs font-semibold text-destructive">
                 {t.optimizer.deductionConflict} -{conflictPenalty}
               </span>
             )}
             {redundancyPenalty > 0 && (
-              <span className="rounded-full bg-yellow-500/10 px-3 py-1 text-xs font-semibold text-yellow-400">
+              <span className="rounded-full bg-warning/10 px-3 py-1 text-xs font-semibold text-warning">
                 {t.optimizer.deductionRedundancy} -{redundancyPenalty}
               </span>
             )}
             {uncoveredPenalty > 0 && (
-              <span className="rounded-full bg-yellow-500/10 px-3 py-1 text-xs font-semibold text-yellow-400">
+              <span className="rounded-full bg-warning/10 px-3 py-1 text-xs font-semibold text-warning">
                 {t.optimizer.deductionUncovered} -{uncoveredPenalty}
               </span>
             )}

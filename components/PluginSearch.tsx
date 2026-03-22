@@ -50,7 +50,11 @@ export default function PluginSearch({
 
   return (
     <div>
+      <label htmlFor="plugin-search-input" className="sr-only">
+        {t.pluginsPage.searchPlaceholder}
+      </label>
       <Input
+        id="plugin-search-input"
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -77,11 +81,14 @@ export default function PluginSearch({
           Plugin ({typeCounts.plugin})
         </TabsTrigger>
       </TabsList>
-      <div className="mb-6 flex gap-1.5 overflow-x-auto pb-2">
+      <div className="relative mb-6">
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-background to-transparent" />
+        <div className="no-scrollbar flex gap-1.5 overflow-x-auto">
         {CATEGORY_KEYS.map((key) => (
           <button
             key={key}
             onClick={() => onCategory(key)}
+            aria-pressed={activeCategory === key}
             className={cn(
               "shrink-0 rounded-full border px-3.5 py-2 font-mono text-xs tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               activeCategory === key
@@ -92,6 +99,7 @@ export default function PluginSearch({
             {key === "all" ? t.pluginsPage.allCategories : (t.categories[key] || key)}
           </button>
         ))}
+        </div>
       </div>
     </div>
   );

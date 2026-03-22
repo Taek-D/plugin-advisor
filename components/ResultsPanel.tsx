@@ -27,7 +27,7 @@ export default function ResultsPanel({ result }: ResultsPanelProps) {
 
   if (result.empty) {
     return (
-      <div className="mt-6 flex items-center justify-center rounded-[24px] border border-dashed border-white/10 px-6 py-10 text-center">
+      <div className="mt-6 flex items-center justify-center rounded-[24px] border border-dashed border-overlay-border px-6 py-10 text-center">
         <p className="text-sm text-muted-foreground">
           {t.optimizer.emptyInputHint}
         </p>

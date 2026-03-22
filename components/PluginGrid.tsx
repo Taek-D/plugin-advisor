@@ -71,6 +71,14 @@ export default function PluginGrid() {
 
   return (
     <div>
+      <h1 className="mb-1.5 font-heading text-xl font-extrabold sm:text-2xl">
+        {t.pluginsPage.title}
+      </h1>
+      <p className="mb-6 text-xs text-muted-foreground">
+        {locale === "en"
+          ? "Browse MCP servers and plugins by tab, or filter by category."
+          : "MCP 서버와 Plugin을 탭으로 나누어 탐색하거나, 카테고리별로 필터링할 수 있어요."}
+      </p>
       <PluginSearch
         onSearch={handleSearch}
         onCategory={handleCategory}

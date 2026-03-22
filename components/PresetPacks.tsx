@@ -44,13 +44,11 @@ export default function PresetPacks({ onSelect }: Props) {
           const plugins = pack.pluginIds.map((id) => PLUGINS[id]).filter(Boolean);
 
           return (
-            <Card
+            <button
               key={pack.id}
+              type="button"
               onClick={() => onSelect(pack)}
-              className="surface-panel-soft group flex h-full cursor-pointer flex-col rounded-[24px] p-5 transition-all hover:-translate-y-0.5 hover:border-primary/30"
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(pack); } }}
+              className="surface-panel-soft group flex h-full cursor-pointer flex-col rounded-[24px] border bg-card p-5 text-left transition-[transform,border-color] hover:-translate-y-0.5 hover:border-primary/30 active:translate-y-0"
             >
               <div className="mb-3 flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
@@ -73,7 +71,7 @@ export default function PresetPacks({ onSelect }: Props) {
                     </div>
                   </div>
                 </div>
-                <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-muted-foreground transition-colors group-hover:text-foreground">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full border border-overlay-border bg-overlay-subtle text-muted-foreground transition-colors group-hover:text-foreground">
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                 </div>
               </div>
@@ -82,7 +80,7 @@ export default function PresetPacks({ onSelect }: Props) {
                 {plugins.map((p) => (
                   <span
                     key={p.id}
-                    className="rounded-full border px-2 py-1 text-[11px] font-semibold"
+                    className="rounded-full border px-2 py-1 text-xs font-semibold"
                     style={{
                       color: p.color,
                       background: p.color + "18",
@@ -93,7 +91,7 @@ export default function PresetPacks({ onSelect }: Props) {
                   </span>
                 ))}
               </div>
-            </Card>
+            </button>
           );
         })}
       </div>

@@ -19,8 +19,9 @@ export default function PluginGridCard({ plugin }: Props) {
     <Link
       href={`/plugins/${plugin.id}`}
       className="block h-full"
+      aria-label={`${plugin.name} — ${plugin.tag}`}
     >
-      <Card className="group flex h-full cursor-pointer flex-col p-4 transition-colors hover:border-muted-foreground">
+      <Card className="group flex h-full cursor-pointer flex-col p-4 transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-muted-foreground hover:shadow-lg active:translate-y-0 active:shadow-md focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background">
         <div className="mb-2 flex flex-wrap items-center gap-2">
           <Badge
             className="border-transparent"
@@ -47,7 +48,7 @@ export default function PluginGridCard({ plugin }: Props) {
         <h3 className="mb-1 font-heading text-sm font-semibold text-muted-foreground group-hover:text-foreground">
           {plugin.name}
         </h3>
-        <p className="mb-2.5 flex-1 text-xs leading-[1.7] text-muted-foreground">
+        <p className="mb-2.5 flex-1 text-xs leading-relaxed text-muted-foreground line-clamp-3">
           {desc}
         </p>
         <div className="flex flex-wrap gap-1">

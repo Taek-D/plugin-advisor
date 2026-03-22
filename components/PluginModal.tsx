@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
 import type { Plugin, VersionInfo } from "@/lib/types";
 import { PLUGINS } from "@/lib/plugins";
@@ -25,25 +24,6 @@ type Props = {
 
 export default function PluginModal({ plugin, onClose, version }: Props) {
   const { locale, t } = useI18n();
-
-  useEffect(() => {
-    if (!plugin) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
-        return;
-      }
-    };
-
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = "";
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [plugin, onClose]);
 
   if (!plugin) return null;
 

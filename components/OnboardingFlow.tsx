@@ -121,35 +121,38 @@ export default function OnboardingFlow({ pack, onBack }: Props) {
       </button>
 
       {/* Step indicator */}
-      <div className="mb-6 flex items-center gap-2">
-        {steps.map((step, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <div
-              className={cn(
-                "flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold transition-colors",
-                i <= currentStep
-                  ? "bg-primary text-white"
-                  : "border border-border text-muted-foreground"
-              )}
-            >
-              {i < currentStep ? <Check className="h-3 w-3" /> : step.num}
-            </div>
-            <span
-              className={cn(
-                "text-xs",
-                i === currentStep ? "font-bold text-foreground" : "text-muted-foreground"
-              )}
-            >
-              {step.label}
-            </span>
-            {i < steps.length - 1 && <ChevronRight className="h-3 w-3 text-text-faint" />}
-          </div>
-        ))}
-      </div>
+      <nav aria-label="온보딩 단계" className="mb-6">
+        <ol className="flex items-center gap-2">
+          {steps.map((step, i) => (
+            <li key={i} className="flex items-center gap-2" aria-current={i === currentStep ? "step" : undefined}>
+              <div
+                className={cn(
+                  "flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold transition-colors",
+                  i <= currentStep
+                    ? "bg-primary text-white"
+                    : "border border-border text-muted-foreground"
+                )}
+                aria-hidden="true"
+              >
+                {i < currentStep ? <Check className="h-3 w-3" /> : step.num}
+              </div>
+              <span
+                className={cn(
+                  "text-xs",
+                  i === currentStep ? "font-bold text-foreground" : "text-muted-foreground"
+                )}
+              >
+                {step.label}
+              </span>
+              {i < steps.length - 1 && <ChevronRight className="h-3 w-3 text-text-faint" aria-hidden="true" />}
+            </li>
+          ))}
+        </ol>
+      </nav>
 
       {/* Step 0: Overview */}
       {currentStep === 0 && (
-        <div>
+        <div className="animate-fade-in">
           <div className="mb-4 space-y-2.5">
             {plugins.map((plugin, i) => {
               const desc =
@@ -176,7 +179,7 @@ export default function OnboardingFlow({ pack, onBack }: Props) {
                       {plugin.tag}
                     </Badge>
                   </div>
-                  <p className="ml-7 text-[13px] leading-[1.7] text-muted-foreground sm:text-xs">{desc}</p>
+                  <p className="ml-7 text-xs leading-[1.7] text-muted-foreground sm:text-sm">{desc}</p>
                 </Card>
               );
             })}
@@ -192,7 +195,7 @@ export default function OnboardingFlow({ pack, onBack }: Props) {
 
       {/* Step 1: Install guide */}
       {currentStep === 1 && (
-        <div>
+        <div className="animate-fade-in">
           {/* Guide box */}
           <div className="mb-4 rounded-md border border-primary/20 bg-primary/5 p-3">
             <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-primary">
@@ -350,7 +353,7 @@ export default function OnboardingFlow({ pack, onBack }: Props) {
               )}
             </button>
             {troubleshootOpen && (
-              <div className="border-t border-border px-3.5 pb-3 pt-2">
+              <div className="animate-fade-in border-t border-border px-3.5 pb-3 pt-2">
                 <p className="mb-2.5 text-xs text-text-faint">
                   {t.onboarding.troubleshootingHint}
                 </p>
@@ -369,7 +372,7 @@ export default function OnboardingFlow({ pack, onBack }: Props) {
                         )}
                       </button>
                       {openTroubleshootIdx === idx && (
-                        <p className="px-3 pb-2.5 text-xs leading-[1.7] text-muted-foreground">
+                        <p className="animate-fade-in px-3 pb-2.5 text-xs leading-[1.7] text-muted-foreground">
                           {item.a}
                         </p>
                       )}
@@ -411,7 +414,7 @@ export default function OnboardingFlow({ pack, onBack }: Props) {
 
       {/* Step 2: Done + What's Next */}
       {currentStep === 2 && (
-        <div>
+        <div className="animate-fade-in">
           {/* Success header */}
           <div className="mb-6 py-4 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">

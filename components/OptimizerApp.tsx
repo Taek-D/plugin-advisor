@@ -105,7 +105,7 @@ export default function OptimizerApp() {
             disabled
             aria-disabled="true"
             title={t.optimizer.aiComingSoon}
-            className="shrink-0 cursor-not-allowed opacity-60 border-white/10"
+            className="shrink-0 cursor-not-allowed opacity-60 border-overlay-border"
           >
             <Sparkles className="mr-2 h-4 w-4" />
             {t.optimizer.aiComingSoon}
@@ -115,7 +115,7 @@ export default function OptimizerApp() {
         {/* Input section */}
         <Card className="surface-panel mb-6 rounded-[28px] p-5 sm:p-6">
           <div className="mb-5">
-            <TabsList className="w-max rounded-full border border-white/10 bg-card/60 p-1">
+            <TabsList className="w-max rounded-full border border-overlay-border bg-card/60 p-1">
               <TabsTrigger
                 active={activeTab === "paste"}
                 className="whitespace-nowrap rounded-full border-transparent px-4 py-2"
@@ -155,7 +155,7 @@ export default function OptimizerApp() {
             </div>
             <div className="flex flex-wrap gap-2">
               {unmatched.map((token) => (
-                <Badge key={token} variant="outline" className="border-white/10 text-muted-foreground">
+                <Badge key={token} variant="outline" className="border-overlay-border text-muted-foreground">
                   {token}
                 </Badge>
               ))}
@@ -165,9 +165,9 @@ export default function OptimizerApp() {
 
         {/* Empty state */}
         {isEmpty && (
-          <div className="mb-6 flex flex-col items-center gap-3 rounded-[24px] border border-dashed border-white/10 px-6 py-10 text-center">
+          <div className="mb-6 flex flex-col items-center gap-3 rounded-[24px] border border-dashed border-overlay-border px-6 py-10 text-center">
             <p className="text-sm text-muted-foreground">{t.optimizer.emptyState}</p>
-            <Button variant="outline" size="sm" onClick={handleSampleData} className="border-white/10">
+            <Button variant="outline" size="sm" onClick={handleSampleData} className="border-overlay-border">
               {t.optimizer.sampleBtn}
             </Button>
           </div>
