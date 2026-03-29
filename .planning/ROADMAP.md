@@ -84,11 +84,11 @@ Plans:
   1. 사이트 메인 URL 공유 시 Plugin Advisor 브랜딩이 포함된 기본 OG 이미지가 소셜 카드에 표시된다
   2. /plugins/[id] URL 공유 시 해당 플러그인의 이름, 카테고리, 태그가 포함된 동적 OG 이미지가 생성된다
   3. /guides/[slug] URL 공유 시 해당 가이드의 제목과 설명이 포함된 동적 OG 이미지가 생성된다
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 18-01: 기본 OG + twitter-image + /plugins, /optimizer, /guides 정적 OG 이미지
-- [ ] 18-02: /plugins/[id] + /guides/[slug] 동적 OG 이미지 (generateStaticParams 포함)
+- [ ] 18-01-PLAN.md — Shared OG utilities + default brand OG/Twitter image + static OG for /advisor, /plugins, /guides + root metadata
+- [ ] 18-02-PLAN.md — Dynamic OG images for /plugins/[id] and /guides/[slug] with generateStaticParams
 
 ### Phase 19: Share + Feedback + Newsletter
 **Goal**: 사용자가 추천/분석 결과를 SNS로 공유하고, 사이트에서 피드백을 제출하고, 뉴스레터를 구독할 수 있다
