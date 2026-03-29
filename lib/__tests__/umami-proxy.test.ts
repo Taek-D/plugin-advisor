@@ -83,7 +83,7 @@ describe("/api/umami proxy route", () => {
     );
     vi.stubGlobal("fetch", mockFetch);
 
-    const { GET } = await import("../../app/api/umami/route");
+    const { GET } = await import("../../app/api/umami/[...path]/route");
     const req = makeMockReq("http://localhost:3000/api/umami/script.js");
     await GET(req as never);
 
@@ -100,7 +100,7 @@ describe("/api/umami proxy route", () => {
     );
     vi.stubGlobal("fetch", mockFetch);
 
-    const { POST } = await import("../../app/api/umami/route");
+    const { POST } = await import("../../app/api/umami/[...path]/route");
     const body = JSON.stringify({ type: "event", payload: { name: "pageview" } });
     const req = makeMockReq("http://localhost:3000/api/umami/api/send", {
       method: "POST",
@@ -125,7 +125,7 @@ describe("/api/umami proxy route", () => {
     );
     vi.stubGlobal("fetch", mockFetch);
 
-    const { GET } = await import("../../app/api/umami/route");
+    const { GET } = await import("../../app/api/umami/[...path]/route");
     const req = makeMockReq("http://localhost:3000/api/umami/missing");
     const response = await GET(req as never);
 
@@ -138,7 +138,7 @@ describe("/api/umami proxy route", () => {
     );
     vi.stubGlobal("fetch", mockFetch);
 
-    const { GET } = await import("../../app/api/umami/route");
+    const { GET } = await import("../../app/api/umami/[...path]/route");
     const req = makeMockReq("http://localhost:3000/api/umami/script.js");
     await GET(req as never);
 
@@ -153,7 +153,7 @@ describe("/api/umami proxy route", () => {
     );
     vi.stubGlobal("fetch", mockFetch);
 
-    const { GET } = await import("../../app/api/umami/route");
+    const { GET } = await import("../../app/api/umami/[...path]/route");
     const req = makeMockReq("http://localhost:3000/api/umami/script.js?v=2");
     await GET(req as never);
 
