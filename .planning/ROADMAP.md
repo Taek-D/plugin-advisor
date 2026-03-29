@@ -70,7 +70,7 @@
   3. 기존 trackEvent 호출(analysis_start 등)이 Umami 커스텀 이벤트로도 전송되어 대시보드에 표시된다
   4. /api/umami 프록시 경로를 통해 Umami 데이터가 전송되어 광고차단기 사용자의 데이터도 수집된다
   5. Supabase에 feedback, newsletter_subscribers 테이블이 존재하고 RLS 정책이 적용되어 있다
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
 - [ ] 17-01: CSP 업데이트 + UmamiScript 컴포넌트 + layout.tsx 통합 + TypeScript 선언
