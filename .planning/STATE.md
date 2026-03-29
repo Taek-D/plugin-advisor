@@ -5,13 +5,13 @@ milestone_name: 마케팅 준비
 status: active
 stopped_at: null
 last_updated: "2026-03-29"
-last_activity: 2026-03-29 — 17-01 complete (Umami script foundation, 2 tasks, 6 files)
+last_activity: 2026-03-29 — 17-02 complete (Umami forwarding + proxy + DB migrations, 2 tasks, 6 files)
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 7
-  completed_plans: 1
-  percent: 14
+  completed_plans: 2
+  percent: 29
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 ```
 Milestone: v1.4 마케팅 준비
 Phase:    17 of 19 (Analytics Foundation)
-Plan:     1 of 2 in current phase
-Status:   In progress
+Plan:     2 of 2 in current phase — COMPLETE
+Status:   Phase 17 complete, advancing to Phase 18
 ```
 
-Progress: [█░░░░░░░░░] 14%
+Progress: [██░░░░░░░░] 29%
 
 ## Performance Metrics
 
@@ -58,6 +58,10 @@ Key decisions carried forward:
 - UmamiScript는 서버 컴포넌트로 구현 (클라이언트 번들 비용 없음, next/script afterInteractive)
 - vitest esbuild jsx automatic runtime 설정 — @vitejs/plugin-react 없이 컴포넌트 테스트 지원
 - Window.umami 타입은 types/umami.d.ts에서 전역 interface 확장으로 선언 (no import/export)
+- Umami forwarding은 additive — localStorage 로직 유지하고 window.umami?.track() 추가
+- /api/umami 프록시는 prefix 제거 후 cloud.umami.is로 포워드, host 헤더 재설정
+- vi.mock("next/server") 패턴 확립 — route handler 유닛 테스트에서 broken node_modules 우회
+- newsletter confirmed 컬럼은 기본값 false — 이메일 인증은 NEWS-03 v2에서 처리
 
 ### Pending Todos
 
@@ -71,5 +75,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-29
-Stopped at: Completed 17-01-PLAN.md (Umami script foundation)
-Resume with: `/gsd:execute-phase 17`
+Stopped at: Completed 17-02-PLAN.md (Umami forwarding + proxy + DB migrations)
+Resume with: `/gsd:execute-phase 18`

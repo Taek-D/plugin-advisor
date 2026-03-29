@@ -11,8 +11,8 @@ Requirements for marketing prep milestone. Each maps to roadmap phases.
 
 - [x] **ANLY-01**: Umami Cloud 스크립트가 모든 페이지에서 로드되어 페이지뷰를 자동 추적한다
 - [x] **ANLY-02**: CSP 헤더가 Umami 도메인을 허용하여 스크립트가 차단되지 않는다
-- [ ] **ANLY-03**: 기존 16개 localStorage 이벤트가 Umami 커스텀 이벤트로 마이그레이션된다
-- [ ] **ANLY-04**: /api/umami proxy 라우트가 광고차단기를 우회하여 데이터 손실을 최소화한다
+- [x] **ANLY-03**: 기존 16개 localStorage 이벤트가 Umami 커스텀 이벤트로 마이그레이션된다
+- [x] **ANLY-04**: /api/umami proxy 라우트가 광고차단기를 우회하여 데이터 손실을 최소화한다
 
 ### OG Images
 
@@ -29,13 +29,13 @@ Requirements for marketing prep milestone. Each maps to roadmap phases.
 ### Feedback
 
 - [ ] **FDBK-01**: 사이트에서 피드백 위젯을 통해 의견을 제출할 수 있다
-- [ ] **FDBK-02**: 피드백이 Supabase에 저장되고 rate limit이 적용된다
+- [x] **FDBK-02**: 피드백이 Supabase에 저장되고 rate limit이 적용된다
 - [ ] **FDBK-03**: 관리자가 피드백을 확인할 수 있다
 
 ### Newsletter
 
 - [ ] **NEWS-01**: 사용자가 이메일 구독 폼으로 뉴스레터를 구독할 수 있다
-- [ ] **NEWS-02**: 구독 정보가 Supabase에 저장되고 중복/rate limit이 적용된다
+- [x] **NEWS-02**: 구독 정보가 Supabase에 저장되고 중복/rate limit이 적용된다
 
 ## v2 Requirements
 
@@ -71,8 +71,8 @@ Deferred to future release. Tracked but not in current roadmap.
 |-------------|-------|--------|
 | ANLY-01 | Phase 17 | Complete |
 | ANLY-02 | Phase 17 | Complete |
-| ANLY-03 | Phase 17 | Pending |
-| ANLY-04 | Phase 17 | Pending |
+| ANLY-03 | Phase 17 | Complete |
+| ANLY-04 | Phase 17 | Complete |
 | OGIM-01 | Phase 18 | Pending |
 | OGIM-02 | Phase 18 | Pending |
 | OGIM-03 | Phase 18 | Pending |
@@ -80,10 +80,10 @@ Deferred to future release. Tracked but not in current roadmap.
 | SHAR-02 | Phase 19 | Pending |
 | SHAR-03 | Phase 19 | Pending |
 | FDBK-01 | Phase 19 | Pending |
-| FDBK-02 | Phase 17 + 19 | Pending |
+| FDBK-02 | Phase 17 + 19 | Complete |
 | FDBK-03 | Phase 19 | Pending |
 | NEWS-01 | Phase 19 | Pending |
-| NEWS-02 | Phase 17 + 19 | Pending |
+| NEWS-02 | Phase 17 + 19 | Complete |
 
 **Coverage:**
 - v1.4 requirements: 15 total
