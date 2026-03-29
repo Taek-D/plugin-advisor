@@ -18,9 +18,25 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://pluginadvisor.cc"),
   title: "Plugin Advisor — Claude Code",
   description:
     "Claude Code 첫 세팅을 덜 헤매게 도와주는 검증된 스타터 스택 설치 어드바이저.",
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    url: "https://pluginadvisor.cc",
+    siteName: "Plugin Advisor",
+    title: "Plugin Advisor — Claude Code",
+    description:
+      "Claude Code 첫 세팅을 덜 헤매게 도와주는 검증된 스타터 스택 설치 어드바이저.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Plugin Advisor — Claude Code",
+    description:
+      "Claude Code 첫 세팅을 덜 헤매게 도와주는 검증된 스타터 스택 설치 어드바이저.",
+  },
 };
 
 export const viewport: Viewport = {
