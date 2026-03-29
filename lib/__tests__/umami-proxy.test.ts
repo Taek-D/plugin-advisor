@@ -1,37 +1,38 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-// Mock next/server — cannot be resolved in vitest node environment (broken node_modules)
+// ---------------------------------------------------------------------------
+// Mock next/server — cannot be resolved in vitest node environment (broken
+// node_modules; same constraint as Plan 01 with next/script).
+// This mock intercepts both the test file and app/api/umami/route.ts imports.
+// ---------------------------------------------------------------------------
+
 vi.mock("next/server", () => {
   class MockNextRequest {
     nextUrl: URL;
     headers: Map<string, string>;
-    method: string;
-    _body: string | undefined;
+    _body: string;
 
     constructor(url: string, init?: { method?: string; body?: string; headers?: Record<string, string> }) {
       this.nextUrl = new URL(url);
-      this.method = init?.method ?? "GET";
-      this._body = init?.body;
+      this._body = init?.body ?? "";
       this.headers = new Map(Object.entries(init?.headers ?? {}));
     }
 
-    text() {
-      return Promise.resolve(this._body ?? "");
+    text(): Promise<string> {
+      return Promise.resolve(this._body);
     }
   }
 
   class MockNextResponse {
     status: number;
     headers: Map<string, string>;
-    _body: ArrayBuffer;
 
-    constructor(body: ArrayBuffer, init?: { status?: number; headers?: Headers | Map<string, string> }) {
-      this._body = body;
+    constructor(_body: unknown, init?: { status?: number; headers?: { forEach?: (cb: (v: string, k: string) => void) => void } }) {
       this.status = init?.status ?? 200;
       this.headers = new Map();
-      if (init?.headers) {
-        (init.headers as Map<string, string>).forEach((v: string, k: string) => {
-          (this.headers as Map<string, string>).set(k, v);
+      if (init?.headers?.forEach) {
+        init.headers.forEach((v: string, k: string) => {
+          this.headers.set(k, v);
         });
       }
     }
@@ -43,13 +44,29 @@ vi.mock("next/server", () => {
   };
 });
 
-// Type alias for tests
+// ---------------------------------------------------------------------------
+// Helper to build a mock request
+// ---------------------------------------------------------------------------
+
 type MockReq = {
   nextUrl: URL;
   headers: Map<string, string>;
-  method: string;
   text: () => Promise<string>;
 };
+
+function makeMockReq(url: string, opts?: { method?: string; body?: string; headers?: Record<string, string> }): MockReq {
+  const parsed = new URL(url);
+  const headerMap = new Map(Object.entries(opts?.headers ?? {}));
+  return {
+    nextUrl: parsed,
+    headers: headerMap,
+    text: () => Promise.resolve(opts?.body ?? ""),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
 
 describe("/api/umami proxy route", () => {
   beforeEach(() => {
@@ -67,8 +84,7 @@ describe("/api/umami proxy route", () => {
     vi.stubGlobal("fetch", mockFetch);
 
     const { GET } = await import("../../app/api/umami/route");
-    const { NextRequest } = await import("next/server");
-    const req = new NextRequest("http://localhost:3000/api/umami/script.js") as unknown as MockReq;
+    const req = makeMockReq("http://localhost:3000/api/umami/script.js");
     await GET(req as never);
 
     expect(mockFetch).toHaveBeenCalledOnce();
@@ -85,13 +101,12 @@ describe("/api/umami proxy route", () => {
     vi.stubGlobal("fetch", mockFetch);
 
     const { POST } = await import("../../app/api/umami/route");
-    const { NextRequest } = await import("next/server");
     const body = JSON.stringify({ type: "event", payload: { name: "pageview" } });
-    const req = new NextRequest("http://localhost:3000/api/umami/api/send", {
+    const req = makeMockReq("http://localhost:3000/api/umami/api/send", {
       method: "POST",
       body,
       headers: { "content-type": "application/json" },
-    }) as unknown as MockReq;
+    });
     await POST(req as never);
 
     expect(mockFetch).toHaveBeenCalledOnce();
@@ -111,8 +126,7 @@ describe("/api/umami proxy route", () => {
     vi.stubGlobal("fetch", mockFetch);
 
     const { GET } = await import("../../app/api/umami/route");
-    const { NextRequest } = await import("next/server");
-    const req = new NextRequest("http://localhost:3000/api/umami/missing") as unknown as MockReq;
+    const req = makeMockReq("http://localhost:3000/api/umami/missing");
     const response = await GET(req as never);
 
     expect(response.status).toBe(404);
@@ -125,8 +139,7 @@ describe("/api/umami proxy route", () => {
     vi.stubGlobal("fetch", mockFetch);
 
     const { GET } = await import("../../app/api/umami/route");
-    const { NextRequest } = await import("next/server");
-    const req = new NextRequest("http://localhost:3000/api/umami/script.js") as unknown as MockReq;
+    const req = makeMockReq("http://localhost:3000/api/umami/script.js");
     await GET(req as never);
 
     const calledOptions = mockFetch.mock.calls[0][1] as RequestInit & { headers?: Record<string, string> };
@@ -141,8 +154,7 @@ describe("/api/umami proxy route", () => {
     vi.stubGlobal("fetch", mockFetch);
 
     const { GET } = await import("../../app/api/umami/route");
-    const { NextRequest } = await import("next/server");
-    const req = new NextRequest("http://localhost:3000/api/umami/script.js?v=2") as unknown as MockReq;
+    const req = makeMockReq("http://localhost:3000/api/umami/script.js?v=2");
     await GET(req as never);
 
     const calledUrl = mockFetch.mock.calls[0][0] as string;
