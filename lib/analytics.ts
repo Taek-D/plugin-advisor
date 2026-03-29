@@ -49,6 +49,9 @@ export function trackEvent(event: EventName, payload: EventPayload = {}): void {
   } catch {
     // Storage full or unavailable — silently skip
   }
+
+  // Forward to Umami (no-op if script not loaded)
+  window.umami?.track(event, payload);
 }
 
 export function getEventStats(): { total: number; byEvent: Record<string, number> } {
