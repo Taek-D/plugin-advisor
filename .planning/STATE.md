@@ -1,35 +1,34 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.3
-milestone_name: DB 확장
-status: completed
-stopped_at: Completed 16-01-PLAN.md
-last_updated: "2026-03-19T07:47:52.007Z"
-last_activity: 2026-03-19 — Phase 16 complete (reason strings + dead export removal, CI green)
+milestone: v1.4
+milestone_name: 마케팅 준비
+status: active
+stopped_at: null
+last_updated: "2026-03-29"
+last_activity: 2026-03-29 — Milestone v1.4 started
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 5
-  completed_plans: 5
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-19)
+See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** 사용자의 프로젝트에 맞는 검증된 Claude Code 플러그인 조합을 정확하게 추천하는 것.
-**Current focus:** v1.3 shipped — planning next milestone
+**Current focus:** v1.4 마케팅 준비 — Analytics, 소셜 공유, 피드백 수집 인프라
 
 ## Current Position
 
 ```
-Milestone: v1.3 shipped (2026-03-19)
-Status:   All 4 milestones complete (v1.0-v1.3)
-
-Lifetime:  4 milestones, 16 phases, 24 plans
+Milestone: v1.4 마케팅 준비
+Status:   Defining requirements
+Phase:    Not started
 ```
 
 ## Performance Metrics
@@ -63,5 +62,5 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-19
-Resume with: /gsd:new-milestone — start next milestone
+Last session: 2026-03-29
+Resume with: Define requirements → Create roadmap
