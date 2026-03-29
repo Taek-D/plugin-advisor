@@ -9,8 +9,8 @@ Requirements for marketing prep milestone. Each maps to roadmap phases.
 
 ### Analytics
 
-- [ ] **ANLY-01**: Umami Cloud 스크립트가 모든 페이지에서 로드되어 페이지뷰를 자동 추적한다
-- [ ] **ANLY-02**: CSP 헤더가 Umami 도메인을 허용하여 스크립트가 차단되지 않는다
+- [x] **ANLY-01**: Umami Cloud 스크립트가 모든 페이지에서 로드되어 페이지뷰를 자동 추적한다
+- [x] **ANLY-02**: CSP 헤더가 Umami 도메인을 허용하여 스크립트가 차단되지 않는다
 - [ ] **ANLY-03**: 기존 16개 localStorage 이벤트가 Umami 커스텀 이벤트로 마이그레이션된다
 - [ ] **ANLY-04**: /api/umami proxy 라우트가 광고차단기를 우회하여 데이터 손실을 최소화한다
 
@@ -69,8 +69,8 @@ Deferred to future release. Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ANLY-01 | Phase 17 | Pending |
-| ANLY-02 | Phase 17 | Pending |
+| ANLY-01 | Phase 17 | Complete |
+| ANLY-02 | Phase 17 | Complete |
 | ANLY-03 | Phase 17 | Pending |
 | ANLY-04 | Phase 17 | Pending |
 | OGIM-01 | Phase 18 | Pending |

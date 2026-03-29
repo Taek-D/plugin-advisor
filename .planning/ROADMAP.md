@@ -130,7 +130,7 @@ Phases execute in numeric order: 17 → 18 → 19
 | 14. Plugin 3개 등록 | v1.3 | 1/1 | Complete | 2026-03-19 |
 | 15. 검증 및 테스트 갱신 | v1.3 | 1/1 | Complete | 2026-03-19 |
 | 16. 추천 이유 문자열 보완 | v1.3 | 1/1 | Complete | 2026-03-19 |
-| 17. Analytics Foundation | v1.4 | 0/2 | Not started | - |
+| 17. Analytics Foundation | 1/2 | In Progress|  | - |
 | 18. OG Images | v1.4 | 0/2 | Not started | - |
 | 19. Share + Feedback + Newsletter | v1.4 | 0/3 | Not started | - |
 

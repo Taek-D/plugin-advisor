@@ -5,13 +5,13 @@ milestone_name: 마케팅 준비
 status: active
 stopped_at: null
 last_updated: "2026-03-29"
-last_activity: 2026-03-29 — Roadmap created (3 phases, 7 plans)
+last_activity: 2026-03-29 — 17-01 complete (Umami script foundation, 2 tasks, 6 files)
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 7
-  completed_plans: 0
-  percent: 0
+  completed_plans: 1
+  percent: 14
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 ```
 Milestone: v1.4 마케팅 준비
 Phase:    17 of 19 (Analytics Foundation)
-Plan:     0 of 2 in current phase
-Status:   Ready to plan
+Plan:     1 of 2 in current phase
+Status:   In progress
 ```
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [█░░░░░░░░░] 14%
 
 ## Performance Metrics
 
@@ -55,6 +55,9 @@ Key decisions carried forward:
 - CSP 업데이트가 Umami 스크립트보다 먼저 적용되어야 함 (차단 방지)
 - Supabase 마이그레이션을 Phase 17에서 선행 (feedback + newsletter 테이블)
 - localStorage analytics 유지 + Umami 레이어 추가 (제거하지 않음)
+- UmamiScript는 서버 컴포넌트로 구현 (클라이언트 번들 비용 없음, next/script afterInteractive)
+- vitest esbuild jsx automatic runtime 설정 — @vitejs/plugin-react 없이 컴포넌트 테스트 지원
+- Window.umami 타입은 types/umami.d.ts에서 전역 interface 확장으로 선언 (no import/export)
 
 ### Pending Todos
 
@@ -68,5 +71,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-03-29
-Stopped at: Roadmap created, ready to plan Phase 17
-Resume with: `/gsd:plan-phase 17`
+Stopped at: Completed 17-01-PLAN.md (Umami script foundation)
+Resume with: `/gsd:execute-phase 17`
