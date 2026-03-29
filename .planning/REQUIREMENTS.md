@@ -69,27 +69,29 @@ Deferred to future release. Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ANLY-01 | TBD | Pending |
-| ANLY-02 | TBD | Pending |
-| ANLY-03 | TBD | Pending |
-| ANLY-04 | TBD | Pending |
-| OGIM-01 | TBD | Pending |
-| OGIM-02 | TBD | Pending |
-| OGIM-03 | TBD | Pending |
-| SHAR-01 | TBD | Pending |
-| SHAR-02 | TBD | Pending |
-| SHAR-03 | TBD | Pending |
-| FDBK-01 | TBD | Pending |
-| FDBK-02 | TBD | Pending |
-| FDBK-03 | TBD | Pending |
-| NEWS-01 | TBD | Pending |
-| NEWS-02 | TBD | Pending |
+| ANLY-01 | Phase 17 | Pending |
+| ANLY-02 | Phase 17 | Pending |
+| ANLY-03 | Phase 17 | Pending |
+| ANLY-04 | Phase 17 | Pending |
+| OGIM-01 | Phase 18 | Pending |
+| OGIM-02 | Phase 18 | Pending |
+| OGIM-03 | Phase 18 | Pending |
+| SHAR-01 | Phase 19 | Pending |
+| SHAR-02 | Phase 19 | Pending |
+| SHAR-03 | Phase 19 | Pending |
+| FDBK-01 | Phase 19 | Pending |
+| FDBK-02 | Phase 17 + 19 | Pending |
+| FDBK-03 | Phase 19 | Pending |
+| NEWS-01 | Phase 19 | Pending |
+| NEWS-02 | Phase 17 + 19 | Pending |
 
 **Coverage:**
 - v1.4 requirements: 15 total
-- Mapped to phases: 0
-- Unmapped: 15 ⚠️
+- Mapped to phases: 15/15
+- Unmapped: 0
+
+**Note:** FDBK-02 and NEWS-02 span two phases: Supabase table creation (Phase 17) and API route + rate limiting (Phase 19). The table is a prerequisite that must exist before the API route can function.
 
 ---
 *Requirements defined: 2026-03-29*
-*Last updated: 2026-03-29 after initial definition*
+*Last updated: 2026-03-29 after roadmap creation*
