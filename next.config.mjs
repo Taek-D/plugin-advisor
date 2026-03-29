@@ -25,6 +25,14 @@ const nextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/umami/:path*",
+        destination: "https://cloud.umami.is/:path*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
