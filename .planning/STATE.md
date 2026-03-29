@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: 마케팅 준비
-status: in_progress
-stopped_at: "Completed 18-og-images/18-02-PLAN.md"
-last_updated: "2026-03-29T18:56:50Z"
+status: completed
+stopped_at: Completed 18-og-images/18-02-PLAN.md
+last_updated: "2026-03-29T19:03:34.991Z"
 progress:
   total_phases: 3
   completed_phases: 2

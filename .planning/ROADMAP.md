@@ -131,7 +131,7 @@ Phases execute in numeric order: 17 → 18 → 19
 | 15. 검증 및 테스트 갱신 | v1.3 | 1/1 | Complete | 2026-03-19 |
 | 16. 추천 이유 문자열 보완 | v1.3 | 1/1 | Complete | 2026-03-19 |
 | 17. Analytics Foundation | 2/2 | Complete    | 2026-03-29 | - |
-| 18. OG Images | 2/2 | Complete   | 2026-03-29 | - |
+| 18. OG Images | 2/2 | Complete    | 2026-03-29 | - |
 | 19. Share + Feedback + Newsletter | v1.4 | 0/3 | Not started | - |
 
 ---
