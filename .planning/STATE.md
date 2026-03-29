@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: 마케팅 준비
 status: in_progress
-stopped_at: "Completed 18-og-images/18-01-PLAN.md"
-last_updated: "2026-03-30T18:50:03Z"
+stopped_at: "Completed 18-og-images/18-02-PLAN.md"
+last_updated: "2026-03-29T18:56:50Z"
 progress:
   total_phases: 3
-  completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
-  percent: 43
+  completed_phases: 2
+  total_plans: 4
+  completed_plans: 4
+  percent: 67
 ---
 
 # Project State
@@ -27,11 +27,11 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 ```
 Milestone: v1.4 마케팅 준비
 Phase:    18 of 19 (OG Images)
-Plan:     1 of 2 in current phase — COMPLETE
-Status:   Phase 18 Plan 01 complete, advancing to Plan 02
+Plan:     2 of 2 in current phase — COMPLETE
+Status:   Phase 18 fully complete, all OG images shipped
 ```
 
-Progress: [████░░░░░░] 43%
+Progress: [██████░░░░] 67%
 
 ## Performance Metrics
 
@@ -64,6 +64,10 @@ Key decisions carried forward:
 - metadataBase: new URL("https://pluginadvisor.cc") 추가 — OG 이미지 URL이 production에서 올바르게 resolve되기 위해 필수
 - OG 이미지 패턴: lib/og-utils.ts 공유 유틸, edge runtime, dark bg (#0f172a) + accent bars (#6366f1) + Space Grotesk Bold
 - twitter-image.tsx convention file 사용 (twitter.images 메타데이터 필드 대신) — opengraph-image.tsx 패턴과 일관성 유지
+- 동적 OG 이미지: generateStaticParams가 page.tsx와 동일한 param set 사용 — 빌드 타임 전체 사전 생성
+- Plugin OG는 plugin.color로 액센트 바 (per-entity 브랜딩), Guide OG는 고정 OG_COLORS.accent (브랜드 일관성)
+- Guide OG는 titleEn/summaryEn 사용 — Edge Runtime에서 한국어 폰트 렌더링 불일치 방지
+- OG summary 120자 트런케이션 — 1200x630 캔버스 오버플로우 방지
 
 ### Pending Todos
 
@@ -76,6 +80,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-30T18:50:03Z
-Stopped at: Completed 18-og-images/18-01-PLAN.md
-Resume with: `/gsd:execute-phase 18`
+Last session: 2026-03-29T18:56:50Z
+Stopped at: Completed 18-og-images/18-02-PLAN.md
+Resume with: `/gsd:execute-phase 19`

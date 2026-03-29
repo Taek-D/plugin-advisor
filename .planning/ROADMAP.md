@@ -55,7 +55,7 @@
 **Milestone Goal:** 마케팅 런칭 전 기술 준비 — Umami Cloud analytics로 사용자 행동 측정, 페이지별 동적 OG 이미지로 소셜 공유 최적화, 공유/피드백/뉴스레터 인프라 구축
 
 - [x] **Phase 17: Analytics Foundation** — Umami Cloud 통합 + CSP 업데이트 + 이벤트 마이그레이션 + 프록시 라우트 + Supabase 테이블 생성 (completed 2026-03-29)
-- [ ] **Phase 18: OG Images** — 사이트 기본 + 페이지별 동적 OG 이미지 생성 (next/og)
+- [x] **Phase 18: OG Images** — 사이트 기본 + 페이지별 동적 OG 이미지 생성 (next/og) (completed 2026-03-29)
 - [ ] **Phase 19: Share + Feedback + Newsletter** — 결과 공유 버튼, 피드백 위젯, 뉴스레터 구독 폼 + i18n
 
 ## Phase Details
@@ -131,7 +131,7 @@ Phases execute in numeric order: 17 → 18 → 19
 | 15. 검증 및 테스트 갱신 | v1.3 | 1/1 | Complete | 2026-03-19 |
 | 16. 추천 이유 문자열 보완 | v1.3 | 1/1 | Complete | 2026-03-19 |
 | 17. Analytics Foundation | 2/2 | Complete    | 2026-03-29 | - |
-| 18. OG Images | 1/2 | In Progress|  | - |
+| 18. OG Images | 2/2 | Complete   | 2026-03-29 | - |
 | 19. Share + Feedback + Newsletter | v1.4 | 0/3 | Not started | - |
 
 ---
