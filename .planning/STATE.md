@@ -2,14 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: 마케팅 준비
-status: active
-stopped_at: null
-last_updated: "2026-03-29"
-last_activity: 2026-03-29 — 17-02 complete (Umami forwarding + proxy + DB migrations, 2 tasks, 6 files)
+status: completed
+stopped_at: Completed 17-02-PLAN.md (Umami forwarding + proxy + DB migrations)
+last_updated: "2026-03-29T14:13:32.954Z"
 progress:
   total_phases: 3
-  completed_phases: 0
-  total_plans: 7
+  completed_phases: 1
+  total_plans: 2
   completed_plans: 2
   percent: 29
 ---
