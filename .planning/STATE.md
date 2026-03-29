@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: 마케팅 준비
-status: completed
-stopped_at: Phase 18 context gathered
-last_updated: "2026-03-29T18:04:41.390Z"
+status: in_progress
+stopped_at: "Completed 18-og-images/18-01-PLAN.md"
+last_updated: "2026-03-30T18:50:03Z"
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
-  percent: 29
+  total_plans: 3
+  completed_plans: 3
+  percent: 43
 ---
 
 # Project State
@@ -26,12 +26,12 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 ```
 Milestone: v1.4 마케팅 준비
-Phase:    17 of 19 (Analytics Foundation)
-Plan:     2 of 2 in current phase — COMPLETE
-Status:   Phase 17 complete, advancing to Phase 18
+Phase:    18 of 19 (OG Images)
+Plan:     1 of 2 in current phase — COMPLETE
+Status:   Phase 18 Plan 01 complete, advancing to Plan 02
 ```
 
-Progress: [██░░░░░░░░] 29%
+Progress: [████░░░░░░] 43%
 
 ## Performance Metrics
 
@@ -61,6 +61,9 @@ Key decisions carried forward:
 - /api/umami 프록시는 prefix 제거 후 cloud.umami.is로 포워드, host 헤더 재설정
 - vi.mock("next/server") 패턴 확립 — route handler 유닛 테스트에서 broken node_modules 우회
 - newsletter confirmed 컬럼은 기본값 false — 이메일 인증은 NEWS-03 v2에서 처리
+- metadataBase: new URL("https://pluginadvisor.cc") 추가 — OG 이미지 URL이 production에서 올바르게 resolve되기 위해 필수
+- OG 이미지 패턴: lib/og-utils.ts 공유 유틸, edge runtime, dark bg (#0f172a) + accent bars (#6366f1) + Space Grotesk Bold
+- twitter-image.tsx convention file 사용 (twitter.images 메타데이터 필드 대신) — opengraph-image.tsx 패턴과 일관성 유지
 
 ### Pending Todos
 
@@ -73,6 +76,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-29T18:04:41.387Z
-Stopped at: Phase 18 context gathered
+Last session: 2026-03-30T18:50:03Z
+Stopped at: Completed 18-og-images/18-01-PLAN.md
 Resume with: `/gsd:execute-phase 18`

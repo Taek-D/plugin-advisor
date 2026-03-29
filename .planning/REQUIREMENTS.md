@@ -16,7 +16,7 @@ Requirements for marketing prep milestone. Each maps to roadmap phases.
 
 ### OG Images
 
-- [ ] **OGIM-01**: 사이트 기본 OG 이미지가 소셜 공유 시 표시된다
+- [x] **OGIM-01**: 사이트 기본 OG 이미지가 소셜 공유 시 표시된다
 - [ ] **OGIM-02**: /plugins/[id] 페이지가 플러그인별 동적 OG 이미지를 생성한다
 - [ ] **OGIM-03**: /guides/[slug] 페이지가 가이드별 동적 OG 이미지를 생성한다
 
@@ -73,7 +73,7 @@ Deferred to future release. Tracked but not in current roadmap.
 | ANLY-02 | Phase 17 | Complete |
 | ANLY-03 | Phase 17 | Complete |
 | ANLY-04 | Phase 17 | Complete |
-| OGIM-01 | Phase 18 | Pending |
+| OGIM-01 | Phase 18 | Complete |
 | OGIM-02 | Phase 18 | Pending |
 | OGIM-03 | Phase 18 | Pending |
 | SHAR-01 | Phase 19 | Pending |
