@@ -51,6 +51,12 @@ export default async function AdminSuggestionsPage({ searchParams }: Props) {
           >
             플러그인 관리
           </Link>
+          <Link
+            href="/admin/feedback"
+            className="inline-flex h-10 items-center rounded-full border border-input px-4 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
+            피드백 확인
+          </Link>
           <AdminLogoutButton />
         </div>
       </div>

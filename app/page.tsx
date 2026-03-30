@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useI18n } from "@/lib/i18n";
 import { trackEvent } from "@/lib/analytics";
+import NewsletterForm from "@/components/NewsletterForm";
 
 export default function Home() {
   const { locale } = useI18n();
@@ -247,6 +248,11 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Newsletter Section */}
+      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <NewsletterForm />
+      </section>
     </main>
   );
 }

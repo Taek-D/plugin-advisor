@@ -3,6 +3,7 @@ import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { I18nProvider } from "@/lib/i18n";
 import Nav from "@/components/Nav";
 import UmamiScript from "@/components/UmamiScript";
+import FeedbackWidget from "@/components/FeedbackWidget";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -81,6 +82,7 @@ export default function RootLayout({
               </a>
             </div>
           </footer>
+          <FeedbackWidget />
         </I18nProvider>
         <UmamiScript />
       </body>
