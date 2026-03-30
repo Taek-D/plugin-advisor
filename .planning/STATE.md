@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: 마케팅 준비
-status: in_progress
-stopped_at: "Completed 19-01-PLAN.md"
-last_updated: "2026-03-30T05:37:17Z"
+status: complete
+stopped_at: "Completed 19-03-PLAN.md"
+last_updated: "2026-03-30T05:55:00Z"
 progress:
   total_phases: 3
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 7
-  completed_plans: 5
-  percent: 71
+  completed_plans: 7
+  percent: 100
 ---
 
 # Project State
@@ -20,18 +20,18 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** 사용자의 프로젝트에 맞는 검증된 Claude Code 플러그인 조합을 정확하게 추천하는 것.
-**Current focus:** v1.4 마케팅 준비 — Phase 17 Analytics Foundation
+**Current focus:** v1.4 마케팅 준비 — Phase 19 Share + Feedback + Newsletter (COMPLETE)
 
 ## Current Position
 
 ```
 Milestone: v1.4 마케팅 준비
 Phase:    19 of 19 (Share + Feedback + Newsletter)
-Plan:     1 of 3 in current phase — COMPLETE
-Status:   19-01 foundation complete (i18n + analytics + share-utils)
+Plan:     3 of 3 in current phase — COMPLETE
+Status:   19-03 FeedbackWidget + NewsletterForm + /api/feedback + /api/newsletter complete
 ```
 
-Progress: [███████░░░] 71%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -40,8 +40,8 @@ Progress: [███████░░░] 71%
 - v1.1: 5 plans in 2 days (~30 min/plan)
 - v1.2: 5 plans in 1 day (~8 min/plan)
 - v1.3: 5 plans in 1 day (~5 min/plan)
-- v1.4: 0/7 plans — not started
-- Total: 24 plans, 16 phases, 4 milestones shipped
+- v1.4: 7/7 plans — complete
+- Total: 31 plans, 19 phases, 5 milestones shipped
 
 ## Accumulated Context
 
@@ -71,6 +71,11 @@ Key decisions carried forward:
 - ShareOutcome string literal union (native|clipboard|error) — enum 금지 컨벤션 준수
 - shareResult() navigator 접근은 함수 본문 내부에만 — SSR 안전성 보장
 - 'share' in navigator operator로 Web Share API 감지 — typeof 대신 in 연산자 사용
+- ShareResultButton은 window.location.href를 클릭 핸들러 내부에서 읽음 — props 불필요, SSR 안전
+- Supabase 미생성 테이블 타입 억제: @ts-expect-error를 오류 발생 표현식 바로 위에 배치 (체인 시작 위가 아님)
+- navigator 타입 축소 버그 수정: 'share' in navigator 이후 'clipboard' in navigator 사용 (in 연산자로 feature detection)
+- FeedbackWidget은 I18nProvider 내부에 배치 — t.feedback 번역 키 접근을 위해 필수
+- upsert ignoreDuplicates: true — newsletter_subscribers unique constraint 에러 방지 + 이메일 존재 여부 비노출
 
 ### Pending Todos
 
@@ -83,6 +88,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-30T05:37:17Z
-Stopped at: Completed 19-01-PLAN.md
-Resume with: `/gsd:execute-phase 19`
+Last session: 2026-03-30T05:55:00Z
+Stopped at: Completed 19-03-PLAN.md
+Resume with: v1.4 milestone complete — no further phases
