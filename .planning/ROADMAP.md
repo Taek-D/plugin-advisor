@@ -100,12 +100,12 @@ Plans:
   3. 모바일에서 Web Share API가 동작하고, 데스크톱에서는 클립보드 복사 + 소셜 링크 폴백이 동작한다
   4. 사이트 하단 우측의 피드백 위젯에서 별점 + 메시지를 제출하면 Supabase에 저장되고, 관리자가 확인할 수 있다
   5. 랜딩 페이지와 /guides에서 이메일 구독 폼으로 뉴스레터를 구독하면 Supabase에 저장되고 중복이 처리된다
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 19-01: i18n 확장 (share, feedback, newsletter 번역 키) + analytics 이벤트 타입 추가
-- [ ] 19-02: ShareResultButton 컴포넌트 + share-utils + ResultsPanel/AdvisorApp 통합
-- [ ] 19-03: FeedbackWidget + /api/feedback + 관리자 피드백 확인 + NewsletterForm + /api/newsletter + 페이지 통합
+- [ ] 19-01-PLAN.md — i18n 확장 (share, feedback, newsletter 번역 키) + analytics 이벤트 타입 추가 + share-utils 유틸리티 + 테스트
+- [ ] 19-02-PLAN.md — ShareResultButton 컴포넌트 + OptimizerApp/PluginAdvisorApp 통합
+- [ ] 19-03-PLAN.md — FeedbackWidget + /api/feedback + NewsletterForm + /api/newsletter + 관리자 피드백 페이지 + 페이지 통합
 
 ## Progress
 
