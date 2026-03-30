@@ -22,19 +22,19 @@ Requirements for marketing prep milestone. Each maps to roadmap phases.
 
 ### Share
 
-- [ ] **SHAR-01**: Optimizer 결과 화면에서 조합 점수/요약을 X, LinkedIn으로 공유할 수 있다
-- [ ] **SHAR-02**: Advisor 결과 화면에서 추천 결과를 공유할 수 있다
+- [x] **SHAR-01**: Optimizer 결과 화면에서 조합 점수/요약을 X, LinkedIn으로 공유할 수 있다
+- [x] **SHAR-02**: Advisor 결과 화면에서 추천 결과를 공유할 수 있다
 - [x] **SHAR-03**: 모바일에서 Web Share API, 데스크톱에서 클립보드 복사 폴백이 동작한다
 
 ### Feedback
 
-- [ ] **FDBK-01**: 사이트에서 피드백 위젯을 통해 의견을 제출할 수 있다
+- [x] **FDBK-01**: 사이트에서 피드백 위젯을 통해 의견을 제출할 수 있다
 - [x] **FDBK-02**: 피드백이 Supabase에 저장되고 rate limit이 적용된다
-- [ ] **FDBK-03**: 관리자가 피드백을 확인할 수 있다
+- [x] **FDBK-03**: 관리자가 피드백을 확인할 수 있다
 
 ### Newsletter
 
-- [ ] **NEWS-01**: 사용자가 이메일 구독 폼으로 뉴스레터를 구독할 수 있다
+- [x] **NEWS-01**: 사용자가 이메일 구독 폼으로 뉴스레터를 구독할 수 있다
 - [x] **NEWS-02**: 구독 정보가 Supabase에 저장되고 중복/rate limit이 적용된다
 
 ## v2 Requirements
@@ -76,13 +76,13 @@ Deferred to future release. Tracked but not in current roadmap.
 | OGIM-01 | Phase 18 | Complete |
 | OGIM-02 | Phase 18 | Complete |
 | OGIM-03 | Phase 18 | Complete |
-| SHAR-01 | Phase 19 | Pending |
-| SHAR-02 | Phase 19 | Pending |
+| SHAR-01 | Phase 19 | Complete |
+| SHAR-02 | Phase 19 | Complete |
 | SHAR-03 | Phase 19 | Complete |
-| FDBK-01 | Phase 19 | Pending |
+| FDBK-01 | Phase 19 | Complete |
 | FDBK-02 | Phase 17 + 19 | Complete |
-| FDBK-03 | Phase 19 | Pending |
-| NEWS-01 | Phase 19 | Pending |
+| FDBK-03 | Phase 19 | Complete |
+| NEWS-01 | Phase 19 | Complete |
 | NEWS-02 | Phase 17 + 19 | Complete |
 
 **Coverage:**
