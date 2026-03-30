@@ -9,6 +9,7 @@ import { trackEvent } from "@/lib/analytics";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import NewsletterForm from "@/components/NewsletterForm";
 
 type Props = {
   guide: StarterGuide;
@@ -56,6 +57,11 @@ export default function GuideDetailClient({ guide }: Props) {
           </Card>
         ))}
       </div>
+
+      {/* Newsletter */}
+      <section className="mt-16 mb-8 rounded-2xl border border-border bg-muted/30 px-6 py-10">
+        <NewsletterForm />
+      </section>
     </main>
   );
 }

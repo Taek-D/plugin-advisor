@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useI18n } from "@/lib/i18n";
 import { STARTER_GUIDES } from "@/lib/guides";
+import NewsletterForm from "@/components/NewsletterForm";
 
 export default function GuidesPage() {
   const { locale } = useI18n();
@@ -44,6 +45,11 @@ export default function GuidesPage() {
           </Link>
         ))}
       </div>
+
+      {/* Newsletter */}
+      <section className="mt-16 mb-8 rounded-2xl border border-border bg-muted/30 px-6 py-10">
+        <NewsletterForm />
+      </section>
     </main>
   );
 }
