@@ -35,6 +35,7 @@ import OnboardingFlow from "./OnboardingFlow";
 import SetupReadiness from "./SetupReadiness";
 import NotRecommendedPanel from "./NotRecommendedPanel";
 import LeadCaptureCard from "./LeadCaptureCard";
+import ShareResultButton from "./ShareResultButton";
 
 type Panel = "input" | "history" | "favorites";
 
@@ -374,6 +375,9 @@ export default function PluginAdvisorApp() {
 
         {step === "result" && result && (
           <div className="animate-fade-in">
+            <div className="mb-4 flex justify-end">
+              <ShareResultButton />
+            </div>
             <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
               <div>
                 <Card className="surface-panel mb-5 rounded-[28px] px-5 py-5">

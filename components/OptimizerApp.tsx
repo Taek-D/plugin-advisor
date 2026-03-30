@@ -17,6 +17,7 @@ import McpPasteInput from "./McpPasteInput";
 import PluginTypeInput from "./PluginTypeInput";
 import SelectedPluginChips from "./SelectedPluginChips";
 import ResultsPanel from "./ResultsPanel";
+import ShareResultButton from "./ShareResultButton";
 
 type InputTab = "paste" | "type";
 type AnalysisState = "idle" | "analyzing" | "done";
@@ -195,7 +196,12 @@ export default function OptimizerApp() {
 
         {/* Results */}
         {analysisState === "done" && result && (
-          <ResultsPanel result={result} />
+          <>
+            <div className="flex justify-end mt-6">
+              <ShareResultButton />
+            </div>
+            <ResultsPanel result={result} />
+          </>
         )}
       </div>
     </div>
