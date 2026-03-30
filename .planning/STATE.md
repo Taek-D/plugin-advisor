@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: 마케팅 준비
 status: complete
-stopped_at: "Completed 19-03-PLAN.md"
-last_updated: "2026-03-30T05:55:00Z"
+stopped_at: "Completed 19-04-PLAN.md"
+last_updated: "2026-03-30T06:36:00Z"
 progress:
   total_phases: 3
   completed_phases: 3
-  total_plans: 7
-  completed_plans: 7
+  total_plans: 8
+  completed_plans: 8
   percent: 100
 ---
 
@@ -27,8 +27,8 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 ```
 Milestone: v1.4 마케팅 준비
 Phase:    19 of 19 (Share + Feedback + Newsletter)
-Plan:     3 of 3 in current phase — COMPLETE
-Status:   19-03 FeedbackWidget + NewsletterForm + /api/feedback + /api/newsletter complete
+Plan:     4 of 4 in current phase — COMPLETE
+Status:   19-04 X/LinkedIn share links + NewsletterForm on /guides pages complete (gap closure)
 ```
 
 Progress: [██████████] 100%
@@ -76,6 +76,9 @@ Key decisions carried forward:
 - navigator 타입 축소 버그 수정: 'share' in navigator 이후 'clipboard' in navigator 사용 (in 연산자로 feature detection)
 - FeedbackWidget은 I18nProvider 내부에 배치 — t.feedback 번역 키 접근을 위해 필수
 - upsert ignoreDuplicates: true — newsletter_subscribers unique constraint 에러 방지 + 이메일 존재 여부 비노출
+- X/LinkedIn share buttons use window.open inside click handler for SSR safety (twitter.com/intent/tweet, linkedin.com/sharing/share-offsite)
+- ghost size="sm" variant for social share buttons keeps visual hierarchy below primary share button
+- NewsletterForm section wrapper rounded-2xl border bg-muted/30 px-6 py-10 matches app/page.tsx pattern for consistency
 
 ### Pending Todos
 
@@ -88,6 +91,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-30T05:55:00Z
-Stopped at: Completed 19-03-PLAN.md
+Last session: 2026-03-30T06:36:00Z
+Stopped at: Completed 19-04-PLAN.md
 Resume with: v1.4 milestone complete — no further phases
