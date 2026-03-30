@@ -99,6 +99,7 @@ describe("POST /api/feedback", () => {
       page: "/",
       message: "Something broke",
       type: "bug",
+      rating: null,
     });
   });
 

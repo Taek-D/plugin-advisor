@@ -9,6 +9,7 @@ type FeedbackRow = {
   id: string;
   created_at: string;
   type: "bug" | "feature" | "other";
+  rating: number | null;
   message: string;
   page: string;
 };
@@ -98,6 +99,11 @@ export default async function AdminFeedbackPage() {
                 >
                   {TYPE_LABELS[item.type]}
                 </span>
+                {item.rating && (
+                  <span className="text-xs text-yellow-500">
+                    {"★".repeat(item.rating)}{"☆".repeat(5 - item.rating)}
+                  </span>
+                )}
                 <span className="text-xs text-muted-foreground">
                   {item.page}
                 </span>

@@ -227,6 +227,7 @@ export const en: Translations = {
     typeBug: "Bug report",
     typeFeature: "Feature request",
     typeOther: "Other",
+    ratingLabel: "Satisfaction",
     messagePlaceholder: "What could we improve?",
     submit: "Submit",
     submitting: "Submitting...",

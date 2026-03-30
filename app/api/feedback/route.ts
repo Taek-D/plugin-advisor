@@ -27,6 +27,11 @@ export async function POST(request: NextRequest) {
         ? (body.type as FeedbackType)
         : null;
     const page = typeof body.page === "string" ? body.page : "unknown";
+    const rawRating = typeof body.rating === "number" ? body.rating : null;
+    const rating =
+      rawRating !== null && rawRating >= 1 && rawRating <= 5
+        ? Math.round(rawRating)
+        : null;
 
     if (!message || message.length > 500) {
       return NextResponse.json(
@@ -46,6 +51,7 @@ export async function POST(request: NextRequest) {
       page,
       message,
       type,
+      rating,
     });
     if (error) throw error;
 

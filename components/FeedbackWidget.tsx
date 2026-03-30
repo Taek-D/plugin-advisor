@@ -15,6 +15,8 @@ export default function FeedbackWidget() {
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<FeedbackType>("bug");
   const [message, setMessage] = useState("");
+  const [rating, setRating] = useState<number>(0);
+  const [hoverRating, setHoverRating] = useState<number>(0);
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<SubmitStatus>("idle");
 
@@ -28,6 +30,8 @@ export default function FeedbackWidget() {
     setStatus("idle");
     setMessage("");
     setType("bug");
+    setRating(0);
+    setHoverRating(0);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -43,6 +47,7 @@ export default function FeedbackWidget() {
           type,
           message: message.trim(),
           page: window.location.pathname,
+          rating: rating > 0 ? rating : null,
         }),
       });
 
@@ -122,6 +127,28 @@ export default function FeedbackWidget() {
                   }`}
                 >
                   {opt.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Star Rating */}
+            <div className="flex items-center gap-1">
+              <span className="text-xs text-muted-foreground mr-2">{t.feedback.ratingLabel}</span>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setRating(star)}
+                  onMouseEnter={() => setHoverRating(star)}
+                  onMouseLeave={() => setHoverRating(0)}
+                  className={`text-lg transition-colors ${
+                    star <= (hoverRating || rating)
+                      ? "text-yellow-500"
+                      : "text-muted-foreground/30"
+                  }`}
+                  aria-label={`${star} star`}
+                >
+                  ★
                 </button>
               ))}
             </div>

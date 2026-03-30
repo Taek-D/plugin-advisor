@@ -226,6 +226,7 @@ export const ko: Translations = {
     typeBug: "버그 신고",
     typeFeature: "기능 제안",
     typeOther: "기타",
+    ratingLabel: "만족도",
     messagePlaceholder: "어떤 점이 불편하거나 개선되면 좋겠나요?",
     submit: "보내기",
     submitting: "전송 중...",

@@ -228,6 +228,7 @@ export type Translations = {
     typeBug: string;
     typeFeature: string;
     typeOther: string;
+    ratingLabel: string;
     messagePlaceholder: string;
     submit: string;
     submitting: string;
