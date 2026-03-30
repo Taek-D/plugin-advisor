@@ -103,7 +103,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 19-01-PLAN.md — i18n 확장 (share, feedback, newsletter 번역 키) + analytics 이벤트 타입 추가 + share-utils 유틸리티 + 테스트
+- [x] 19-01-PLAN.md — i18n 확장 (share, feedback, newsletter 번역 키) + analytics 이벤트 타입 추가 + share-utils 유틸리티 + 테스트
 - [ ] 19-02-PLAN.md — ShareResultButton 컴포넌트 + OptimizerApp/PluginAdvisorApp 통합
 - [ ] 19-03-PLAN.md — FeedbackWidget + /api/feedback + NewsletterForm + /api/newsletter + 관리자 피드백 페이지 + 페이지 통합
 
@@ -132,7 +132,7 @@ Phases execute in numeric order: 17 → 18 → 19
 | 16. 추천 이유 문자열 보완 | v1.3 | 1/1 | Complete | 2026-03-19 |
 | 17. Analytics Foundation | 2/2 | Complete    | 2026-03-29 | - |
 | 18. OG Images | 2/2 | Complete    | 2026-03-29 | - |
-| 19. Share + Feedback + Newsletter | v1.4 | 0/3 | Not started | - |
+| 19. Share + Feedback + Newsletter | v1.4 | 1/3 | In progress | - |
 
 ---
 *Full v1.0 details: `.planning/milestones/v1.0-ROADMAP.md`*
