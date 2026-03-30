@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: 마케팅 준비
-status: complete
-stopped_at: "Completed 19-05-PLAN.md (gap closure)"
-last_updated: "2026-03-30T06:48:00Z"
+status: completed
+stopped_at: Completed 19-05-PLAN.md (gap closure — Supabase types + star rating)
+last_updated: "2026-03-30T07:01:51.597Z"
 progress:
   total_phases: 3
   completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 9
+  completed_plans: 9
   percent: 100
 ---
 
