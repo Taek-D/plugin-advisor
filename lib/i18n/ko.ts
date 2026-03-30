@@ -217,6 +217,8 @@ export const ko: Translations = {
     button: "공유하기",
     copied: "복사됨",
     title: "Plugin Advisor 추천 결과",
+    shareOnX: "X에 공유",
+    shareOnLinkedin: "LinkedIn에 공유",
   },
   feedback: {
     buttonLabel: "피드백",

@@ -218,6 +218,8 @@ export type Translations = {
     button: string;
     copied: string;
     title: string;
+    shareOnX: string;
+    shareOnLinkedin: string;
   };
   // Feedback
   feedback: {

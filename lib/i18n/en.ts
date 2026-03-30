@@ -218,6 +218,8 @@ export const en: Translations = {
     button: "Share",
     copied: "Copied",
     title: "Plugin Advisor Results",
+    shareOnX: "Share on X",
+    shareOnLinkedin: "Share on LinkedIn",
   },
   feedback: {
     buttonLabel: "Feedback",
