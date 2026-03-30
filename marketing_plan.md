@@ -33,7 +33,7 @@
 
 > 검색에서 발견되고, 가치를 전달하는 콘텐츠를 만든다.
 
-- [ ] `/marketing-skills:content-strategy` — 토픽, 채널, 일정 계획
+- [x] `/marketing-skills:content-strategy` — 4 pillars, 20 topics, 90일 캘린더 완료 (`.agents/content-strategy.md`)
 - [x] `/marketing-skills:seo-audit` — robots.ts, sitemap.ts, page metadata 추가 완료
 - [ ] `/marketing-skills:ai-seo` — AI 검색 엔진 최적화 (LLM 인용 대비)
 - [ ] `/marketing-skills:schema-markup` — 구조화 데이터(JSON-LD) 추가
@@ -93,12 +93,12 @@
 |-------|------|------|------|
 | 1. 기반 다지기 | 6 | 6 | 완료 |
 | 2. 출시 전략 | 5 | 5 | 완료 |
-| 3. 콘텐츠 & SEO | 6 | 1 | 진행중 |
+| 3. 콘텐츠 & SEO | 6 | 2 | 진행중 |
 | 4. 전환 최적화 | 5 | 0 | 대기 |
 | 5. 성장 & 아웃리치 | 7 | 0 | 대기 |
 | 6. 유료 광고 | 2 | 0 | 대기 |
 | 7. 측정 & 반복 | 3 | 0 | 대기 |
-| **합계** | **34** | **12** | **35% 완료** |
+| **합계** | **34** | **13** | **38% 완료** |
 
 ## Notes
 
