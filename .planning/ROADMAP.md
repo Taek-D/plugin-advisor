@@ -56,7 +56,7 @@
 
 - [x] **Phase 17: Analytics Foundation** — Umami Cloud 통합 + CSP 업데이트 + 이벤트 마이그레이션 + 프록시 라우트 + Supabase 테이블 생성 (completed 2026-03-29)
 - [x] **Phase 18: OG Images** — 사이트 기본 + 페이지별 동적 OG 이미지 생성 (next/og) (completed 2026-03-29)
-- [x] **Phase 19: Share + Feedback + Newsletter** — 결과 공유 버튼, 피드백 위젯, 뉴스레터 구독 폼 + i18n (completed 2026-03-30)
+- [ ] **Phase 19: Share + Feedback + Newsletter** — 결과 공유 버튼, 피드백 위젯, 뉴스레터 구독 폼 + i18n (gap closure in progress)
 
 ## Phase Details
 
@@ -100,12 +100,14 @@ Plans:
   3. 모바일에서 Web Share API가 동작하고, 데스크톱에서는 클립보드 복사 + 소셜 링크 폴백이 동작한다
   4. 사이트 하단 우측의 피드백 위젯에서 별점 + 메시지를 제출하면 Supabase에 저장되고, 관리자가 확인할 수 있다
   5. 랜딩 페이지와 /guides에서 이메일 구독 폼으로 뉴스레터를 구독하면 Supabase에 저장되고 중복이 처리된다
-**Plans**: 3 plans
+**Plans**: 5 plans
 
 Plans:
 - [x] 19-01-PLAN.md — i18n 확장 (share, feedback, newsletter 번역 키) + analytics 이벤트 타입 추가 + share-utils 유틸리티 + 테스트
-- [ ] 19-02-PLAN.md — ShareResultButton 컴포넌트 + OptimizerApp/PluginAdvisorApp 통합
-- [ ] 19-03-PLAN.md — FeedbackWidget + /api/feedback + NewsletterForm + /api/newsletter + 관리자 피드백 페이지 + 페이지 통합
+- [x] 19-02-PLAN.md — ShareResultButton 컴포넌트 + OptimizerApp/PluginAdvisorApp 통합
+- [x] 19-03-PLAN.md — FeedbackWidget + /api/feedback + NewsletterForm + /api/newsletter + 관리자 피드백 페이지 + 페이지 통합
+- [ ] 19-04-PLAN.md — [Gap closure] X/LinkedIn 소셜 공유 링크 + /guides 페이지 NewsletterForm 통합
+- [ ] 19-05-PLAN.md — [Gap closure] Supabase 수동 타입 정의 + 별점 UI + @ts-expect-error 제거
 
 ## Progress
 
@@ -130,9 +132,9 @@ Phases execute in numeric order: 17 → 18 → 19
 | 14. Plugin 3개 등록 | v1.3 | 1/1 | Complete | 2026-03-19 |
 | 15. 검증 및 테스트 갱신 | v1.3 | 1/1 | Complete | 2026-03-19 |
 | 16. 추천 이유 문자열 보완 | v1.3 | 1/1 | Complete | 2026-03-19 |
-| 17. Analytics Foundation | 2/2 | Complete    | 2026-03-29 | - |
-| 18. OG Images | 2/2 | Complete    | 2026-03-29 | - |
-| 19. Share + Feedback + Newsletter | 3/3 | Complete   | 2026-03-30 | - |
+| 17. Analytics Foundation | v1.4 | 2/2 | Complete | 2026-03-29 |
+| 18. OG Images | v1.4 | 2/2 | Complete | 2026-03-29 |
+| 19. Share + Feedback + Newsletter | v1.4 | 3/5 | Gap Closure | - |
 
 ---
 *Full v1.0 details: `.planning/milestones/v1.0-ROADMAP.md`*
