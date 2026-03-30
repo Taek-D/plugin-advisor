@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.4
 milestone_name: 마케팅 준비
 status: complete
-stopped_at: "Completed 19-04-PLAN.md"
-last_updated: "2026-03-30T06:36:00Z"
+stopped_at: "Completed 19-05-PLAN.md (gap closure)"
+last_updated: "2026-03-30T06:48:00Z"
 progress:
   total_phases: 3
   completed_phases: 3
@@ -79,6 +79,9 @@ Key decisions carried forward:
 - X/LinkedIn share buttons use window.open inside click handler for SSR safety (twitter.com/intent/tweet, linkedin.com/sharing/share-offsite)
 - ghost size="sm" variant for social share buttons keeps visual hierarchy below primary share button
 - NewsletterForm section wrapper rounded-2xl border bg-muted/30 px-6 py-10 matches app/page.tsx pattern for consistency
+- Relationships: [] required on each table in Database type — GenericTable contract from @supabase/postgrest-js@2.98.0 requires this field
+- Use SupabaseClient<Database> instead of ReturnType<typeof createClient<Database>> — TypeScript cannot infer generics from typeof
+- FeedbackWidget star rating is optional (nullable) — no validation error for missing rating, sent as number|null
 
 ### Pending Todos
 
@@ -91,6 +94,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-30T06:36:00Z
-Stopped at: Completed 19-04-PLAN.md
-Resume with: v1.4 milestone complete — no further phases
+Last session: 2026-03-30T06:48:00Z
+Stopped at: Completed 19-05-PLAN.md (gap closure — Supabase types + star rating)
+Resume with: v1.4 milestone complete — all gap closures done
