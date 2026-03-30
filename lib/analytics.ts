@@ -14,7 +14,12 @@ type EventName =
   | "service_cta_click"
   | "guide_view"
   | "plugin_suggestion_open"
-  | "plugin_suggestion_submit";
+  | "plugin_suggestion_submit"
+  | "result_share"
+  | "feedback_open"
+  | "feedback_submit"
+  | "newsletter_subscribe"
+  | "newsletter_error";
 
 type EventPayload = Record<string, string | number | boolean>;
 

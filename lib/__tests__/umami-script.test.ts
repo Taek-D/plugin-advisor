@@ -12,7 +12,7 @@ vi.mock("next/script", () => ({
 describe("next.config.mjs CSP header", () => {
   it("contains cloud.umami.is in script-src directive", async () => {
     const { default: config } = await import("../../next.config.mjs");
-    const headers = await config.headers();
+    const headers = await config.headers!();
     const cspHeader = headers[0].headers.find(
       (h: { key: string; value: string }) => h.key === "Content-Security-Policy"
     );
@@ -25,7 +25,7 @@ describe("next.config.mjs CSP header", () => {
 
   it("contains cloud.umami.is in connect-src directive", async () => {
     const { default: config } = await import("../../next.config.mjs");
-    const headers = await config.headers();
+    const headers = await config.headers!();
     const cspHeader = headers[0].headers.find(
       (h: { key: string; value: string }) => h.key === "Content-Security-Policy"
     );

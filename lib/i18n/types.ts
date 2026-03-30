@@ -213,4 +213,35 @@ export type Translations = {
     deductionUncovered: string;
     complementReason: string;
   };
+  // Share
+  share: {
+    button: string;
+    copied: string;
+    title: string;
+  };
+  // Feedback
+  feedback: {
+    buttonLabel: string;
+    panelTitle: string;
+    typeBug: string;
+    typeFeature: string;
+    typeOther: string;
+    messagePlaceholder: string;
+    submit: string;
+    submitting: string;
+    successMsg: string;
+    errorMsg: string;
+    close: string;
+  };
+  // Newsletter
+  newsletter: {
+    sectionTitle: string;
+    sectionDesc: string;
+    placeholder: string;
+    submit: string;
+    submitting: string;
+    successMsg: string;
+    errorMsg: string;
+    privacyNote: string;
+  };
 };
