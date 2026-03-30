@@ -1,8 +1,9 @@
 import "server-only";
 
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "./supabase-types";
 
-let cachedClient: ReturnType<typeof createClient> | null = null;
+let cachedClient: SupabaseClient<Database> | null = null;
 
 export class SupabaseNotConfiguredError extends Error {
   constructor() {
@@ -25,7 +26,7 @@ export function getSupabaseAdminClient() {
     throw new SupabaseNotConfiguredError();
   }
 
-  cachedClient = createClient(url, serviceRoleKey, {
+  cachedClient = createClient<Database>(url, serviceRoleKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
