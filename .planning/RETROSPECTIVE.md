@@ -165,6 +165,51 @@
 
 ---
 
+## Milestone: v1.4 — 마케팅 준비
+
+**Shipped:** 2026-03-30
+**Phases:** 3 | **Plans:** 9 | **Sessions:** ~4
+
+### What Was Built
+- Umami Cloud analytics 전 페이지 통합 (CSP + 이벤트 마이그레이션 + rewrite 프록시)
+- next/og Edge Runtime 동적 OG 이미지 (사이트 기본 + 51 플러그인 + 6 가이드)
+- ShareResultButton (Web Share API + 클립보드 + X/LinkedIn 소셜 링크)
+- FeedbackWidget (글로벌 플로팅 버튼 + 드로어 + 별점 + Supabase)
+- NewsletterForm (랜딩 + /guides 이메일 구독 + Supabase upsert)
+- Supabase 수동 타입 정의 (lib/supabase-types.ts)
+
+### What Worked
+- zero new npm packages 원칙 — Umami 외부 스크립트, next/og 빌트인, Web Share API 네이티브, Supabase 기존 클라이언트로 전체 마일스톤 완성
+- Phase 17→18→19 의존성 순서가 매우 자연스러움 — 17의 Supabase 테이블이 19의 API route에, 18의 OG 이미지가 19의 공유에 활용
+- Gap closure 패턴 (19-04, 19-05)으로 감사에서 발견된 문제를 체계적으로 해결 — audit → gap plan → fix → verify
+- TDD 패턴 유지 (share-utils, API routes) — 13개 이상 신규 테스트 추가
+
+### What Was Inefficient
+- Phase 19가 5개 plan으로 분할됨 (원래 3개 → gap closure 2개 추가) — 초기 계획에서 소셜 공유 링크와 /guides 뉴스레터 통합을 빠뜨림
+- Supabase 타입 문제 (@ts-expect-error 4개)가 19-03에서 발생하여 19-05에서 별도 gap closure — 타입 정의를 19-01 foundation에서 선행했으면 @ts-expect-error 없이 진행 가능
+- summary-extract one_liner 여전히 null — 5번째 마일스톤에서도 미해결 (SUMMARY frontmatter 포맷 문제)
+- SUMMARY frontmatter requirements_completed가 19-03/04/05에서 비어있음 — 감사에서 documentation gap으로 발견
+
+### Patterns Established
+- next.config.mjs rewrite 기반 프록시 (API route 대신) — 서버리스 함수 비용 제로
+- OG 이미지 패턴: lib/og-utils.ts 공유 유틸 + route별 opengraph-image.tsx + twitter-image.tsx convention files
+- Web Share API feature detection: 'share' in navigator (typeof 대신 in 연산자)
+- Supabase 수동 Database 타입: Relationships: [] 필수 (postgrest-js@2.98.0 GenericTable 계약)
+- FeedbackWidget I18nProvider 내부 배치 필수 — 전역 컴포넌트에서도 i18n 컨텍스트 필요
+
+### Key Lessons
+1. 마케팅 인프라 마일스톤은 기능 간 연결이 밀접 — analytics/OG/share/feedback가 서로 의존하므로 하나의 마일스톤으로 묶는 것이 정확했음
+2. Supabase 타입 정의를 테이블 생성 시점에 함께 추가해야 함 — 나중에 gap closure로 추가하면 중간 plan들에서 @ts-expect-error 오염
+3. Gap closure plan은 불가피하지만, 감사 전에 스스로 누락을 발견할 수 있는 체크리스트가 있으면 더 효율적
+4. Edge Runtime OG 이미지에서 한국어 폰트는 아직 미해결 — titleEn/summaryEn 우회가 현실적 대안
+
+### Cost Observations
+- Model mix: 0% opus, 100% sonnet, 0% haiku (balanced profile)
+- Total execution: ~2 days, 9 plans
+- Notable: Phase 17이 가장 복잡 (프록시 API route → rewrite 리팩토링), Phase 18-19는 패턴 재활용으로 빠르게 진행
+
+---
+
 ## Cross-Milestone Trends
 
 ### Process Evolution
@@ -175,10 +220,12 @@
 | v1.1 | ~3 | 3 | 5 | 11.6m | TDD 도입, 순수 함수 패턴 확립 |
 | v1.2 | ~2 | 5 | 5 | 6.4m | 패턴 재활용 효과 — 45% 속도 향상 |
 | v1.3 | ~2 | 4 | 5 | ~5m | 순수 데이터 마일스톤 — 최단 plan 시간 |
+| v1.4 | ~4 | 3 | 9 | — | 마케팅 인프라 — zero new npm, gap closure 패턴 |
 
 ### Top Lessons (Verified Across Milestones)
 
-1. summary-extract one_liner null 문제 반복 — SUMMARY.md 포맷 표준화 필요 (v1.0, v1.1 모두 발생)
+1. summary-extract one_liner null 문제 반복 — SUMMARY.md 포맷 표준화 필요 (v1.0~v1.4 모두 발생)
 2. sonnet 모델만으로 모든 구현/검증 가능 — opus는 계획/아키텍처 단계에서만 필요할 수 있음
 3. phase별 의존성 그래프 순서가 실행 효율에 직결 — 로직 → UI 순서가 가장 안정적
 4. verifier가 SUMMARY 문서를 그대로 신뢰하면 코드 불일치를 놓침 — 숫자 주장은 코드에서 직접 검증 필요 (v1.2에서 발견)
+5. 타입 정의/인프라를 foundation phase에서 선행해야 중간 plan에서 workaround(@ts-expect-error) 없이 진행 가능 (v1.4에서 발견)

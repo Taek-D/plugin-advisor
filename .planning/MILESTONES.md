@@ -1,5 +1,24 @@
 # Milestones
 
+## v1.4 마케팅 준비 (Shipped: 2026-03-30)
+
+**Phases:** 17-19 | **Plans:** 9 | **Timeline:** 2 days (2026-03-29 → 2026-03-30)
+**Files:** 74 changed (+8,073 / -36)
+
+**Key accomplishments:**
+- Umami Cloud analytics 전 페이지 통합 — CSP 허용 + 16개 커스텀 이벤트 마이그레이션 + next.config.mjs rewrite 프록시로 광고차단기 우회
+- next/og Edge Runtime 동적 OG 이미지 — 사이트 기본 + 51개 플러그인 + 6개 가이드 소셜 카드 자동 생성 (Space Grotesk Bold, dark bg)
+- SNS 공유 버튼 — Web Share API (모바일) + 클립보드 복사 + X/LinkedIn 소셜 링크 (데스크톱), Optimizer + Advisor 결과 공유
+- 피드백 위젯 — 글로벌 플로팅 버튼 + 드로어 + 별점 + Supabase 저장 + 관리자 피드백 확인 페이지
+- 뉴스레터 구독 — 랜딩 + /guides 이메일 구독 폼 + Supabase upsert + rate limit + 중복 처리
+- Supabase 타입 정의 (lib/supabase-types.ts) — @ts-expect-error 제거, SupabaseClient<Database> 타입 안전
+
+**Tech Debt:** 3 items (LOW/INFO) — phantom test, dev console.debug, SUMMARY frontmatter gap
+
+**Archive:** `.planning/milestones/v1.4-ROADMAP.md`, `.planning/milestones/v1.4-REQUIREMENTS.md`
+
+---
+
 ## v1.3 DB 확장 (Shipped: 2026-03-19)
 
 **Phases:** 13-16 | **Plans:** 5 | **Timeline:** 1 day (2026-03-19)
