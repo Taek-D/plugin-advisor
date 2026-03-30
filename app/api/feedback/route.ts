@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = getSupabaseAdminClient();
+    // @ts-expect-error — Supabase generated types not yet regenerated for feedback table
     const { error } = await supabase.from("feedback").insert({
       page,
       message,

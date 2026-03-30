@@ -30,12 +30,12 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = getSupabaseAdminClient();
-    const { error } = await supabase
-      .from("newsletter_subscribers")
-      .upsert(
-        { email, source: "landing", confirmed: false },
-        { onConflict: "email", ignoreDuplicates: true }
-      );
+    const table = supabase.from("newsletter_subscribers");
+    // @ts-expect-error — Supabase generated types pending regeneration for newsletter_subscribers table
+    const { error } = await table.upsert(
+      { email, source: "landing", confirmed: false },
+      { onConflict: "email", ignoreDuplicates: true }
+    );
     if (error) throw error;
 
     // 중복이든 신규든 항상 성공 응답 — 이메일 존재 여부 비노출 (보안)
