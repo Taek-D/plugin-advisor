@@ -11,7 +11,7 @@ type FeedbackType = "bug" | "feature" | "other";
 type SubmitStatus = "idle" | "success" | "error";
 
 export default function FeedbackWidget() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const [open, setOpen] = useState(false);
   const [type, setType] = useState<FeedbackType>("bug");
   const [message, setMessage] = useState("");
@@ -87,7 +87,7 @@ export default function FeedbackWidget() {
 
       {/* Slide-up drawer */}
       <div
-        className={`fixed bottom-16 right-4 z-50 w-80 rounded-[20px] border border-border bg-background p-5 shadow-xl transition-all duration-300 sm:right-6 ${
+        className={`fixed bottom-16 right-4 z-50 w-[calc(100vw-2rem)] rounded-[20px] border border-border bg-background p-5 shadow-xl transition-all duration-300 sm:right-6 sm:w-80 ${
           open
             ? "translate-y-0 opacity-100"
             : "pointer-events-none translate-y-4 opacity-0"
@@ -146,7 +146,7 @@ export default function FeedbackWidget() {
                       ? "text-yellow-500"
                       : "text-muted-foreground/30"
                   }`}
-                  aria-label={`${star} star`}
+                  aria-label={locale === "en" ? `${star} star` : `${star}점`}
                 >
                   ★
                 </button>

@@ -298,6 +298,7 @@ export default function PluginAdvisorApp() {
                             type="button"
                             key={plugin.id}
                             onClick={() => handleDetailPlugin(plugin)}
+                            aria-label={`${plugin.name} 상세 보기`}
                             className="cursor-pointer rounded-full px-2.5 py-1 text-xs font-bold tracking-wide transition-opacity hover:opacity-80"
                             style={{
                               color: plugin.color,
@@ -309,7 +310,7 @@ export default function PluginAdvisorApp() {
                           </button>
                         ))}
                       </div>
-                      <div className="mt-3 text-sm font-medium leading-relaxed text-muted-foreground sm:text-xs">
+                      <div className="mt-3 text-xs font-medium leading-relaxed text-muted-foreground sm:text-sm">
                         {locale === "en"
                           ? "Use the full catalog only when you need deeper exploration after the first recommendation."
                           : "전체 플러그인 탐색은 첫 추천을 받은 뒤 더 깊게 조정할 때만 보는 편이 좋습니다."}

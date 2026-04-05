@@ -129,7 +129,7 @@ export default function OnboardingFlow({ pack, onBack }: Props) {
                 className={cn(
                   "flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold transition-colors",
                   i <= currentStep
-                    ? "bg-primary text-white"
+                    ? "bg-primary text-primary-foreground"
                     : "border border-border text-muted-foreground"
                 )}
                 aria-hidden="true"
@@ -166,7 +166,7 @@ export default function OnboardingFlow({ pack, onBack }: Props) {
                 >
                   <div className="mb-1.5 flex items-center gap-2">
                     <span
-                      className="flex h-5 w-5 items-center justify-center rounded-sm text-xs font-bold text-white"
+                      className="flex h-5 w-5 items-center justify-center rounded-sm text-xs font-bold text-primary-foreground"
                       style={{ backgroundColor: plugin.color }}
                     >
                       {i + 1}

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { I18nProvider } from "@/lib/i18n";
+import Link from "next/link";
 import Nav from "@/components/Nav";
 import UmamiScript from "@/components/UmamiScript";
 import FeedbackWidget from "@/components/FeedbackWidget";
@@ -103,10 +104,10 @@ export default function RootLayout({
                   Product
                 </div>
                 <ul className="space-y-2 text-xs">
-                  <li><a href="/advisor" className="transition-colors hover:text-foreground">Plugin Advisor</a></li>
-                  <li><a href="/optimizer" className="transition-colors hover:text-foreground">Plugin Optimizer</a></li>
-                  <li><a href="/plugins" className="transition-colors hover:text-foreground">Plugin Catalog</a></li>
-                  <li><a href="/compare" className="transition-colors hover:text-foreground">Compare Approaches</a></li>
+                  <li><Link href="/advisor" className="transition-colors hover:text-foreground">Plugin Advisor</Link></li>
+                  <li><Link href="/optimizer" className="transition-colors hover:text-foreground">Plugin Optimizer</Link></li>
+                  <li><Link href="/plugins" className="transition-colors hover:text-foreground">Plugin Catalog</Link></li>
+                  <li><Link href="/compare" className="transition-colors hover:text-foreground">Compare Approaches</Link></li>
                 </ul>
               </div>
               <div>
@@ -114,10 +115,10 @@ export default function RootLayout({
                   Resources
                 </div>
                 <ul className="space-y-2 text-xs">
-                  <li><a href="/guides" className="transition-colors hover:text-foreground">Starter Guides</a></li>
-                  <li><a href="/guides/claude-code-first-setup-checklist" className="transition-colors hover:text-foreground">First Setup Checklist</a></li>
-                  <li><a href="/plugins/category/orchestration" className="transition-colors hover:text-foreground">Orchestration Plugins</a></li>
-                  <li><a href="/plugins/category/data" className="transition-colors hover:text-foreground">Data Plugins</a></li>
+                  <li><Link href="/guides" className="transition-colors hover:text-foreground">Starter Guides</Link></li>
+                  <li><Link href="/guides/claude-code-first-setup-checklist" className="transition-colors hover:text-foreground">First Setup Checklist</Link></li>
+                  <li><Link href="/plugins/category/orchestration" className="transition-colors hover:text-foreground">Orchestration Plugins</Link></li>
+                  <li><Link href="/plugins/category/data" className="transition-colors hover:text-foreground">Data Plugins</Link></li>
                 </ul>
               </div>
               <div>
@@ -125,8 +126,8 @@ export default function RootLayout({
                   Support
                 </div>
                 <ul className="space-y-2 text-xs">
-                  <li><a href="/services" className="transition-colors hover:text-foreground">Setup Review</a></li>
-                  <li><a href="/admin/login" className="transition-colors hover:text-foreground">Admin</a></li>
+                  <li><Link href="/services" className="transition-colors hover:text-foreground">Setup Review</Link></li>
+                  <li><Link href="/admin/login" className="transition-colors hover:text-foreground">Admin</Link></li>
                 </ul>
               </div>
             </div>

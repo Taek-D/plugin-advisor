@@ -242,6 +242,7 @@ export default function InputPanel({ onAnalyze, disabled, aiAvailable }: Props) 
             accept=".md,.txt"
             className="hidden"
             onChange={handleFile}
+            aria-label={t.input.fileUploadTitle}
           />
         </div>
       )}
