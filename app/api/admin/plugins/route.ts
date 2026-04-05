@@ -43,10 +43,11 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ plugins: result });
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "플러그인 목록을 불러오는 중 오류가 발생했습니다.";
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch {
+    return NextResponse.json(
+      { error: "플러그인 목록을 불러오는 중 오류가 발생했습니다." },
+      { status: 500 }
+    );
   }
 }
 
@@ -159,9 +160,10 @@ export async function POST(request: NextRequest) {
 
     const plugin = await addCustomPlugin(parsed.data);
     return NextResponse.json({ plugin }, { status: 201 });
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "플러그인을 추가하는 중 오류가 발생했습니다.";
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch {
+    return NextResponse.json(
+      { error: "플러그인을 추가하는 중 오류가 발생했습니다." },
+      { status: 500 }
+    );
   }
 }

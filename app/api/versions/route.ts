@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { PLUGINS } from "@/lib/plugins";
+import { checkRateLimit, cleanupExpiredEntries } from "@/lib/rate-limit";
 import type { VersionInfo } from "@/lib/types";
 
 // Server-side in-memory cache (persists across requests within same instance)
@@ -10,7 +11,20 @@ function emptyVersion(id: string): VersionInfo {
   return { pluginId: id, latestVersion: null, publishedAt: null, releaseUrl: null };
 }
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  cleanupExpiredEntries();
+  const { allowed } = checkRateLimit(request, {
+    name: "versions",
+    maxRequests: 15,
+    windowMs: 60_000,
+  });
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "요청이 너무 많아요. 잠시 후 다시 시도해 주세요." },
+      { status: 429 }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
   const ids = searchParams.get("ids")?.split(",").filter(Boolean) ?? [];
 

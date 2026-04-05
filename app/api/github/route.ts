@@ -1,7 +1,21 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit, cleanupExpiredEntries } from "@/lib/rate-limit";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    cleanupExpiredEntries();
+    const { allowed } = checkRateLimit(request, {
+      name: "github",
+      maxRequests: 10,
+      windowMs: 60_000,
+    });
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "요청이 너무 많아요. 잠시 후 다�� 시도해 주��요." },
+        { status: 429 }
+      );
+    }
+
     const { url } = await request.json();
     const match = url?.trim().match(/github\.com\/([^/]+)\/([^/\s?#]+)/i);
 

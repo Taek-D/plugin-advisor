@@ -32,12 +32,10 @@ export async function GET(request: NextRequest) {
     const items = await listPluginSuggestions({ query, status });
 
     return NextResponse.json({ items });
-  } catch (error) {
-    const message =
-      error instanceof Error
-        ? error.message
-        : "제안 목록을 불러오는 중 오류가 발생했습니다.";
-
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch {
+    return NextResponse.json(
+      { error: "제안 목록을 불러오는 중 오류가 발생했습니다." },
+      { status: 500 }
+    );
   }
 }

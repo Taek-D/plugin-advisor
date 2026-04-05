@@ -61,12 +61,10 @@ export async function POST(request: NextRequest) {
     });
 
     return response;
-  } catch (error) {
-    const message =
-      error instanceof Error
-        ? error.message
-        : "관리자 로그인 처리 중 오류가 발생했습니다.";
-
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch {
+    return NextResponse.json(
+      { error: "관리자 로그인 처리 중 오류가 발생했습니다." },
+      { status: 500 }
+    );
   }
 }
