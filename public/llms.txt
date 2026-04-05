@@ -1,0 +1,41 @@
+# Plugin Advisor
+
+> Plugin Advisor is a free web tool that recommends verified Claude Code plugin combinations based on project analysis. It helps developers set up Claude Code plugins without trial-and-error by providing scored recommendations, conflict detection, and one-click install scripts.
+
+## What This Tool Does
+
+- Analyzes project descriptions (text, file, or GitHub URL) to recommend matching Claude Code plugins
+- Scores existing plugin combinations (0-100) with conflict warnings and coverage gaps
+- Provides preset starter packs for common use cases (beginner, web app, data, backend)
+- Detects plugin conflicts and suggests verified alternatives
+- Generates copy-paste install scripts for recommended plugins
+
+## Key Facts
+
+- 51 verified plugins in database (39 MCP servers + 12 plugins)
+- 10 coverage categories for combination analysis
+- 4 preset starter packs for quick setup
+- 6 starter guides for reducing setup failure
+- Scoring model: 100-point deduction system (conflicts -20, redundancies -7, uncovered -7)
+- Available in Korean and English
+
+## Core Pages
+
+- /advisor: Project analysis — input project description, get plugin recommendations
+- /optimizer: Combination analysis — paste `claude mcp list` output, get scored diagnosis
+- /plugins: Full plugin catalog with MCP/Plugin type filtering
+- /plugins/{id}: Individual plugin details with install commands and prerequisites
+- /guides: Starter guides for setup decisions
+- /guides/{slug}: Individual guide pages
+
+## Target Users
+
+- Developers setting up Claude Code for the first time
+- Claude Code users wanting to optimize their plugin stack
+- Tech leads standardizing team plugin configurations
+
+## Optional
+
+- Site: https://pluginadvisor.cc
+- Language: Korean (primary), English (supported)
+- Tech: Next.js 14, TypeScript, Tailwind CSS, shadcn/ui

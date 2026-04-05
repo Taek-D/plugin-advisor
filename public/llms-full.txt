@@ -1,0 +1,101 @@
+# Plugin Advisor — Full Context for LLMs
+
+> Plugin Advisor is a free web tool that recommends verified Claude Code plugin combinations. It analyzes project descriptions or existing plugin setups to provide scored recommendations with conflict detection, coverage analysis, and one-click install scripts. Available at https://pluginadvisor.cc
+
+## Problem It Solves
+
+The Claude Code plugin ecosystem has grown to 51+ plugins. Developers face these challenges:
+- Not knowing which plugins to install first
+- Installing conflicting or redundant plugins
+- Spending hours on setup that breaks on day one
+- No way to verify if their current combination is optimal
+
+Plugin Advisor solves this by providing data-driven recommendations from a verified database.
+
+## How It Works
+
+### Project Analysis (/advisor)
+1. User inputs project description via text, file upload, or GitHub URL
+2. Engine extracts keywords and matches against 51-plugin database
+3. Returns scored recommendations with install priority, conflict warnings, and prerequisites
+4. Generates copy-paste install scripts (claude mcp add / claude plugin add commands)
+
+### Combination Analysis (/optimizer)
+1. User pastes `claude mcp list` output or selects plugins via autocomplete
+2. Engine scores combination on 100-point scale
+3. Deductions: conflicts (-20 per pair), redundancies (-7), uncovered categories (-7)
+4. Returns: combination score, conflict warnings, complementary plugin suggestions, replacement recommendations for deprecated plugins
+
+### Preset Packs
+- Beginner Pack: 2-3 safe starter plugins
+- Web App Pack: Frontend/backend development essentials
+- Data Pack: Data analysis and database tools
+- Backend Pack: API and infrastructure plugins
+
+## Plugin Database
+
+51 verified entries across 10 categories:
+- **MCP Servers (39)**: filesystem, github, postgres, supabase, brave-search, puppeteer, sequential-thinking, memory, context7, playwright, sentry, exa, tavily, linear, slack, notion, figma, and more
+- **Plugins (12)**: oh-my-claudecode, taskmaster, gsd, bkit, bkit-starter, fireauto, superpowers, superclaude, agency-agents, ralph, frontend-design, claude-mem
+
+Each plugin entry includes: name, description, category, install command, prerequisites, verification status, conflict pairs, and Korean/English descriptions.
+
+## Scoring Model
+
+Combination health score (0-100):
+- Start at 100 points
+- -20 per conflict pair (plugins that interfere with each other)
+- -7 per redundancy (multiple plugins serving same purpose)
+- -7 per uncovered category (gaps in plugin coverage)
+- Minimum score: 0
+
+## Starter Guides
+
+6 guides focused on setup decisions, not plugin collection:
+1. Claude Code First Setup Checklist
+2. MCP Server Connection Troubleshooting
+3. Plugin Conflict Resolution Guide
+4. Team Plugin Standardization Guide
+5. Plugin Update and Migration Guide
+6. Advanced Plugin Configuration Guide
+
+## Differentiation from Alternatives
+
+| Feature | Plugin Advisor | Claude Code Setup (Official) | awesome-claude-code | Manual Setup |
+|---------|---------------|------------------------------|---------------------|--------------|
+| Combination scoring | Yes (0-100) | No | No | No |
+| Conflict detection | Yes | No | No | Manual |
+| Install scripts | Yes | No | No | Manual |
+| Preset packs | Yes (4) | No | No | No |
+| Coverage analysis | Yes (10 categories) | No | No | No |
+| Plugin count | 51 verified | Varies | List only | N/A |
+
+## Technical Details
+
+- Framework: Next.js 14 (App Router) with TypeScript
+- UI: Tailwind CSS + shadcn/ui
+- Analysis: Client-side (no server dependency for scoring)
+- Database: Static TypeScript file (lib/plugins.ts) + Supabase for user suggestions
+- Deployment: Vercel
+- Analytics: Umami Cloud
+- i18n: Korean (default) + English
+
+## FAQ
+
+Q: How many plugins does Plugin Advisor track?
+A: 51 verified plugins — 39 MCP servers and 12 plugins, each verified against GitHub README documentation.
+
+Q: Is Plugin Advisor free?
+A: Yes, the web tool is completely free. Premium setup review services are planned.
+
+Q: How does the scoring work?
+A: Combinations start at 100 points. Points are deducted for conflicts (-20 each), redundancies (-7 each), and uncovered categories (-7 each).
+
+Q: What input formats are supported?
+A: Text descriptions, file uploads, and GitHub repository URLs for project analysis. For combination analysis, paste `claude mcp list` output or type plugin names with autocomplete.
+
+Q: How often is the plugin database updated?
+A: The database is actively maintained. Users can suggest new plugins through the built-in suggestion feature.
+
+Q: Does it work with MCP servers and plugins?
+A: Yes. Since v1.2, Plugin Advisor distinguishes between MCP servers and plugins with separate scoring, tabs, and type badges.

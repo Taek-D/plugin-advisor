@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { PLUGINS } from "@/lib/plugins";
 import { STARTER_GUIDES } from "@/lib/guides";
+import { ALL_CATEGORY_SLUGS } from "@/lib/category-meta";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [
@@ -10,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: "https://pluginadvisor.cc/guides", lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
     { url: "https://pluginadvisor.cc/services", lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
     { url: "https://pluginadvisor.cc/optimizer", lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
+    { url: "https://pluginadvisor.cc/compare", lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
   ];
 
   const pluginPages: MetadataRoute.Sitemap = Object.keys(PLUGINS).map((id) => ({
@@ -26,5 +28,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...pluginPages, ...guidePages];
+  const categoryPages: MetadataRoute.Sitemap = ALL_CATEGORY_SLUGS.map((slug) => ({
+    url: `https://pluginadvisor.cc/plugins/category/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...pluginPages, ...guidePages, ...categoryPages];
 }

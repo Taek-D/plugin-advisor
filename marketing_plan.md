@@ -35,10 +35,10 @@
 
 - [x] `/marketing-skills:content-strategy` — 4 pillars, 20 topics, 90일 캘린더 완료 (`.agents/content-strategy.md`)
 - [x] `/marketing-skills:seo-audit` — robots.ts, sitemap.ts, page metadata 추가 완료
-- [ ] `/marketing-skills:ai-seo` — AI 검색 엔진 최적화 (LLM 인용 대비)
-- [ ] `/marketing-skills:schema-markup` — 구조화 데이터(JSON-LD) 추가
-- [ ] `/marketing-skills:programmatic-seo` — 템플릿 기반 대량 SEO 페이지 생성
-- [ ] `/marketing-skills:competitor-alternatives` — "vs" 비교 페이지 / 대안 페이지
+- [x] `/marketing-skills:ai-seo` — AI 검색 엔진 최적화 완료: robots.txt AI 봇 명시, llms.txt/llms-full.txt 생성, 전 페이지 메타 설명 AI 최적화 (`.agents/ai-seo-audit.md`)
+- [x] `/marketing-skills:schema-markup` — JSON-LD 구조화 데이터 완료: Organization, WebSite, SoftwareApplication (글로벌), Article+Breadcrumb (가이드), ItemList (플러그인 카탈로그), Breadcrumb (플러그인 상세)
+- [x] `/marketing-skills:programmatic-seo` — 카테고리별 플러그인 랜딩 페이지 10개 생성 (`/plugins/category/[category]`) + sitemap + JSON-LD
+- [x] `/marketing-skills:competitor-alternatives` — `/compare` 비교 페이지 완료: Plugin Advisor vs 공식 Setup vs awesome-cc vs 수동 세팅 (기능 표 + 상세 카드 + 추천 조합)
 
 ---
 
@@ -93,12 +93,12 @@
 |-------|------|------|------|
 | 1. 기반 다지기 | 6 | 6 | 완료 |
 | 2. 출시 전략 | 5 | 5 | 완료 |
-| 3. 콘텐츠 & SEO | 6 | 2 | 진행중 |
+| 3. 콘텐츠 & SEO | 6 | 6 | 완료 |
 | 4. 전환 최적화 | 5 | 0 | 대기 |
 | 5. 성장 & 아웃리치 | 7 | 0 | 대기 |
 | 6. 유료 광고 | 2 | 0 | 대기 |
 | 7. 측정 & 반복 | 3 | 0 | 대기 |
-| **합계** | **34** | **13** | **38% 완료** |
+| **합계** | **34** | **17** | **50% 완료** |
 
 ## Notes
 
