@@ -87,15 +87,52 @@ export default function RootLayout({
         <I18nProvider>
           <Nav />
           <div className="min-h-[calc(100vh-3.5rem)]">{children}</div>
-          <footer className="border-t border-border px-4 py-6 text-xs text-muted-foreground">
-            <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3">
-              <span>Plugin Advisor — Claude Code starter setup guide</span>
-              <a
-                href="/admin/login"
-                className="text-muted-foreground transition-colors hover:text-foreground"
-              >
-                관리자
-              </a>
+          <footer className="border-t border-border px-4 py-10 text-sm text-muted-foreground">
+            <div className="mx-auto grid max-w-6xl gap-8 sm:grid-cols-2 lg:grid-cols-4">
+              <div>
+                <div className="mb-3 font-heading text-xs font-bold tracking-widest text-foreground">
+                  PLUGIN ADVISOR
+                </div>
+                <p className="text-xs leading-relaxed">
+                  Claude Code 플러그인 추천 + 조합 분석 도구.
+                  51개 검증 DB 기반, 충돌 감지, 설치 스크립트 제공.
+                </p>
+              </div>
+              <div>
+                <div className="mb-3 text-xs font-semibold text-foreground">
+                  Product
+                </div>
+                <ul className="space-y-2 text-xs">
+                  <li><a href="/advisor" className="transition-colors hover:text-foreground">Plugin Advisor</a></li>
+                  <li><a href="/optimizer" className="transition-colors hover:text-foreground">Plugin Optimizer</a></li>
+                  <li><a href="/plugins" className="transition-colors hover:text-foreground">Plugin Catalog</a></li>
+                  <li><a href="/compare" className="transition-colors hover:text-foreground">Compare Approaches</a></li>
+                </ul>
+              </div>
+              <div>
+                <div className="mb-3 text-xs font-semibold text-foreground">
+                  Resources
+                </div>
+                <ul className="space-y-2 text-xs">
+                  <li><a href="/guides" className="transition-colors hover:text-foreground">Starter Guides</a></li>
+                  <li><a href="/guides/claude-code-first-setup-checklist" className="transition-colors hover:text-foreground">First Setup Checklist</a></li>
+                  <li><a href="/plugins/category/orchestration" className="transition-colors hover:text-foreground">Orchestration Plugins</a></li>
+                  <li><a href="/plugins/category/data" className="transition-colors hover:text-foreground">Data Plugins</a></li>
+                </ul>
+              </div>
+              <div>
+                <div className="mb-3 text-xs font-semibold text-foreground">
+                  Support
+                </div>
+                <ul className="space-y-2 text-xs">
+                  <li><a href="/services" className="transition-colors hover:text-foreground">Setup Review</a></li>
+                  <li><a href="/admin/login" className="transition-colors hover:text-foreground">Admin</a></li>
+                </ul>
+              </div>
+            </div>
+            <div className="mx-auto mt-8 flex max-w-6xl items-center justify-between border-t border-border pt-6 text-xs">
+              <span>Plugin Advisor — setup success over plugin count</span>
+              <span>pluginadvisor.cc</span>
             </div>
           </footer>
           <FeedbackWidget />

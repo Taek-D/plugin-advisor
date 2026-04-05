@@ -18,6 +18,10 @@ export default function Nav() {
     { href: "/plugins", label: t.nav.plugins },
     { href: "/optimizer", label: t.nav.optimizer },
     {
+      href: "/guides",
+      label: locale === "en" ? "Guides" : "가이드",
+    },
+    {
       href: "/services",
       label: locale === "en" ? "Setup support" : "세팅 지원",
     },
