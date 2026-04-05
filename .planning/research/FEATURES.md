@@ -1,346 +1,329 @@
-# Feature Research
+# Feature Landscape: v1.4 Marketing Prep
 
-**Domain:** MCP Server / Claude Code Plugin Directory — DB Expansion
-**Researched:** 2026-03-18
-**Confidence:** HIGH (architecture verified from source; ecosystem from multiple converging sources)
-
----
-
-## Context: What This Research Covers
-
-This is a **subsequent milestone** research document. The core product already exists (51-entry DB,
-/advisor, /optimizer, /plugins, admin panel, i18n). The question is scoped to:
-
-1. What new MCP server / Plugin entries are worth adding?
-2. What metadata fields matter most for new entries?
-3. What install patterns exist and how do they map to `installMode`?
-4. What categories do new entries fall into, and are gaps visible?
-5. Table stakes vs differentiators for a comprehensive plugin directory at this scale.
+**Domain:** Marketing-readiness features for a Next.js 14 plugin advisor tool
+**Researched:** 2026-03-29
+**Scope:** Analytics, OG images, share buttons, feedback form, newsletter form
 
 ---
 
-## Feature Landscape
+## 1. Server-Side Analytics (Vercel Analytics + Custom Events)
 
-### Table Stakes (Users Expect These)
+### Table Stakes
 
-Features a plugin directory is expected to have. Missing these makes the product feel unreliable.
+| Feature | Why Expected | Complexity | Dependency |
+|---------|-------------|------------|------------|
+| Page view tracking (all routes) | Baseline for any marketing launch; needed to measure traffic | Low | Root layout change |
+| Vercel Analytics `<Analytics />` component in layout | Standard Vercel deployment pattern; zero-config page views | Low | `@vercel/analytics` package, root `layout.tsx` |
+| Custom event tracking via `track()` from `@vercel/analytics` | Must measure meaningful actions (analysis start, script copy, etc.) to evaluate feature usage | Medium | Replace or augment existing `trackEvent` calls in `lib/analytics.ts` |
+| CSP header update for Vercel Analytics script domain | Current CSP is strict (`connect-src 'self'`); Vercel Analytics will be blocked without allowing its domains | Low | `next.config.mjs` headers |
 
-| Feature | Why Expected | Complexity | Notes |
-|---------|--------------|------------|-------|
-| Complete install command(s) per entry | Users copy-paste install; wrong command = immediate failure | LOW | Must match official docs exactly; all transport variants where applicable |
-| Accurate `verificationStatus` | Users trust "verified" entries; wrong status misleads | LOW | GitHub README + official page check required per entry |
-| `requiredSecrets` list | API-key-required tools need upfront disclosure | LOW | Missing this causes silent setup failure |
-| English + Korean desc/longDesc | i18n parity already established at 51 entries | LOW | `pluginDescEn` in `lib/i18n/plugins-en.ts` must be updated in sync |
-| `type: "mcp" \| "plugin"` correctly set | /plugins tab split and /optimizer typeScope depend on this | LOW | Most new entries are `mcp`; Plugin entries need intentional selection |
-| `category` assignment | /plugins category filter and scoring weights depend on it | LOW | Must map to existing `PluginCategory` enum — no new categories needed |
-| `keywords[]` array (10-20 per entry) | Powers keyword-based recommendation engine in /advisor | MEDIUM | Keywords drive score; thin keyword arrays = invisible in recommendations |
-| `conflicts[]` array | /optimizer conflict detection depends on this | LOW | Cross-check against existing entries; most new entries have no conflicts |
-| `githubRepo` field | Used for version API calls and README verification workflow | LOW | Format: `"owner/repo"` or `null` for remote-only HTTP entries |
+### Differentiators
 
-### Differentiators (Competitive Advantage)
+| Feature | Value Proposition | Complexity | Dependency |
+|---------|-------------------|------------|------------|
+| Server-side custom events (`@vercel/analytics/server`) | Track API route usage (GitHub fetch, AI analyze, plugin suggestions) without client JS; more accurate than client-only | Medium | API route modifications, `@vercel/analytics >= 1.1.0` |
+| Migration of existing localStorage analytics to Vercel events | Unify 16 existing event types into Vercel dashboard; single source of truth instead of two systems | Medium | Touching all `trackEvent()` call sites across ~10 components |
+| Vercel Speed Insights | Core Web Vitals monitoring, performance regression detection | Low | `@vercel/speed-insights` package, layout addition |
 
-Features that make this directory more useful than a raw awesome-list or docs page.
+### Anti-Features
 
-| Feature | Value Proposition | Complexity | Notes |
-|---------|-------------------|------------|-------|
-| `bestFor` / `avoidFor` arrays | Opinionated guidance users cannot get from README | LOW | 2-4 entries each; Korean language per convention |
-| `installMode` accuracy | Distinguishes zero-friction (safe-copy) from API-key-required (external-setup) | LOW | Three values: `safe-copy`, `external-setup`, `manual-required` |
-| `difficulty` field | Surfaces beginner-safe entries vs advanced ones | LOW | Most new MCP entries are `beginner` (npx one-liner) |
-| `maintenanceStatus` | Warns users about stale repos before they invest setup time | LOW | Check last commit date; flag `stale` if >6 months |
-| Multiple install variants in `install[]` | Remote HTTP + stdio npx both shown where available | LOW | Matches pattern established for sentry, github, figma entries |
-| `officialStatus: "official"` for vendor-maintained servers | Signals trust level above community entries | LOW | Firebase (Google), Railway, PostHog, GitLab are vendor-official |
-| Deprecation notes in `longDesc` | Honest about superseded entries; mirrors linear deprecation pattern | LOW | Example: old npm package → new remote HTTP URL |
+| Anti-Feature | Why Avoid | What to Do Instead |
+|-------------|-----------|-------------------|
+| Google Analytics / gtag.js | Adds cookie consent burden, GDPR complexity, heavier bundle; Vercel Analytics is privacy-friendly and already part of the deployment platform | Use Vercel Analytics exclusively |
+| Keeping localStorage analytics as primary system | Two analytics systems create confusion; localStorage data is invisible to marketing and non-exportable | Migrate events to Vercel `track()`, keep localStorage as optional local-dev debug fallback only |
+| Tracking PII (email, IP) in custom events | Privacy violation, not needed for marketing metrics | Track only action names + non-PII metadata (plugin count, score range, locale) |
+| Paid analytics tier features at launch | Custom events limited to 2 keys on Pro plan; sufficient for launch needs | Start with Pro-tier limits; upgrade only if data proves need |
+| Umami self-hosted or Umami Cloud | Adds infrastructure management or another SaaS; Vercel Analytics is native to the deployment platform with zero additional setup | Use Vercel Analytics which is already integrated into the Vercel dashboard |
 
-### Anti-Features (Commonly Requested, Often Problematic)
+### Complexity Assessment
 
-| Feature | Why Requested | Why Problematic | Alternative |
-|---------|---------------|-----------------|-------------|
-| Adding every MCP server that exists | "More is better" — 10,000+ servers exist | Unverified entries pollute recommendations; users lose trust when installs fail | Add only entries with GitHub-verifiable README and active maintenance |
-| New `PluginCategory` values | Some new entries feel like they don't fit existing categories | 10 categories already cover all real groupings; adding more fractures the filter UI | Map creatively to existing categories (e.g., firebase → `devops`, posthog → `data`) |
-| Automatic star-count display field | Shows popularity signals | Requires live API calls; rate limits; staleness within hours | Keep `verificationStatus` as proxy for trust; star count is a research input, not a display field |
-| AI-generated metadata without verification | Fast to produce | Wrong install commands, wrong requiredSecrets = user trust destroyed | GitHub README + official docs verification per entry, same workflow as v1.0 |
-| Adding Plugin entries without verified `plugin.json` | Fills the Plugin tab | MCP servers installed via `claude mcp add` are NOT plugins; mixing confuses users | Only mark `type: "plugin"` for entries with a verified `/plugin install` install pattern |
-| Runtime/execution testing of new entries | Proves the install actually works | Out of scope per PROJECT.md constraints | Metadata verification only; flag status honestly |
+**Overall: Low-Medium.** The `<Analytics />` drop-in is trivial. The real work is migrating the 16 existing `trackEvent` call sites to use `track()` from `@vercel/analytics` and updating the CSP. Server-side events require touching each API route but follow a simple pattern.
+
+### Dependencies on Existing Code
+
+- `lib/analytics.ts`: Current 16 event types need mapping to Vercel `track()` calls
+- `app/layout.tsx`: Add `<Analytics />` and optionally `<SpeedInsights />`
+- `next.config.mjs`: CSP update for `*.vercel-insights.com` and `*.vercel-analytics.com`
+- ~10 components calling `trackEvent()`: Gradual migration or wrapper function
 
 ---
 
-## Category Distribution Analysis
+## 2. OG Image Optimization (Dynamic Social Cards)
 
-Current 51 entries by category (from source):
+### Table Stakes
 
-| Category | Current Count | Example Entries |
-|----------|--------------|-----------------|
-| `orchestration` | 3 | omc, superpowers, agency-agents |
-| `workflow` | 10 | bkit-starter, bkit, ralph, taskmaster, gsd, fireauto, sequential-thinking, todoist, linear, atlassian |
-| `code-quality` | 3 | repomix, context7, memory |
-| `testing` | 3 | playwright, puppeteer, browserbase |
-| `documentation` | 1 | notion |
-| `data` | 7 | firecrawl, brave-search, exa, tavily, perplexity, postgres, neon |
-| `security` | 2 | security, sentry |
-| `integration` | 6 | github, slack, filesystem, git, supabase, figma, stripe |
-| `ui-ux` | 1 | uiux |
-| `devops` | 5 | docker, vercel, aws, desktop-commander, cloudflare |
+| Feature | Why Expected | Complexity | Dependency |
+|---------|-------------|------------|------------|
+| Default OG image for the site | Any shared link without OG image looks broken on social media; absolute minimum for marketing launch | Low | `app/opengraph-image.tsx` file convention |
+| `<meta>` title + description on all pages | Currently only 2 dynamic pages use `generateMetadata`; `/advisor`, `/optimizer`, `/services` are missing or minimal | Low | Add/update `metadata` exports on each page |
+| Twitter card meta tags (`twitter:card`, `twitter:image`) | Twitter/X is a primary sharing channel for developer tools | Low | `app/twitter-image.tsx` or metadata export |
+| 1200x630 image dimensions | Standard OG image size expected by all platforms (Facebook, Twitter, LinkedIn, Discord, Slack) | N/A | Design constraint |
 
-**Underrepresented categories that new entries can fill:**
+### Differentiators
 
-- `documentation` (1 entry): firebase docs access, mintlify are candidates
-- `code-quality` (3): serena is a strong candidate for semantic code operations
-- `ui-ux` (1): frontend-design plugin fills this gap
-- `devops` (5): firebase, railway are additional candidates
+| Feature | Value Proposition | Complexity | Dependency |
+|---------|-------------------|------------|------------|
+| Per-plugin dynamic OG images via `opengraph-image.tsx` route convention | Each plugin detail page (`/plugins/[id]`) gets a branded card showing plugin name, category, verification status; looks professional when shared | Medium | `app/plugins/[id]/opengraph-image.tsx` using `ImageResponse` from `next/og` |
+| Optimizer result OG image (shareable score card) | When users share their combo analysis result, the preview shows their score + plugin count; creates viral sharing loop | High | Requires URL-encodable state (query params or short ID), dedicated OG route |
+| Guide-specific OG images | Each guide gets a card with its title and topic icon | Medium | `app/guides/[slug]/opengraph-image.tsx` |
+| Consistent brand template across all OG images | Dark theme matching the site, Space Grotesk font, consistent layout builds brand recognition | Medium | Shared OG utility/template component |
 
-**No new category is needed.** All viable new entries map naturally to existing ones.
+### Anti-Features
 
----
+| Anti-Feature | Why Avoid | What to Do Instead |
+|-------------|-----------|-------------------|
+| Static pre-rendered PNG files per page | Does not scale with 51+ plugins; cannot reflect real-time data; maintenance burden | Use `ImageResponse` API for dynamic generation |
+| Complex illustrations in OG images | Satori (the rendering engine) supports only Flexbox, basic text, borders, gradients; no CSS Grid, transforms, or SVG paths | Keep designs simple: text, colored backgrounds, basic shapes |
+| External image generation service (Cloudinary, imgix) | Adds external dependency, cost, complexity; Next.js built-in solution is sufficient and free | Use `next/og` `ImageResponse` |
+| Custom font loading for every OG image render | Fonts must be loaded as ArrayBuffer for Satori; adds latency per request | Fetch Space Grotesk once at build time and cache, or fall back to system fonts |
+| Internationalized OG images (ko + en variants) | Doubles the work with minimal SEO benefit at launch; primary audience is Korean | Korean OG images only for launch; English variants can be added later if needed |
 
-## Install Pattern Taxonomy
+### Complexity Assessment
 
-Four real-world patterns in the ecosystem map to the existing `InstallMode` type.
+**Overall: Medium.** The default site-wide OG image is trivial. Per-plugin dynamic images are medium because the pattern is well-documented in Next.js docs. The optimizer share card is the hardest part because it requires serializing analysis state into a URL. Satori CSS limitations require designing within Flexbox-only constraints.
 
-### Pattern 1: `safe-copy` — Plugin install (no external dependencies)
+### Dependencies on Existing Code
 
-Used by Claude Code Plugins (`type: "plugin"`). Install is via `/plugin` commands. No API key, no
-external account, no config file needed.
-
-```bash
-# Marketplace install
-/plugin marketplace add https://github.com/owner/repo
-/plugin install plugin-name
-
-# Official Anthropic marketplace
-/plugin install plugin-name@claude-plugins-official
-```
-
-**DB entries using this:** omc, superpowers, bkit, bkit-starter, agency-agents, gsd, fireauto, ralph
-
-### Pattern 2: `external-setup` — Remote HTTP MCP (OAuth or header auth)
-
-The modern recommended transport (2025+). Many official vendor servers have migrated here.
-SSE transport is deprecated per official docs; use HTTP where available.
-
-```bash
-# Basic HTTP (OAuth via /mcp in Claude Code)
-claude mcp add --transport http sentry https://mcp.sentry.dev/mcp
-
-# With Bearer token header
-claude mcp add --transport http airtable https://mcp.airtable.com/mcp \
-  --header "Authorization: Bearer YOUR_TOKEN"
-```
-
-**DB entries using this:** firecrawl, exa, tavily, perplexity, brave-search, vercel, supabase, figma, github, sentry, stripe
-
-### Pattern 3: `external-setup` — Local stdio via npx (API key as env var)
-
-Most common for community-published npm packages. Spawns a local Node.js process.
-
-```bash
-claude mcp add --transport stdio --env API_KEY=YOUR_KEY <name> \
-  -- npx -y @package/name
-```
-
-**DB entries using this:** postgres, neon, docker (some patterns)
-
-### Pattern 4: `manual-required` — Non-standard setup
-
-Used when a server requires Docker, Python/uvx runtime, or manual JSON editing.
-
-```bash
-# uvx (Python-based, e.g. serena)
-uvx --from serena-code serena-mcp-server
-
-# Firebase CLI (Node.js tool, not a standalone npm package)
-npx -y firebase-tools@latest mcp
-```
-
-**DB entries using this:** atlassian, desktop-commander, cloudflare
-
-### Pattern 5 (emerging): Plugin-bundled MCP
-
-Plugins can include `.mcp.json` or inline `mcpServers` in `plugin.json`. When the plugin is
-installed via `/plugin install`, its MCP server starts automatically. This is how official
-marketplace plugins like `firebase`, `serena`, `playwright` work when sourced from
-`anthropics/claude-plugins-official`.
-
-Maps to `safe-copy` installMode when the primary install is `/plugin install`; `external-setup`
-if an API key is still required after plugin install.
+- `app/layout.tsx`: Root metadata needs `openGraph` and `twitter` fields
+- `app/plugins/[id]/page.tsx`: Already has `generateMetadata` -- extend with `openGraph` image reference
+- `app/guides/[slug]/page.tsx`: Already has `generateMetadata` -- same extension needed
+- `lib/plugins.ts`: Plugin data (name, category, icon color) feeds into dynamic OG
+- `next.config.mjs`: CSP may need update if OG images fetch external fonts at runtime
+- Font files: Space Grotesk needs to be available as raw ArrayBuffer for Satori
 
 ---
 
-## Candidate New Entries Analysis
+## 3. Share Buttons (Combo Analysis Result SNS Sharing)
 
-### High-Priority MCP Server Candidates
+### Table Stakes
 
-Ordered by evidence strength (GitHub stars, official status, coverage gap filled).
+| Feature | Why Expected | Complexity | Dependency |
+|---------|-------------|------------|------------|
+| "Copy link" button | Universal fallback; works everywhere; most basic sharing action | Low | `navigator.clipboard.writeText()` + toast notification |
+| Twitter/X share button | Primary developer community platform for this niche | Low | `https://twitter.com/intent/tweet?url=...&text=...` URL pattern |
+| Share button placement on optimizer results | The optimizer result (`ResultsPanel`) is the most shareable output of the product | Low | `components/ResultsPanel.tsx` modification |
 
-| id | Category | installMode | requiredSecrets | officialStatus | Confidence |
-|----|----------|-------------|-----------------|----------------|------------|
-| `firebase` | `devops` | `external-setup` | Firebase project config or OAuth | official (Google) | HIGH |
-| `gitlab` | `integration` | `external-setup` | GITLAB_TOKEN | official | HIGH |
-| `railway` | `devops` | `external-setup` | RAILWAY_TOKEN | official | HIGH |
-| `posthog` | `data` | `external-setup` | POSTHOG_API_KEY | official | HIGH |
-| `redis` | `data` | `external-setup` | REDIS_URL | official (redis.io) | HIGH |
-| `terraform` | `devops` | `external-setup` | none | official (HashiCorp) | MEDIUM |
-| `sourcegraph` | `code-quality` | `external-setup` | SOURCEGRAPH_TOKEN | official | MEDIUM |
-| `serena` | `code-quality` | `manual-required` | none | community | MEDIUM |
-| `markitdown` | `documentation` | `external-setup` | none | community wrapper | LOW |
-| `zapier` | `integration` | `external-setup` | Zapier account | official | MEDIUM |
+### Differentiators
 
-### High-Priority Plugin Candidates
+| Feature | Value Proposition | Complexity | Dependency |
+|---------|-------------------|------------|------------|
+| Native Web Share API with fallback | Mobile users get the native OS share sheet (contacts, apps); feels native, higher share completion rate | Low | `navigator.share()` with `navigator.canShare()` check; fall back to button row on desktop |
+| Shareable optimizer URL with encoded state | Users share a link that recreates their combo analysis (selected plugins + score); recipients see the same result | High | URL state serialization: query params (`?plugins=ctx7,playwright,...`) or Supabase-stored short IDs |
+| Pre-composed share text with score | "My Claude Code plugin combo scored 85/100!" -- compelling social proof that drives clicks | Low | Template string using `ScoringResult.totalScore` |
+| LinkedIn share button | Relevant for team/enterprise audience sharing setup recommendations | Low | `https://linkedin.com/sharing/share-offsite?url=...` URL pattern |
 
-| id | Category | installMode | Source | Install Pattern | Confidence |
-|----|----------|-------------|--------|-----------------|------------|
-| `feature-dev` | `workflow` | `safe-copy` | anthropics/claude-plugins-official | `/plugin install feature-dev@claude-plugins-official` | HIGH |
-| `pr-review-toolkit` | `code-quality` | `safe-copy` | anthropics/claude-plugins-official | `/plugin install pr-review-toolkit@claude-plugins-official` | HIGH |
-| `commit-commands` | `workflow` | `safe-copy` | anthropics/claude-plugins-official | `/plugin install commit-commands@claude-plugins-official` | HIGH |
-| `frontend-design` | `ui-ux` | `safe-copy` | anthropics/claude-plugins-official | `/plugin install frontend-design@claude-plugins-official` | HIGH |
-| `security-guidance` | `security` | `safe-copy` | anthropics/claude-plugins-official | `/plugin install security-guidance@claude-plugins-official` | MEDIUM |
+### Anti-Features
 
----
+| Anti-Feature | Why Avoid | What to Do Instead |
+|-------------|-----------|-------------------|
+| `next-share` or `react-share` library | Adds dependency for what is 5 lines of URL construction; these libraries are thin wrappers over intent URLs | Build share buttons manually with platform intent URLs + Lucide icons already in the project |
+| Facebook share button | Developer tools audience is primarily Twitter/X and LinkedIn; Facebook adds noise without value | Offer Twitter/X, LinkedIn, and native share (which includes Facebook on mobile via OS share sheet) |
+| Share count display | Requires server-side API calls to each platform; adds complexity, rate limits, and stale data | Skip counts entirely; the share action itself is what matters |
+| Auto-sharing (share on analysis complete) | Annoying UX pattern; user should explicitly choose to share | Show share buttons only after results are displayed, require explicit click |
 
-## Metadata Fields — Completeness Checklist per New Entry
+### Complexity Assessment
 
-### Required (no defaults acceptable)
+**Overall: Low for basic buttons, High for shareable URLs.** The share buttons themselves are trivial (URL intent patterns). The hard part is making the optimizer result reproducible from a URL. Two approaches:
+1. **Query params** (recommended first): `/optimizer?plugins=context7,playwright,github&analyze=true` -- limited by URL length but works for typical combos of 3-10 plugins
+2. **Supabase short ID** (future): Store result in Supabase, generate short ID, share `/optimizer/s/abc123` -- handles any combo size but requires new API + DB table
 
-- `id` — kebab-case, unique across all 51+ entries
-- `name` — display name
-- `tag` — short uppercase abbreviation (2-6 chars)
-- `color` — hex color, distinct from existing palette
-- `category` — one of 10 existing `PluginCategory` values
-- `githubRepo` — `"owner/repo"` format, or `null` for remote-only HTTP entries
-- `desc` — Korean, 1 sentence, ≤80 chars
-- `longDesc` — Korean, 3-5 sentences with tool count and use case
-- `url` — primary docs/GitHub URL
-- `install[]` — at minimum 1 verified command; prefer 2 (remote HTTP + stdio) where both exist
-- `features[]` — 3-5 Korean bullet points
-- `keywords[]` — 10-20 terms (mix Korean/English)
-- `conflicts[]` — explicit `[]` if none; cross-check against all existing entries
-- `type` — `"mcp"` or `"plugin"`
+Recommend query params first. Typical combo of 5-10 plugins produces URLs under 200 chars, well within all platform limits.
 
-### Operational overrides (set in PLUGIN_FIELD_OVERRIDES, not PluginSeed)
+### Dependencies on Existing Code
 
-- `officialStatus` — `"official"` if vendor-maintained; `"community"` if not
-- `verificationStatus` — start as `"partial"`, promote to `"verified"` after README + docs check
-- `difficulty` — `"beginner"` for npx one-liners; `"intermediate"` for API key required; `"advanced"` for Docker/Python runtime
-- `installMode` — never leave as `"safe-copy"` default for API-key MCP servers
-- `requiredSecrets[]` — enumerate all env vars by exact name
-- `bestFor[]` — 2-4 Korean phrases
-- `avoidFor[]` — 1-3 Korean phrases
-- `maintenanceStatus` — check last commit date; `stale` if >6 months inactive
-
-### i18n (must be added in sync with Korean entry)
-
-- `pluginDescEn[id].desc` — English desc
-- `pluginDescEn[id].longDesc` — English longDesc
-- `reasonsEn` not needed for new entries unless they appear in preset packs
+- `components/ResultsPanel.tsx`: Add share button row after results render
+- `components/OptimizerApp.tsx`: Read query params on mount to restore plugin selection + trigger analysis
+- `lib/scoring.ts`: `ScoringResult` type provides `totalScore`, `conflicts`, `complementary` for share text
+- OG Image feature (Feature 2): Shareable URLs are only valuable if the link preview shows a good OG image -- **build OG images before share buttons**
 
 ---
 
-## Feature Dependencies
+## 4. Feedback Form (Site-wide Feedback Widget)
+
+### Table Stakes
+
+| Feature | Why Expected | Complexity | Dependency |
+|---------|-------------|------------|------------|
+| Floating feedback button (bottom-right corner) | Standard pattern; always accessible without interfering with main content | Low | New client component in layout |
+| Simple text input + category selector (bug/feature/other) | Minimizes friction; users can leave feedback in seconds | Low | Form component with textarea + select |
+| Server-side submission to Supabase | Data must be stored persistently; Supabase is already configured | Medium | New `feedback` table in Supabase, new API route |
+| Rate limiting on submission | Prevent spam; existing `lib/rate-limit.ts` pattern can be reused directly | Low | Reuse `checkRateLimit` with new bucket name |
+| Success/error feedback to user | User must know their submission went through | Low | Inline confirmation state change |
+
+### Differentiators
+
+| Feature | Value Proposition | Complexity | Dependency |
+|---------|-------------------|------------|------------|
+| Page context auto-capture | Automatically include current URL path, locale, and viewport size with each submission; helps triage without asking user | Low | `window.location.pathname` + `useI18n().locale` |
+| Optional email field | Lets users who want a response provide contact info; not required, keeps friction low | Low | Extra input field, optional |
+| Admin panel feedback review | View/manage/archive feedback in existing `/admin` panel | Medium | New admin page + API routes following existing `suggestions` pattern |
+| Feedback categorization in admin | Filter by page, category, date; basic triage workflow | Medium | Supabase query filters, admin UI |
+
+### Anti-Features
+
+| Anti-Feature | Why Avoid | What to Do Instead |
+|-------------|-----------|-------------------|
+| Third-party feedback widget (Canny, UserVoice, Formbricks) | Adds external dependency, branding, cost; form is simple enough to build in-house with existing Supabase + shadcn | Build custom with Supabase + existing component library |
+| Feedback voting/ranking system | Over-engineering at current scale; just collect raw feedback | Simple list in admin sorted by date |
+| Real-time notification on new feedback | Not needed at current traffic; admin can check periodically | Optionally add webhook later using existing `/api/lead` pattern as template |
+| Anonymous feedback without any throttle | Spam vector | Require rate limiting (IP-based, reuse existing pattern) |
+| Complex categorization (tags, priorities, status workflow) | Overkill for early stage feedback volume | Simple category field: bug, feature, general |
+
+### Complexity Assessment
+
+**Overall: Medium.** The UI is straightforward (floating button that opens a popover/drawer with form). The backend work is the Supabase table setup, API route creation, and admin integration. All patterns already exist in the codebase -- the `plugin-suggestions` flow (`/api/plugin-suggestions` + admin review page) is nearly identical in structure and can be used as a direct template.
+
+### Dependencies on Existing Code
+
+- `lib/supabase-admin.ts`: Reuse `getSupabaseAdminClient()` for server-side writes
+- `lib/rate-limit.ts`: Reuse `checkRateLimit()` for spam prevention
+- `app/layout.tsx`: Add floating feedback button component to the body
+- `app/admin/suggestions/page.tsx`: Direct template for the new feedback admin page
+- `app/api/plugin-suggestions/route.ts`: Direct template for the new feedback API route
+- `lib/i18n/`: Add ko/en translations for form labels and messages
+
+---
+
+## 5. Newsletter Signup Form (Email Collection)
+
+### Table Stakes
+
+| Feature | Why Expected | Complexity | Dependency |
+|---------|-------------|------------|------------|
+| Email input + subscribe button | Minimal viable newsletter signup; single field reduces friction | Low | New client component |
+| Email format validation (client + server) | Prevent garbage data; standard HTML5 `type="email"` + server regex | Low | Built into HTML + API route validation |
+| Supabase storage of subscribers | Persistent storage; Supabase is already configured | Low | New `newsletter_subscribers` table |
+| Duplicate prevention | Same email should not create duplicate rows; user should see friendly message | Low | Supabase unique constraint + upsert |
+| Rate limiting | Prevent abuse of the endpoint | Low | Reuse existing `checkRateLimit` |
+| Success confirmation UI | User must know subscription worked | Low | Inline success message replacing the form |
+
+### Differentiators
+
+| Feature | Value Proposition | Complexity | Dependency |
+|---------|-------------------|------------|------------|
+| Placement in footer (global) | Visible on every page; standard marketing pattern for content sites | Low | Footer section in `app/layout.tsx` |
+| Placement on landing page (bottom CTA section) | Higher visibility; catches users at peak engagement after reading value props | Low | `app/page.tsx` modification |
+| Locale-aware copy (ko/en) | Matches existing i18n pattern; Korean users see Korean CTA, English users see English | Low | `lib/i18n/` translations |
+| Admin subscriber list view | Export/manage subscribers from existing admin panel | Medium | New admin page following existing patterns |
+
+### Anti-Features
+
+| Anti-Feature | Why Avoid | What to Do Instead |
+|-------------|-----------|-------------------|
+| Double opt-in email confirmation flow | Requires email sending infrastructure (SMTP, SendGrid, etc.) which is not in the current stack; overkill for initial launch | Single opt-in with Supabase storage; add double opt-in later when email service is chosen |
+| Third-party newsletter service integration (Mailchimp, ConvertKit, Buttondown) | Premature optimization; need to collect emails first, decide on service later; adds API key management | Store in Supabase now; export CSV to any service when ready to send newsletters |
+| Animated/complex signup form | Over-designed for a secondary action; should not distract from primary product flow | Simple inline form matching existing shadcn/ui design language |
+| Topic segmentation checkboxes at launch | No email campaigns exist yet; segmenting before there is content to segment for adds complexity without value | Store with default topic; add segmentation when first campaign is planned |
+| Social login for newsletter | Email-only collection is simpler and has higher conversion | Plain email input, no OAuth complexity |
+
+### Complexity Assessment
+
+**Overall: Low.** This is the simplest of the 5 features. One input field, one button, one API route, one Supabase table. The UI follows existing patterns (shadcn `Input` + `Button`). The only decision is placement (footer, landing page, or both -- recommend both).
+
+### Dependencies on Existing Code
+
+- `lib/supabase-admin.ts`: Reuse for server-side writes
+- `lib/rate-limit.ts`: Reuse for spam prevention
+- `app/layout.tsx`: Footer modification for global placement
+- `app/page.tsx`: Landing page bottom CTA section for high-visibility placement
+- `lib/i18n/`: Add ko/en translations for CTA copy
+- `app/admin/`: Optional subscriber management page
+
+---
+
+## Feature Dependencies (Cross-Feature)
 
 ```
-New DB entry (any)
-    └──requires──> PluginSeed (Korean desc + longDesc, install[], keywords[], etc.)
-    └──requires──> PLUGIN_FIELD_OVERRIDES (installMode, verificationStatus, requiredSecrets, type)
-    └──requires──> pluginDescEn entry (English translation, plugins-en.ts)
+Analytics (1)  <-- Share Buttons (3), Feedback (4), Newsletter (5)
+  All new user actions should emit Vercel Analytics events.
+  Set up analytics FIRST so new features are tracked from day one.
 
-type: "plugin" entries
-    └──requires──> /plugin install pattern verified (not claude mcp add)
-    └──conflict──> type: "mcp" install pattern (these are mutually exclusive)
+OG Images (2)  <-- Share Buttons (3)
+  Share buttons are only valuable if shared links have good previews.
+  Build OG images BEFORE share buttons.
 
-keywords[] quality
-    └──enhances──> /advisor recommendation accuracy
-    └──enhances──> score-based ranking in recommend.ts
-
-conflicts[] accuracy
-    └──enhances──> /optimizer conflict detection
-    └──requires──> cross-check against ALL 51+ existing entries
-
-Remote HTTP installMode entries
-    └──requires──> requiredSecrets[] OR explicit note about OAuth flow
-    └──note──> SSE transport deprecated per official docs; prefer HTTP transport
+Feedback (4)  ||  Newsletter (5)
+  These are independent of each other. Can be built in parallel.
+  Both follow the same pattern: form component -> API route -> Supabase table.
 ```
 
-### Dependency Notes
-
-- **English translation requires Korean first.** `pluginDescEn` references the same `id`; Korean PluginSeed is the source of truth. Do not write English before Korean.
-- **installMode is not inherited from type.** `type: "plugin"` entries use `/plugin install` (maps to `safe-copy`), but `type: "mcp"` entries almost always need `external-setup` or `manual-required`. The DEFAULT_PLUGIN_FIELDS default of `safe-copy` is wrong for most new MCP entries — must override.
-- **verificationStatus requires actual README lookup.** Do not mark `verified` without confirming install command from official source. Ship as `partial` first.
-- **Plugin entries must not use `claude mcp add` install pattern.** MCP servers and Plugins have different install mechanisms. Mixing them in `install[]` misleads users.
-
----
-
-## MVP Definition for v1.3
-
-### Add in v1.3 (current milestone)
-
-- [ ] 5-10 new MCP server entries from HIGH-confidence candidates above
-- [ ] 5-10 new Plugin entries from official Anthropic marketplace
-- [ ] All new entries: complete Korean + English desc/longDesc
-- [ ] All new entries: `verificationStatus` set honestly (`partial` until README confirmed)
-- [ ] All new entries: correct `type`, `installMode`, `requiredSecrets`
-- [ ] Target: total DB 51 → 60-65 entries
-
-### Defer to v1.4+
-
-- [ ] `serena` — Python/uvx runtime; `manual-required`; higher friction for typical audience. Worth adding but needs careful `avoidFor` and difficulty labeling.
-- [ ] `markitdown` — Community-built npx wrapper around Microsoft's Python tool, not an official MCP. Needs verification that wrapper is actively maintained.
-- [ ] `redis` / `mongodb` — Valuable but niche; adds noise for the typical non-backend audience.
-- [ ] `zapier` — Remote MCP with 8,000+ apps is powerful but setup is non-trivial (Zapier account + zap creation per action). Medium confidence on usability without additional explanation.
+**Recommended build order:**
+```
+Phase 1: Analytics (foundation -- measure everything from the start)
+Phase 2: OG Images (prerequisite for share buttons looking good)
+Phase 3: Share Buttons (depends on OG images being in place)
+Phase 4: Feedback + Newsletter (parallel, independent, both use Supabase form pattern)
+```
 
 ---
 
-## Feature Prioritization Matrix
+## MVP Recommendation
 
-| Entry / Feature | User Value | Implementation Cost | Priority |
-|-----------------|------------|---------------------|----------|
-| `firebase` MCP | HIGH — Google-official, massive user base | LOW — official plugin, one-liner | P1 |
-| `feature-dev` Plugin | HIGH — most-installed plugin in ecosystem | LOW — official marketplace | P1 |
-| `pr-review-toolkit` Plugin | HIGH — fills code-quality gap | LOW — official marketplace | P1 |
-| `commit-commands` Plugin | HIGH — completes git workflow trio | LOW — official marketplace | P1 |
-| `gitlab` MCP | HIGH — GitHub alternative for enterprise | LOW — official, external-setup | P1 |
-| `railway` MCP | HIGH — rising deployment platform | LOW — official, npx pattern | P1 |
-| `posthog` MCP | HIGH — analytics gap in current DB | LOW — official, external-setup | P1 |
-| `frontend-design` Plugin | MEDIUM — fills ui-ux gap (1 entry now) | LOW — official marketplace | P2 |
-| `terraform` MCP | MEDIUM — infra users only | LOW — official HashiCorp | P2 |
-| `sourcegraph` MCP | MEDIUM — advanced code search | MEDIUM — token required | P2 |
-| `security-guidance` Plugin | MEDIUM — security tab enhancement | LOW — official marketplace | P2 |
-| `serena` MCP | MEDIUM — powerful but high friction | MEDIUM — Python/uvx runtime | P3 |
-| `markitdown` MCP | LOW — community wrapper, not official | MEDIUM — stability uncertain | P3 |
-| `redis` / `mongodb` | LOW for typical audience | LOW | P3 |
+**Prioritize in this order:**
+
+1. **Analytics** (table stakes) -- Without this, the impact of every other marketing feature is unmeasurable. The `<Analytics />` drop-in gives immediate page view data. Migrate existing `trackEvent` to Vercel `track()` to unify into a single dashboard.
+
+2. **OG Images** (table stakes) -- Every shared link currently shows no image preview. A default site-wide OG image plus per-plugin dynamic images are the minimum for social sharing to not look broken.
+
+3. **Share Buttons** (table stakes for optimizer) -- The optimizer result is the most viral-worthy output. Start with query-param based shareable URLs (simpler), add copy-link + Twitter/X + native Web Share API.
+
+4. **Feedback Form** (differentiator) -- Captures early user signals before broader launch. The existing `plugin-suggestions` flow provides an exact blueprint for the Supabase + API route + admin pattern.
+
+5. **Newsletter Form** (differentiator) -- Email collection for future marketing. Simplest feature technically, but lowest urgency because there is no email sending infrastructure yet. Still worth building since it is trivial.
+
+**Defer to later milestones:**
+- Double opt-in email confirmation: Until email sending service is chosen
+- Supabase short-ID share links: Until query-param approach proves insufficient (URL length issues)
+- Feedback voting/ranking: Until feedback volume justifies triage tooling
+- Speed Insights: Nice-to-have, can add alongside Analytics but not critical for launch
+- Topic segmentation for newsletter: Until first email campaign is planned
+- English OG image variants: Until English audience justifies the effort
+- A/B testing: Until traffic volume supports statistical significance
+- Session replay: Overkill for a content/tool site at this stage
 
 ---
 
-## Ecosystem Context: Directory Comparison
+## Supabase Schema Requirements
 
-| Feature | awesome-mcp-servers (list) | mcpcat.io (directory) | This Product |
-|---------|---------------------------|----------------------|--------------|
-| Curated vs exhaustive | Exhaustive (thousands) | Exhaustive | Curated (quality over quantity) |
-| Install commands | Sometimes present | Sometimes present | Always verified, copy-paste ready |
-| Category filter | Tags only | Categories | 10 categories + type tabs |
-| Conflict detection | None | None | /optimizer conflict + score |
-| Recommendation engine | None | None | /advisor keyword + AI mode |
-| Korean language | None | None | Native ko + en i18n |
-| Verification status | None | Community ratings | `verified/partial/unverified` per entry |
-| Plugin vs MCP distinction | Mixed | Mixed | Explicit type tabs + badges |
+Two new tables needed. Both follow the existing `plugin_suggestions` table pattern.
 
-**Core differentiation:** Not a raw list — a recommendation engine with verified metadata. More entries only improve value if they are verified. Quality gate matters more than count.
+**feedback table:**
+- `id` (uuid, PK, auto-generated)
+- `category` (text: 'bug' | 'feature' | 'general', default 'general')
+- `message` (text, required)
+- `page_path` (text, auto-captured from client)
+- `locale` (text, default 'ko')
+- `email` (text, optional)
+- `created_at` (timestamptz, default now())
+
+**newsletter_subscribers table:**
+- `id` (uuid, PK, auto-generated)
+- `email` (text, unique, required)
+- `locale` (text, default 'ko')
+- `subscribed_at` (timestamptz, default now())
+- `unsubscribed_at` (timestamptz, nullable -- for soft delete)
+
+---
+
+## New Package Dependencies
+
+| Package | Version | Purpose | Required By |
+|---------|---------|---------|-------------|
+| `@vercel/analytics` | `^1.4` | Page views + custom event tracking | Feature 1 (Analytics) |
+| `@vercel/speed-insights` | `^1.0` | Core Web Vitals monitoring (optional) | Feature 1 (Analytics, differentiator) |
+
+No other new packages needed. OG images use built-in `next/og`. Share buttons use native URL intent patterns. Forms use existing shadcn/ui components + Lucide icons.
 
 ---
 
 ## Sources
 
-- [Official Claude Code MCP Docs](https://code.claude.com/docs/en/mcp) — transport types, install patterns, scopes (HIGH confidence)
-- [anthropics/claude-plugins-official marketplace.json](https://github.com/anthropics/claude-plugins-official) — official plugin catalog, 83 entries (HIGH confidence)
-- [Awesome Claude AI — Top MCP Servers by GitHub Stars](https://awesomeclaude.ai/top-mcp-servers) — star ranking data (MEDIUM confidence)
-- [ComposioHQ/awesome-claude-plugins](https://github.com/ComposioHQ/awesome-claude-plugins) — plugin landscape overview (MEDIUM confidence)
-- [wshobson/agents](https://github.com/wshobson/agents) — plugin ecosystem scale (MEDIUM confidence)
-- [oraios/serena GitHub](https://github.com/oraios/serena) — serena MCP details (HIGH confidence)
-- [Firebase MCP Server Docs](https://firebase.google.com/docs/ai-assistance/mcp-server) — official Firebase MCP (HIGH confidence)
-- [railwayapp/railway-mcp-server](https://github.com/railwayapp/railway-mcp-server) — Railway MCP (HIGH confidence)
-- [PostHog/mcp](https://github.com/PostHog/mcp) — PostHog MCP (HIGH confidence)
-- [redis/mcp-redis](https://github.com/redis/mcp-redis) — Redis MCP (HIGH confidence)
-- WebSearch roundups: builder.io, mcpcat.io, firecrawl.dev, fastmcp.me 2025-2026 (MEDIUM confidence)
-
----
-
-*Feature research for: MCP Server / Plugin DB Expansion (Plugin Advisor v1.3)*
-*Researched: 2026-03-18*
+- [Vercel Analytics Quickstart](https://vercel.com/docs/analytics/quickstart) -- HIGH confidence
+- [Vercel Custom Events](https://vercel.com/docs/analytics/custom-events) -- HIGH confidence
+- [Vercel Server-Side Custom Events Changelog](https://vercel.com/changelog/track-server-side-custom-events-with-vercel-web-analytics) -- HIGH confidence
+- [Next.js opengraph-image File Convention](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image) -- HIGH confidence
+- [Next.js ImageResponse API](https://nextjs.org/docs/app/api-reference/functions/image-response) -- HIGH confidence
+- [Web Share API - MDN](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/share) -- HIGH confidence
+- [Web Share API Browser Support - Can I Use](https://caniuse.com/web-share) -- HIGH confidence
+- [Supabase + Next.js Tutorial](https://supabase.com/docs/guides/getting-started/tutorials/with-nextjs) -- HIGH confidence
+- [Newsletter with Next.js + Supabase](https://madza.hashnode.dev/how-to-create-a-secure-newsletter-subscription-with-nextjs-supabase-nodemailer-and-arcjet) -- MEDIUM confidence
