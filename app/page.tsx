@@ -56,9 +56,10 @@ export default function Home() {
   ];
 
   const quickSignals = [
-    locale === "en" ? "4 starter packs" : "4개 스타터 팩",
-    locale === "en" ? "2-3 plugin focus" : "2~3개 핵심 추천",
-    locale === "en" ? "Checklist before copy" : "복사 전 체크리스트",
+    locale === "en" ? "51 verified plugins" : "51개 검증 플러그인",
+    locale === "en" ? "10 coverage categories" : "10개 커버리지 카테고리",
+    locale === "en" ? "0-100 combination score" : "0-100 조합 점수",
+    locale === "en" ? "Setup in 5 min" : "5분 내 세팅 완료",
   ];
 
   const quickSteps = [
@@ -105,13 +106,13 @@ export default function Home() {
               </div>
               <h1 className="mb-6 max-w-3xl font-heading text-4xl font-extrabold leading-tight tracking-tight text-foreground text-pretty sm:text-6xl">
               {locale === "en"
-                ? "Set up Claude Code without tripping over the first week."
-                : "Claude Code 첫 세팅, 덜 헤매고 시작하게 도와주는 가이드"}
+                ? "51 verified plugins. One setup that actually works."
+                : "51개 검증된 플러그인에서, 내 프로젝트에 맞는 조합만 골라주는 도구"}
               </h1>
               <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground">
               {locale === "en"
-                ? "Pick a starter pack or run a quick diagnosis. We focus on verified plugins, preflight checks, and practical install steps."
-                : "프리셋 팩을 고르거나 간단 진단을 돌리면, 검증된 플러그인과 설치 전 체크리스트를 기준으로 첫 세팅 실패 확률을 줄여드려요."}
+                ? "Paste your project description or pick a starter pack. Get scored recommendations, conflict warnings, and copy-paste install commands — not a list of 50 things to figure out yourself."
+                : "프로젝트 설명을 붙여넣거나 스타터 팩을 고르세요. 충돌 경고, 조합 점수, 복사 가능한 설치 명령까지 — 직접 하나씩 찾아볼 필요 없이 바로 받을 수 있어요."}
               </p>
               <div className="mt-6 flex flex-wrap gap-2">
                 {quickSignals.map((signal) => (
@@ -129,13 +130,13 @@ export default function Home() {
                     size="lg"
                     className="group h-12 w-full rounded-full bg-primary px-8 text-base font-bold text-primary-foreground hover:bg-primary/90 sm:w-auto"
                   >
-                    {locale === "en" ? "Start setup diagnosis" : "세팅 진단 시작하기"}
+                    {locale === "en" ? "Find my plugins" : "내 플러그인 찾기"}
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </Link>
                 <Link href="/guides" className="w-full sm:w-auto">
                   <Button size="lg" variant="outline" className="h-12 w-full rounded-full border-overlay-border bg-overlay-subtle px-8 text-base font-bold sm:w-auto">
-                    {locale === "en" ? "Open starter guides" : "스타터 가이드 보기"}
+                    {locale === "en" ? "Browse starter guides" : "가이드 먼저 보기"}
                   </Button>
                 </Link>
               </div>
@@ -235,8 +236,8 @@ export default function Home() {
         <div className="mt-16 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-6 text-sm text-muted-foreground">
           <p>
             {locale === "en"
-              ? "Plugin Advisor — built for setup success, not plugin hoarding."
-              : "Plugin Advisor — 플러그인 수보다 세팅 성공을 우선합니다."}
+              ? "Plugin Advisor — 51 plugins scored, conflicts caught, setup done."
+              : "Plugin Advisor — 51개 플러그인 점수화, 충돌 감지, 세팅 완료."}
           </p>
           <div className="flex gap-4">
             <Link href="/guides" className="hover:text-foreground">

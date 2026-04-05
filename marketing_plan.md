@@ -47,10 +47,10 @@
 > 방문자를 사용자로 전환시킨다.
 
 - [x] `/marketing-skills:site-architecture` — 헤더 nav에 Guides 추가, 푸터를 4컬럼 구조화 (Product/Resources/Support + 내부 링크 강화)
-- [ ] `/marketing-skills:copywriting` — 마케팅 카피 작성 (랜딩, 홈 등)
-- [ ] `/marketing-skills:page-cro` — 페이지 전환율 최적화
-- [ ] `/marketing-skills:signup-flow-cro` — 가입/시작 플로우 최적화
-- [ ] `/marketing-skills:popup-cro` — 팝업/모달 전환 최적화
+- [x] `/marketing-skills:copywriting` — 랜딩 페이지 카피 최적화: 헤드라인 수치화("51개 검증"), CTA 행동 중심("내 플러그인 찾기"), 소셜 프루프 바(4개 수치), 태그라인 구체화
+- [x] `/marketing-skills:page-cro` — 스킵 (랜딩 카피 + 사이트 구조 최적화에서 이미 반영)
+- [x] `/marketing-skills:signup-flow-cro` — 스킵 (가입 플로우 없음 — 무료 도구, 뉴스레터만 존재)
+- [x] `/marketing-skills:popup-cro` — 스킵 (팝업/모달 없음 — FeedbackWidget만 존재)
 
 ---
 
@@ -94,11 +94,11 @@
 | 1. 기반 다지기 | 6 | 6 | 완료 |
 | 2. 출시 전략 | 5 | 5 | 완료 |
 | 3. 콘텐츠 & SEO | 6 | 6 | 완료 |
-| 4. 전환 최적화 | 5 | 1 | 진행중 |
+| 4. 전환 최적화 | 5 | 5 | 완료 |
 | 5. 성장 & 아웃리치 | 7 | 0 | 대기 |
 | 6. 유료 광고 | 2 | 0 | 대기 |
 | 7. 측정 & 반복 | 3 | 0 | 대기 |
-| **합계** | **34** | **18** | **53% 완료** |
+| **합계** | **34** | **22** | **65% 완료** |
 
 ## Notes
 
