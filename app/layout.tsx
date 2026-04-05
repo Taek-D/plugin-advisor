@@ -45,6 +45,13 @@ export const metadata: Metadata = {
     description:
       "Plugin Advisor analyzes your project and recommends verified Claude Code plugin combinations from a database of 51 plugins. Includes conflict detection, 100-point scoring, and one-click install scripts.",
   },
+  alternates: {
+    canonical: "/",
+    languages: {
+      "ko-KR": "/",
+      "en-US": "/",
+    },
+  },
 };
 
 export const viewport: Viewport = {

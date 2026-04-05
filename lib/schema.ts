@@ -76,6 +76,12 @@ export function articleSchema(opts: {
     url: opts.url,
     datePublished: opts.datePublished ?? "2026-03-01",
     dateModified: opts.dateModified ?? new Date().toISOString().split("T")[0],
+    author: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+    image: `${SITE_URL}/opengraph-image`,
     publisher: { "@id": `${SITE_URL}/#organization` },
     isPartOf: { "@id": `${SITE_URL}/#website` },
     inLanguage: "ko-KR",
