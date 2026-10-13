@@ -20,3 +20,13 @@ START.md
 *.png
 !app/icon.png
 !app/apple-icon.png
+
+# 로컬 전용 작업 문서·도구 설정
+/SECURITY_AUDIT.md
+/marketing_plan.md
+/FIGMA-EXPORT.md
+/ui-improve-diff.md
+/.planning/
+/.agents/
+/CLAUDE.md
+/AGENTS.md
