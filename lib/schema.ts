@@ -1,4 +1,4 @@
-const SITE_URL = "https://pluginadvisor.cc";
+const SITE_URL = "https://plugin-advisor.vercel.app";
 const SITE_NAME = "Plugin Advisor";
 
 export function organizationSchema() {

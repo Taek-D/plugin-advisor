@@ -9,31 +9,31 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const LAST_PLUGIN_UPDATE = "2026-03-30";
 
   const staticPages: MetadataRoute.Sitemap = [
-    { url: "https://pluginadvisor.cc", lastModified: LAST_CONTENT_UPDATE, changeFrequency: "weekly", priority: 1.0 },
-    { url: "https://pluginadvisor.cc/advisor", lastModified: LAST_CONTENT_UPDATE, changeFrequency: "weekly", priority: 0.9 },
-    { url: "https://pluginadvisor.cc/plugins", lastModified: LAST_PLUGIN_UPDATE, changeFrequency: "weekly", priority: 0.8 },
-    { url: "https://pluginadvisor.cc/guides", lastModified: LAST_CONTENT_UPDATE, changeFrequency: "monthly", priority: 0.8 },
-    { url: "https://pluginadvisor.cc/services", lastModified: LAST_CONTENT_UPDATE, changeFrequency: "monthly", priority: 0.6 },
-    { url: "https://pluginadvisor.cc/optimizer", lastModified: LAST_PLUGIN_UPDATE, changeFrequency: "monthly", priority: 0.7 },
-    { url: "https://pluginadvisor.cc/compare", lastModified: LAST_CONTENT_UPDATE, changeFrequency: "monthly", priority: 0.7 },
+    { url: "https://plugin-advisor.vercel.app", lastModified: LAST_CONTENT_UPDATE, changeFrequency: "weekly", priority: 1.0 },
+    { url: "https://plugin-advisor.vercel.app/advisor", lastModified: LAST_CONTENT_UPDATE, changeFrequency: "weekly", priority: 0.9 },
+    { url: "https://plugin-advisor.vercel.app/plugins", lastModified: LAST_PLUGIN_UPDATE, changeFrequency: "weekly", priority: 0.8 },
+    { url: "https://plugin-advisor.vercel.app/guides", lastModified: LAST_CONTENT_UPDATE, changeFrequency: "monthly", priority: 0.8 },
+    { url: "https://plugin-advisor.vercel.app/services", lastModified: LAST_CONTENT_UPDATE, changeFrequency: "monthly", priority: 0.6 },
+    { url: "https://plugin-advisor.vercel.app/optimizer", lastModified: LAST_PLUGIN_UPDATE, changeFrequency: "monthly", priority: 0.7 },
+    { url: "https://plugin-advisor.vercel.app/compare", lastModified: LAST_CONTENT_UPDATE, changeFrequency: "monthly", priority: 0.7 },
   ];
 
   const pluginPages: MetadataRoute.Sitemap = Object.keys(PLUGINS).map((id) => ({
-    url: `https://pluginadvisor.cc/plugins/${id}`,
+    url: `https://plugin-advisor.vercel.app/plugins/${id}`,
     lastModified: LAST_PLUGIN_UPDATE,
     changeFrequency: "monthly" as const,
     priority: 0.6,
   }));
 
   const guidePages: MetadataRoute.Sitemap = STARTER_GUIDES.map((g) => ({
-    url: `https://pluginadvisor.cc/guides/${g.slug}`,
+    url: `https://plugin-advisor.vercel.app/guides/${g.slug}`,
     lastModified: LAST_CONTENT_UPDATE,
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));
 
   const categoryPages: MetadataRoute.Sitemap = ALL_CATEGORY_SLUGS.map((slug) => ({
-    url: `https://pluginadvisor.cc/plugins/category/${slug}`,
+    url: `https://plugin-advisor.vercel.app/plugins/category/${slug}`,
     lastModified: LAST_PLUGIN_UPDATE,
     changeFrequency: "monthly" as const,
     priority: 0.7,

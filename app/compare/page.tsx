@@ -18,8 +18,8 @@ export const metadata: Metadata = {
 export default function ComparePage() {
   const jsonLd = wrapSingle(
     breadcrumbSchema([
-      { name: "Home", url: "https://pluginadvisor.cc" },
-      { name: "Compare", url: "https://pluginadvisor.cc/compare" },
+      { name: "Home", url: "https://plugin-advisor.vercel.app" },
+      { name: "Compare", url: "https://plugin-advisor.vercel.app/compare" },
     ])
   );
 

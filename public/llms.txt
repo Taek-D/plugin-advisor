@@ -36,6 +36,6 @@
 
 ## Optional
 
-- Site: https://pluginadvisor.cc
+- Site: https://plugin-advisor.vercel.app
 - Language: Korean (primary), English (supported)
 - Tech: Next.js 14, TypeScript, Tailwind CSS, shadcn/ui

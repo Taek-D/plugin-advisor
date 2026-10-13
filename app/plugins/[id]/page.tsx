@@ -27,9 +27,9 @@ export default function PluginDetailPage({ params }: Props) {
 
   const jsonLd = wrapSingle(
     breadcrumbSchema([
-      { name: "Home", url: "https://pluginadvisor.cc" },
-      { name: "Plugins", url: "https://pluginadvisor.cc/plugins" },
-      { name: plugin.name, url: `https://pluginadvisor.cc/plugins/${params.id}` },
+      { name: "Home", url: "https://plugin-advisor.vercel.app" },
+      { name: "Plugins", url: "https://plugin-advisor.vercel.app/plugins" },
+      { name: plugin.name, url: `https://plugin-advisor.vercel.app/plugins/${params.id}` },
     ])
   );
 

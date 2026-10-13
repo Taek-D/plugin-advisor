@@ -26,6 +26,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: "/",
       },
     ],
-    sitemap: "https://pluginadvisor.cc/sitemap.xml",
+    sitemap: "https://plugin-advisor.vercel.app/sitemap.xml",
   };
 }

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function PluginsPage() {
   const pluginItems = Object.entries(PLUGINS).map(([id, p]) => ({
     name: p.name,
-    url: `https://pluginadvisor.cc/plugins/${id}`,
+    url: `https://plugin-advisor.vercel.app/plugins/${id}`,
   }));
   const jsonLd = wrapSingle(itemListSchema(pluginItems));
 

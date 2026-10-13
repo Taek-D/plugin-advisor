@@ -1,6 +1,6 @@
 # Plugin Advisor — Full Context for LLMs
 
-> Plugin Advisor is a free web tool that recommends verified Claude Code plugin combinations. It analyzes project descriptions or existing plugin setups to provide scored recommendations with conflict detection, coverage analysis, and one-click install scripts. Available at https://pluginadvisor.cc
+> Plugin Advisor is a free web tool that recommends verified Claude Code plugin combinations. It analyzes project descriptions or existing plugin setups to provide scored recommendations with conflict detection, coverage analysis, and one-click install scripts. Available at https://plugin-advisor.vercel.app
 
 ## Problem It Solves
 

@@ -7,7 +7,7 @@ export const OG_COLORS = {
   accent: "#6366f1",
 };
 
-export const OG_FOOTER_TEXT = "pluginadvisor.cc";
+export const OG_FOOTER_TEXT = "plugin-advisor.vercel.app";
 
 export async function loadSpaceGrotesk() {
   const res = await fetch(

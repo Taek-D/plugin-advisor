@@ -30,12 +30,12 @@ export default function GuideDetailPage({ params }: Props) {
     articleSchema({
       title: guide.title,
       description: guide.summary,
-      url: `https://pluginadvisor.cc/guides/${guide.slug}`,
+      url: `https://plugin-advisor.vercel.app/guides/${guide.slug}`,
     }),
     breadcrumbSchema([
-      { name: "Home", url: "https://pluginadvisor.cc" },
-      { name: "Guides", url: "https://pluginadvisor.cc/guides" },
-      { name: guide.titleEn, url: `https://pluginadvisor.cc/guides/${guide.slug}` },
+      { name: "Home", url: "https://plugin-advisor.vercel.app" },
+      { name: "Guides", url: "https://plugin-advisor.vercel.app/guides" },
+      { name: guide.titleEn, url: `https://plugin-advisor.vercel.app/guides/${guide.slug}` },
     ]),
   ]);
 

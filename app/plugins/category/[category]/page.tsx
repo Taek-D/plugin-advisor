@@ -40,14 +40,14 @@ export default function CategoryPage({ params }: Props) {
 
   const jsonLd = wrapGraph([
     breadcrumbSchema([
-      { name: "Home", url: "https://pluginadvisor.cc" },
-      { name: "Plugins", url: "https://pluginadvisor.cc/plugins" },
-      { name: meta.labelEn, url: `https://pluginadvisor.cc/plugins/category/${cat}` },
+      { name: "Home", url: "https://plugin-advisor.vercel.app" },
+      { name: "Plugins", url: "https://plugin-advisor.vercel.app/plugins" },
+      { name: meta.labelEn, url: `https://plugin-advisor.vercel.app/plugins/category/${cat}` },
     ]),
     itemListSchema(
       plugins.map((p) => ({
         name: p.name,
-        url: `https://pluginadvisor.cc/plugins/${p.id}`,
+        url: `https://plugin-advisor.vercel.app/plugins/${p.id}`,
       }))
     ),
   ]);

@@ -26,14 +26,14 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://pluginadvisor.cc"),
+  metadataBase: new URL("https://plugin-advisor.vercel.app"),
   title: "Plugin Advisor — Claude Code Plugin Recommendation Tool",
   description:
     "Plugin Advisor는 51개 검증된 플러그인 DB 기반으로 Claude Code 플러그인 조합을 추천하고 점수화하는 무료 웹 도구입니다. 충돌 감지, 커버리지 분석, 원클릭 설치 스크립트를 제공합니다.",
   openGraph: {
     type: "website",
     locale: "ko_KR",
-    url: "https://pluginadvisor.cc",
+    url: "https://plugin-advisor.vercel.app",
     siteName: "Plugin Advisor",
     title: "Plugin Advisor — Claude Code Plugin Recommendation Tool",
     description:
@@ -140,7 +140,7 @@ export default function RootLayout({
             </div>
             <div className="mx-auto mt-8 flex max-w-6xl items-center justify-between border-t border-border pt-6 text-xs">
               <span>Plugin Advisor — setup success over plugin count</span>
-              <span>pluginadvisor.cc</span>
+              <span>plugin-advisor.vercel.app</span>
             </div>
           </footer>
           <FeedbackWidget />
